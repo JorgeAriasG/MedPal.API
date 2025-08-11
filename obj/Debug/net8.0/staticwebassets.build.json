@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "54UtHf3Y5pPf0tf9OxvL6k8/M7qGAfRJ7478VdH2JKY=",
+  "Source": "MedPal.API",
+  "BasePath": "_content/MedPal.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

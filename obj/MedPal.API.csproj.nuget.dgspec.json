@@ -1,32 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "F:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj": {}
+    "f:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj": {}
   },
   "projects": {
-    "F:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj": {
+    "f:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "F:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj",
+        "projectUniqueName": "f:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj",
         "projectName": "MedPal.API",
-        "projectPath": "F:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj",
+        "projectPath": "f:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj",
         "packagesPath": "C:\\Users\\Jorge\\.nuget\\packages\\",
-        "outputPath": "F:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\obj\\",
+        "outputPath": "f:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Jorge\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net7.0"
+          "net8.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net7.0": {
-            "targetAlias": "net7.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {}
           }
         },
@@ -34,15 +34,46 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
-        "net7.0": {
-          "targetAlias": "net7.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[13.0.1, )"
+            },
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
-              "version": "[7.0.4, )"
+              "version": "[8.0.8, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.8, )"
+            },
+            "Microsoft.EntityFrameworkCore.Proxies": {
+              "target": "Package",
+              "version": "[8.0.8, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.8, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.8, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -68,7 +99,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.401/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

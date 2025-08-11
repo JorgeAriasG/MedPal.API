@@ -1,0 +1,13 @@
+namespace MedPal.API.DTOs
+{
+    public class MedicalHistoryReadDTO
+    {
+        public int Id { get; set; }
+        public int PatientDetailsId { get; set; }
+        public string ConditionName { get; set; }
+        public string Treatment { get; set; }
+        public string Medications { get; set; }
+        public string DoctorNotes { get; set; }
+        public DateTime DiagnosisDate { get; set; }
+    }
+}

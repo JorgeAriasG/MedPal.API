@@ -4,6 +4,7 @@ using MedPal.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MedPal.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251125030534_ImprovedMedicalHistoryModel")]
+    partial class ImprovedMedicalHistoryModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -523,30 +526,12 @@ namespace MedPal.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeactivatedByUserId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("DefaultClinicId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("HasAcceptedPrivacyTerms")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastAccessAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -556,15 +541,7 @@ namespace MedPal.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProfessionalLicenseNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Specialty")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -693,14 +670,13 @@ namespace MedPal.API.Migrations
             modelBuilder.Entity("MedPal.API.Models.MedicalHistory", b =>
                 {
                     b.HasOne("MedPal.API.Models.User", "HealthcareProfessional")
-                        .WithMany("CreatedMedicalHistories")
+                        .WithMany()
                         .HasForeignKey("HealthcareProfessionalId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MedPal.API.Models.User", "LastModifiedByUser")
-                        .WithMany("ModifiedMedicalHistories")
-                        .HasForeignKey("LastModifiedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .WithMany()
+                        .HasForeignKey("LastModifiedByUserId");
 
                     b.HasOne("MedPal.API.Models.PatientDetails", "PatientDetails")
                         .WithMany("MedicalHistories")
@@ -892,10 +868,6 @@ namespace MedPal.API.Migrations
             modelBuilder.Entity("MedPal.API.Models.User", b =>
                 {
                     b.Navigation("Appointments");
-
-                    b.Navigation("CreatedMedicalHistories");
-
-                    b.Navigation("ModifiedMedicalHistories");
 
                     b.Navigation("Settings")
                         .IsRequired();

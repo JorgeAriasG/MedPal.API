@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "f:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj": {}
+    "F:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj": {}
   },
   "projects": {
-    "f:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj": {
+    "F:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "f:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj",
+        "projectUniqueName": "F:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj",
         "projectName": "MedPal.API",
-        "projectPath": "f:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj",
+        "projectPath": "F:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\MedPal.API.csproj",
         "packagesPath": "C:\\Users\\Jorge\\.nuget\\packages\\",
-        "outputPath": "f:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\obj\\",
+        "outputPath": "F:\\PersonalProjects\\SchedulingApp\\Backend\\Services\\MedPalApi\\MedPal.API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Jorge\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -52,6 +52,10 @@
             "BCrypt.Net-Next": {
               "target": "Package",
               "version": "[4.0.3, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.8, )"
             },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",

@@ -10,7 +10,7 @@ namespace MedPal.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AppointmentsController : ControllerBase
+    public class AppointmentsController : BaseController
     {
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IMapper _mapper;
@@ -64,19 +64,26 @@ namespace MedPal.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAppointment(int id, AppointmentWriteDTO appointmentWriteDto)
         {
-            // if (id != appointmentWriteDto.Id)
-            // {
-            //     return BadRequest();
-            // }
-
             var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
-            appointment.UpdatedAt = DateTime.UtcNow;
             if (appointment == null)
             {
                 return NotFound();
             }
 
+            appointment.UpdatedAt = DateTime.UtcNow;
+
+            var originalPatientId = appointment.PatientId;
+            var originalUserId = appointment.UserId;
+
             _mapper.Map(appointmentWriteDto, appointment);
+
+            // If PatientId was not provided, restore the original value
+            if (!appointmentWriteDto.PatientId.HasValue)
+                appointment.PatientId = originalPatientId;
+            // If UserId was not provided, restore the original value
+            if (!appointmentWriteDto.UserId.HasValue)
+                appointment.UserId = originalUserId;
+
             _appointmentRepository.UpdateAppointment(appointment);
             await _appointmentRepository.CompleteAsync();
 

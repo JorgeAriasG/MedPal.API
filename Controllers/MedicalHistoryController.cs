@@ -43,6 +43,7 @@ namespace MedPal.API.Controllers
             return Ok(medicalHistoryReadDTO);
         }
 
+        // TODO: Extract UserId and UserRole from token instead of explicity send the Id on all the requests
         // POST: api/medicalhistory
         [HttpPost]
         public async Task<ActionResult<MedicalHistoryReadDTO>> CreateMedicalHistory(MedicalHistoryWriteDTO medicalHistoryWriteDto)

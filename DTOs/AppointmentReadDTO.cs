@@ -8,7 +8,7 @@ namespace MedPal.API.DTOs
         public int? ClinicId { get; set; }
         public string Status { get; set; }
         public string Notes { get; set; }
-        public string Date { get; set; }
-        public string Time { get; set; }
+        public DateOnly Date { get; set; }
+        public TimeOnly Time { get; set; }
     }
 }

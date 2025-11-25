@@ -69,13 +69,8 @@ namespace MedPal.API.Repositories.Implementations
 
         public async Task UpdateClinicAsync(Clinic clinic)
         {
-            var existingClinic = await _context.Clinics.FindAsync(clinic.Id);
-            if (existingClinic == null)
-            {
-                throw new KeyNotFoundException($"Clinic with Id {clinic.Id} not found.");
-            }
-            existingClinic.UpdatedAt = System.DateTime.Now;
-            _context.Clinics.Update(existingClinic);
+            clinic.UpdatedAt = System.DateTime.Now;
+            _context.Clinics.Update(clinic);
             await _context.SaveChangesAsync();
         }
 

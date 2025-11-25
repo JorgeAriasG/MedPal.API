@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using MedPal.API.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Proxies;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MedPal.API.Data
 {
@@ -40,6 +41,13 @@ namespace MedPal.API.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure your entity relationships and constraints here
+            var timeOnlyConverter = new ValueConverter<TimeOnly, TimeSpan>(
+                t => t.ToTimeSpan(),
+                ts => TimeOnly.FromTimeSpan(ts));
+
+            var dateOnlyConverter = new ValueConverter<DateOnly, DateTime>(
+                d => d.ToDateTime(TimeOnly.MinValue),
+                dt => DateOnly.FromDateTime(dt));
 
             // Configure foreign keys for UserClinic
             modelBuilder.Entity<UserClinic>()
@@ -92,6 +100,51 @@ namespace MedPal.API.Data
 
             modelBuilder.Entity<Patient>()
                 .HasOne(p => p.Clinic);
+
+            modelBuilder.Entity<Clinic>()
+                .Property(c => c.Open)
+                .HasConversion(timeOnlyConverter);
+
+            modelBuilder.Entity<Clinic>()
+                .Property(c => c.Close)
+                .HasConversion(timeOnlyConverter);
+
+            modelBuilder.Entity<Appointment>()
+                .Property(a => a.Date)
+                .HasConversion(dateOnlyConverter);
+
+            modelBuilder.Entity<Appointment>()
+                .Property(a => a.Time)
+                .HasConversion(timeOnlyConverter);
+
+            modelBuilder.Entity<Invoice>()
+                .Property(i => i.TotalAmount)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Payment>()
+                .Property(p => p.AmountPaid)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<MedicalHistory>()
+                .Property(mh => mh.Diagnosis)
+                .HasColumnName("Diagnosis");
+
+            modelBuilder.Entity<MedicalHistory>()
+                .Property(mh => mh.IsConfidential)
+                .HasDefaultValue(true);
+
+            // Configure foreign keys for MedicalHistory con soft delete
+            modelBuilder.Entity<MedicalHistory>()
+                .HasOne(mh => mh.HealthcareProfessional)
+                .WithMany(u => u.CreatedMedicalHistories)
+                .HasForeignKey(mh => mh.HealthcareProfessionalId)
+                .OnDelete(DeleteBehavior.NoAction); // Cambiar a NoAction
+
+            modelBuilder.Entity<MedicalHistory>()
+                .HasOne(mh => mh.LastModifiedByUser)
+                .WithMany(u => u.ModifiedMedicalHistories)
+                .HasForeignKey(mh => mh.LastModifiedByUserId)
+                .OnDelete(DeleteBehavior.NoAction); // Cambiar a NoAction
 
             base.OnModelCreating(modelBuilder);
         }

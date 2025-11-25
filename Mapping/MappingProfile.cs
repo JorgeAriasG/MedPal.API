@@ -19,16 +19,8 @@ namespace MedPal.API.Mapping
             CreateMap<PatientDetails, PatientDetailsWriteDTO>().ReverseMap();
             CreateMap<MedicalHistory, MedicalHistoryReadDTO>().ReverseMap();
             CreateMap<MedicalHistory, MedicalHistoryWriteDTO>().ReverseMap();
-            CreateMap<Appointment, AppointmentReadDTO>()
-            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToString("yyyy-MM-dd")))
-            .ForMember(dest => dest.Time, opt => opt.MapFrom(src => src.Time.ToString("HH:mm")))
-            .ReverseMap();
-            CreateMap<AppointmentWriteDTO, Appointment>()
-            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.Parse(src.Date)))
-            .ForMember(dest => dest.Time, opt => opt.MapFrom(src => TimeOnly.Parse(src.Time)));
-            CreateMap<Appointment, AppointmentWriteDTO>()
-            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToString("yyyy-MM-dd")))
-            .ForMember(dest => dest.Time, opt => opt.MapFrom(src => src.Time.ToString("HH:mm")));
+            CreateMap<Appointment, AppointmentReadDTO>().ReverseMap();
+            CreateMap<AppointmentWriteDTO, Appointment>().ReverseMap();
         }
     }
 }

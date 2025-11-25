@@ -139,3 +139,5 @@ F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debu
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debug\net8.0\MedPal.API.genruntimeconfig.cache
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debug\net8.0\ref\MedPal.API.dll
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\bin\Debug\net8.0\BCrypt.Net-Next.dll
+F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debug\net8.0\MedPal.API.sourcelink.json
+F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

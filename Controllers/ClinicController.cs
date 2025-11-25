@@ -1,14 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using MedPal.API.DTOs;
 using MedPal.API.Repositories;
 using AutoMapper;
 using MedPal.API.Models;
+using MedPal.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ClinicController : ControllerBase
+public class ClinicController : BaseController
 {
     private readonly IClinicRepository _clinicRepository;
     private readonly IMapper _mapper;
@@ -53,7 +52,7 @@ public class ClinicController : ControllerBase
     }
 
     // PUT: api/clinic/{id}
-    [HttpPut("{id}")]
+    [HttpPut]
     public async Task<IActionResult> UpdateClinic(ClinicReadDTO clinicReadDTO)
     {
         var clinic = await _clinicRepository.GetClinicByIdAsync(clinicReadDTO.Id);

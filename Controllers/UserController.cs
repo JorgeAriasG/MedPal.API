@@ -4,23 +4,30 @@ using AutoMapper;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedPal.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
         private readonly IUserRepository _userRepository;
         private readonly IClinicRepository _clinicRepository;
         private readonly IMapper _mapper;
+        private readonly ITokenService _tokenService;
 
-        public UserController(IUserRepository userRepository, IClinicRepository clinicRepository, IMapper mapper)
+        public UserController(
+            IUserRepository userRepository, 
+            IClinicRepository clinicRepository, 
+            IMapper mapper, 
+            ITokenService tokenService)
         {
             _userRepository = userRepository;
             _clinicRepository = clinicRepository;
             _mapper = mapper;
+            _tokenService = tokenService;
         }
 
         [HttpGet]
@@ -54,6 +61,7 @@ namespace MedPal.API.Controllers
             return CreatedAtAction(nameof(GetUserById), new { id = userReadDTO.Id }, userReadDTO);
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<UserReadDTO>> Login(UserLoginDTO userLoginDto)
         {
@@ -62,7 +70,10 @@ namespace MedPal.API.Controllers
             {
                 return Unauthorized("Invalid email or password.");
             }
+
+            var token = _tokenService.GenerateToken(user);
             var userReadDTO = _mapper.Map<UserReadDTO>(user);
+            userReadDTO.Token = token;
             return Ok(userReadDTO);
         }
 
@@ -78,6 +89,20 @@ namespace MedPal.API.Controllers
         public async Task<ActionResult> DeleteUser(int id)
         {
             await _userRepository.DeleteUserAsync(id);
+            return NoContent();
+        }
+
+        [HttpPost("soft-delete/{id}")]
+        public async Task<ActionResult> SoftDeleteUser(int id, [FromBody] int deletedByUserId)
+        {
+            await _userRepository.SoftDeleteUserAsync(id, deletedByUserId);
+            return NoContent();
+        }
+
+        [HttpPost("restore/{id}")]
+        public async Task<ActionResult> RestoreUser(int id)
+        {
+            await _userRepository.RestoreUserAsync(id);
             return NoContent();
         }
     }

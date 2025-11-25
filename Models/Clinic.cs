@@ -24,6 +24,10 @@ namespace MedPal.API.Models
         [Required]
         public DateTime UpdatedAt { get; set; }
 
+        public TimeOnly Open { get; set; }
+        
+        public TimeOnly Close { get; set; }
+
         public virtual ICollection<UserClinic> UserClinics { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
     }

@@ -4,6 +4,7 @@ using MedPal.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MedPal.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251114032025_AddClinicHours")]
+    partial class AddClinicHours
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,8 +78,8 @@ namespace MedPal.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
 
                     b.Property<string>("Notes")
                         .IsRequired()
@@ -89,7 +92,7 @@ namespace MedPal.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeSpan>("Time")
+                    b.Property<TimeOnly>("Time")
                         .HasColumnType("time");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -221,51 +224,28 @@ namespace MedPal.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ClinicalNotes")
+                    b.Property<string>("ConditionName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Diagnosis")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Diagnosis");
-
                     b.Property<DateTime>("DiagnosisDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("FollowUpDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("DoctorNotes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("HealthcareProfessionalId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsConfidential")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<int?>("LastModifiedByUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("Medications")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PatientDetailsId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PrescribedMedications")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SpecialtyType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TreatmentPlan")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TreatmentStatus")
+                    b.Property<string>("Treatment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -273,10 +253,6 @@ namespace MedPal.API.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("HealthcareProfessionalId");
-
-                    b.HasIndex("LastModifiedByUserId");
 
                     b.HasIndex("PatientDetailsId");
 
@@ -523,30 +499,12 @@ namespace MedPal.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeactivatedByUserId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("DefaultClinicId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("HasAcceptedPrivacyTerms")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastAccessAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -556,15 +514,7 @@ namespace MedPal.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProfessionalLicenseNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Specialty")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -692,25 +642,11 @@ namespace MedPal.API.Migrations
 
             modelBuilder.Entity("MedPal.API.Models.MedicalHistory", b =>
                 {
-                    b.HasOne("MedPal.API.Models.User", "HealthcareProfessional")
-                        .WithMany("CreatedMedicalHistories")
-                        .HasForeignKey("HealthcareProfessionalId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("MedPal.API.Models.User", "LastModifiedByUser")
-                        .WithMany("ModifiedMedicalHistories")
-                        .HasForeignKey("LastModifiedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("MedPal.API.Models.PatientDetails", "PatientDetails")
                         .WithMany("MedicalHistories")
                         .HasForeignKey("PatientDetailsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("HealthcareProfessional");
-
-                    b.Navigation("LastModifiedByUser");
 
                     b.Navigation("PatientDetails");
                 });
@@ -892,10 +828,6 @@ namespace MedPal.API.Migrations
             modelBuilder.Entity("MedPal.API.Models.User", b =>
                 {
                     b.Navigation("Appointments");
-
-                    b.Navigation("CreatedMedicalHistories");
-
-                    b.Navigation("ModifiedMedicalHistories");
 
                     b.Navigation("Settings")
                         .IsRequired();

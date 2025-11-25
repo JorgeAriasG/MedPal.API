@@ -76,5 +76,37 @@ namespace MedPal.API.Repositories.Implementations
             }
             return user;
         }
+
+         // Soft delete: marcar usuario como eliminado sin borrar física
+        public async Task SoftDeleteUserAsync(int userId, int deletedByUserId)
+        {
+            var user = await GetUserByIdAsync(userId);
+            if (user == null)
+                throw new KeyNotFoundException($"User with Id {userId} not found.");
+
+            user.IsDeleted = true;
+            user.IsActive = false;
+            user.DeletedAt = DateTime.UtcNow;
+            user.DeactivatedByUserId = deletedByUserId;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await UpdateUserAsync(userId, user);
+        }
+
+        // Restaurar usuario (si es necesario)
+        public async Task RestoreUserAsync(int userId)
+        {
+            var user = await GetUserByIdAsync(userId);
+            if (user == null)
+                throw new KeyNotFoundException($"User with Id {userId} not found.");
+
+            user.IsDeleted = false;
+            user.IsActive = true;
+            user.DeletedAt = null;
+            user.DeactivatedByUserId = null;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await UpdateUserAsync(userId, user);
+        }
     }
 }

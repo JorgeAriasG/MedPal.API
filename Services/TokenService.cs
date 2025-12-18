@@ -2,9 +2,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using MedPal.API.Models;
+using MedPal.API.Repositories;
 using Microsoft.IdentityModel.Tokens;
 
-namespace MedPal.API.Repositories
+namespace MedPal.API.Services
 {
     public class TokenService : ITokenService
     {
@@ -55,9 +56,26 @@ namespace MedPal.API.Repositories
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role ?? "User"),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            // Añadir roles del usuario (desde la relación UserRoles)
+            if (user.UserRoles != null && user.UserRoles.Count > 0)
+            {
+                foreach (var userRole in user.UserRoles)
+                {
+                    if (userRole.Role != null)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
+                    }
+                }
+            }
+            else
+            {
+                // Si no tiene roles asignados, asignar el rol por defecto
+                claims.Add(new Claim(ClaimTypes.Role, "User"));
+            }
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],

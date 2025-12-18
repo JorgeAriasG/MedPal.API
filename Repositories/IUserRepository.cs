@@ -14,5 +14,6 @@ namespace MedPal.API.Repositories
         Task<User?> ValidateUserAsync(string email, string password);
         Task SoftDeleteUserAsync(int userId, int deletedByUserId);
         Task RestoreUserAsync(int userId);
+        Task UpdateUserLastAccessAtAsync(int userId);
     }
 }

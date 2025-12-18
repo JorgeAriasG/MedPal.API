@@ -1,6 +1,7 @@
 using AutoMapper;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
+using MedPal.API.Models.Authorization;
 
 namespace MedPal.API.Mapping
 {
@@ -21,6 +22,17 @@ namespace MedPal.API.Mapping
             CreateMap<MedicalHistory, MedicalHistoryWriteDTO>().ReverseMap();
             CreateMap<Appointment, AppointmentReadDTO>().ReverseMap();
             CreateMap<AppointmentWriteDTO, Appointment>().ReverseMap();
+
+            // Permission mappings
+            CreateMap<Permission, PermissionDTO>();
+
+            // Role mappings
+            CreateMap<Role, RoleReadDTO>()
+                .ForMember(dest => dest.Permissions, opt => opt.MapFrom(src => src.RolePermissions.Select(rp => rp.Permission).ToList()));
+            
+            // UserRole mappings
+            CreateMap<UserRole, UserRoleDTO>()
+                .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.Name));
         }
     }
 }

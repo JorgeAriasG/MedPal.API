@@ -20,28 +20,7 @@ namespace MedPal.API.Repositories.Implementations
         public async Task<IEnumerable<Patient>> GetAllPatientsAsync(int clinicId)
         {
             return await _context.Patients
-                .Where(p => p.Clinic.Id == clinicId)
-                .Select(p => new Patient
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Middlename = p.Middlename,
-                    Lastname = p.Lastname,
-                    Email = p.Email,
-                    Phone = p.Phone,
-                    Address = p.Address,
-                    Dob = p.Dob,
-                    Gender = p.Gender,
-                    EmergencyContact = p.EmergencyContact,
-                    Clinic = new Clinic
-                    {
-                        Id = p.Clinic.Id,
-                        Name = p.Clinic.Name,
-                        Location = p.Clinic.Location,
-                        ContactInfo = p.Clinic.ContactInfo
-                    }
-                }
-                )
+                .Where(p => p.ClinicId == clinicId) // Comparar por ID, no por objeto
                 .ToListAsync();
         }
 

@@ -5,23 +5,28 @@ using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace MedPal.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PatientController : ControllerBase
+    public class PatientController : BaseController
     {
         private readonly IPatientRepository _patientRepository;
         private readonly IMapper _mapper;
+        private readonly IAuthorizationService _authorizationService;
 
-        public PatientController(IPatientRepository patientRepository, IMapper mapper)
+        public PatientController(IPatientRepository patientRepository, IMapper mapper, IAuthorizationService authorizationService)
         {
             _patientRepository = patientRepository;
             _mapper = mapper;
+            _authorizationService = authorizationService;
         }
 
         [HttpGet]
+        [Authorize(Policy = "Patients.ViewAll")]
         public async Task<ActionResult<IEnumerable<PatientReadDTO>>> GetAllPatients(int clinicId)
         {
             var patients = await _patientRepository.GetAllPatientsAsync(clinicId);
@@ -37,11 +42,28 @@ namespace MedPal.API.Controllers
             {
                 return NotFound();
             }
+
+            // Authorization Check
+            var viewAll = await _authorizationService.AuthorizeAsync(User, "Patients.ViewAll");
+            if (!viewAll.Succeeded)
+            {
+                // Check if it's the patient viewing their own record
+                var viewOwn = await _authorizationService.AuthorizeAsync(User, "Patients.ViewOwn");
+                if (!viewOwn.Succeeded) return Forbid();
+
+                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier); // Or "sub"
+                if (userIdClaim == null || patient.UserId != int.Parse(userIdClaim.Value))
+                {
+                    return Forbid();
+                }
+            }
+
             var patientReadDTO = _mapper.Map<PatientReadDTO>(patient);
             return Ok(patientReadDTO);
         }
 
         [HttpPost]
+        [Authorize(Policy = "Patients.Create")]
         public async Task<ActionResult> AddPatient(PatientWriteDTO patientWriteDto)
         {
             var patient = _mapper.Map<Patient>(patientWriteDto);
@@ -52,6 +74,7 @@ namespace MedPal.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Policy = "Patients.Update")]
         public async Task<ActionResult> UpdatePatient(int id, PatientWriteDTO patientWriteDto)
         {
             var patient = _mapper.Map<Patient>(patientWriteDto);
@@ -60,6 +83,7 @@ namespace MedPal.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Patients.Delete")]
         public async Task<ActionResult> DeletePatient(int id)
         {
             await _patientRepository.DeletePatientAsync(id);

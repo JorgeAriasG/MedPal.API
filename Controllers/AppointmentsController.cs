@@ -5,6 +5,7 @@ using AutoMapper;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MedPal.API.Controllers
 {
@@ -23,6 +24,7 @@ namespace MedPal.API.Controllers
 
         // GET: api/appointments
         [HttpGet]
+        [Authorize(Policy = "Appointments.ViewAll")]
         public async Task<ActionResult<IEnumerable<AppointmentReadDTO>>> GetAllAppointmentsById(int clinicId)
         {
             var appointments = await _appointmentRepository.GetAllAppointmentsByIdAsync(clinicId);
@@ -32,6 +34,7 @@ namespace MedPal.API.Controllers
 
         // GET: api/appointments/{id}
         [HttpGet("{id}")]
+        [Authorize(Policy = "Appointments.ViewAll")]
         public async Task<ActionResult<AppointmentReadDTO>> GetAppointmentById(int id)
         {
             var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
@@ -45,6 +48,7 @@ namespace MedPal.API.Controllers
 
         // POST: api/appointments
         [HttpPost]
+        [Authorize(Policy = "Appointments.Create")]
         public async Task<ActionResult<AppointmentReadDTO>> CreateAppointment(AppointmentWriteDTO appointmentWriteDto)
         {
             var appointment = _mapper.Map<Appointment>(appointmentWriteDto);
@@ -62,6 +66,7 @@ namespace MedPal.API.Controllers
 
         // PUT: api/appointments/{id}
         [HttpPut("{id}")]
+        [Authorize(Policy = "Appointments.Update")]
         public async Task<IActionResult> UpdateAppointment(int id, AppointmentWriteDTO appointmentWriteDto)
         {
             var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
@@ -92,6 +97,7 @@ namespace MedPal.API.Controllers
 
         // DELETE: api/appointments/{id}
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Appointments.Cancel")]
         public async Task<IActionResult> DeleteAppointment(int id)
         {
             var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);

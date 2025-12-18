@@ -6,6 +6,15 @@ namespace MedPal.API.Models
 {
     public class Patient
     {
+        public Patient()
+        {
+            Appointments = new HashSet<Appointment>();
+            Reports = new HashSet<Report>();
+            PatientsInsurance = new HashSet<PatientInsurance>();
+            Invoices = new HashSet<Invoice>();
+            UserTasks = new HashSet<UserTask>();
+        }
+
         [Key]
         public int Id { get; set; }
         [Required]
@@ -29,8 +38,13 @@ namespace MedPal.API.Models
         public DateTime CreatedAt { get; set; }
         [Required]
         public DateTime UpdatedAt { get; set; }
+        public int ClinicId { get; set; }
+        // Relación opcional con User (para portal de pacientes)
+        public int? UserId { get; set; }
 
+        // Navigation Properties
         public virtual Clinic Clinic { get; set; }
+        public virtual User User { get; set; }
         public virtual PatientDetails PatientDetails { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
         public virtual ICollection<Report> Reports { get; set; }

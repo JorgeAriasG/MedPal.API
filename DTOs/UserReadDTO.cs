@@ -6,7 +6,7 @@ namespace MedPal.API.DTOs
         public string Name { get; set; }
         public string Email { get; set; }
         // public string PasswordHash { get; set; }
-        public int DefaultClinicId { get; set; }
+        public int ClinicId { get; set; }
         public string Token { get; set; }
     }
 }

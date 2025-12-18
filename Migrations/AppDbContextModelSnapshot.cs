@@ -109,6 +109,143 @@ namespace MedPal.API.Migrations
                     b.ToTable("Appointments");
                 });
 
+            modelBuilder.Entity("MedPal.API.Models.Authorization.Permission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Resource")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Permissions");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.Authorization.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSystemRole")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.Authorization.RolePermission", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("GrantedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("GrantedByUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RoleId", "PermissionId");
+
+                    b.HasIndex("GrantedByUserId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("RolePermissions");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.Authorization.UserRole", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ClinicId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("AssignedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("AssignedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UserId", "RoleId", "ClinicId");
+
+                    b.HasIndex("AssignedByUserId");
+
+                    b.HasIndex("ClinicId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("UserRoles");
+                });
+
             modelBuilder.Entity("MedPal.API.Models.Clinic", b =>
                 {
                     b.Property<int>("Id")
@@ -335,9 +472,14 @@ namespace MedPal.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClinicId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Patients");
                 });
@@ -526,9 +668,6 @@ namespace MedPal.API.Migrations
                     b.Property<int?>("DeactivatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DefaultClinicId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
@@ -560,10 +699,6 @@ namespace MedPal.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Specialty")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -572,8 +707,6 @@ namespace MedPal.API.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DefaultClinicId");
 
                     b.ToTable("Users");
                 });
@@ -671,6 +804,66 @@ namespace MedPal.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MedPal.API.Models.Authorization.RolePermission", b =>
+                {
+                    b.HasOne("MedPal.API.Models.User", "GrantedByUser")
+                        .WithMany()
+                        .HasForeignKey("GrantedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("MedPal.API.Models.Authorization.Permission", "Permission")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MedPal.API.Models.Authorization.Role", "Role")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GrantedByUser");
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.Authorization.UserRole", b =>
+                {
+                    b.HasOne("MedPal.API.Models.User", "AssignedByUser")
+                        .WithMany()
+                        .HasForeignKey("AssignedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("MedPal.API.Models.Clinic", "Clinic")
+                        .WithMany()
+                        .HasForeignKey("ClinicId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MedPal.API.Models.Authorization.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MedPal.API.Models.User", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AssignedByUser");
+
+                    b.Navigation("Clinic");
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MedPal.API.Models.Invoice", b =>
                 {
                     b.HasOne("MedPal.API.Models.Appointment", "Appointment")
@@ -723,7 +916,13 @@ namespace MedPal.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MedPal.API.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.Navigation("Clinic");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MedPal.API.Models.PatientDetails", b =>
@@ -789,15 +988,6 @@ namespace MedPal.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MedPal.API.Models.User", b =>
-                {
-                    b.HasOne("MedPal.API.Models.Clinic", "DefaultClinic")
-                        .WithMany()
-                        .HasForeignKey("DefaultClinicId");
-
-                    b.Navigation("DefaultClinic");
-                });
-
             modelBuilder.Entity("MedPal.API.Models.UserClinic", b =>
                 {
                     b.HasOne("MedPal.API.Models.Clinic", "Clinic")
@@ -847,6 +1037,18 @@ namespace MedPal.API.Migrations
             modelBuilder.Entity("MedPal.API.Models.Appointment", b =>
                 {
                     b.Navigation("Invoices");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.Authorization.Permission", b =>
+                {
+                    b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.Authorization.Role", b =>
+                {
+                    b.Navigation("RolePermissions");
+
+                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("MedPal.API.Models.Clinic", b =>
@@ -901,6 +1103,8 @@ namespace MedPal.API.Migrations
                         .IsRequired();
 
                     b.Navigation("UserClinics");
+
+                    b.Navigation("UserRoles");
 
                     b.Navigation("UserTasks");
                 });

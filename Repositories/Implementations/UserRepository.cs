@@ -37,7 +37,6 @@ namespace MedPal.API.Repositories.Implementations
         {
             // Hash the password before saving the user
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
-            user.Role = "Admin"; // TODO: Remove this line once the role is implemented
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
@@ -69,12 +68,50 @@ namespace MedPal.API.Repositories.Implementations
 
         public async Task<User?> ValidateUserAsync(string email, string password)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+            var user = await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .SingleOrDefaultAsync(u => u.Email == email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
                 return null;
             }
             return user;
+        }
+
+        // Soft delete: marcar usuario como eliminado sin borrar física
+        public async Task SoftDeleteUserAsync(int userId, int deletedByUserId)
+        {
+            var user = await GetUserByIdAsync(userId);
+
+            user.IsDeleted = true;
+            user.IsActive = false;
+            user.DeletedAt = DateTime.UtcNow;
+            user.DeactivatedByUserId = deletedByUserId;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await UpdateUserAsync(userId, user);
+        }
+
+        // Restaurar usuario (si es necesario)
+        public async Task RestoreUserAsync(int userId)
+        {
+            var user = await GetUserByIdAsync(userId);
+
+            user.IsDeleted = false;
+            user.IsActive = true;
+            user.DeletedAt = null;
+            user.DeactivatedByUserId = null;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await UpdateUserAsync(userId, user);
+        }
+
+        public async Task UpdateUserLastAccessAtAsync(int userId)
+        {
+            var user = await GetUserByIdAsync(userId);
+            user.LastAccessAt = DateTime.UtcNow;
+            await UpdateUserAsync(userId, user);
         }
     }
 }

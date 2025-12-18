@@ -8,8 +8,10 @@ F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\bin\Debu
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\bin\Debug\net8.0\AutoMapper.dll
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\bin\Debug\net8.0\Azure.Core.dll
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\bin\Debug\net8.0\Azure.Identity.dll
+F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\bin\Debug\net8.0\BCrypt.Net-Next.dll
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\bin\Debug\net8.0\Castle.Core.dll
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\bin\Debug\net8.0\Humanizer.dll
+F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\bin\Debug\net8.0\Microsoft.AspNetCore.OpenApi.dll
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\bin\Debug\net8.0\Microsoft.CodeAnalysis.dll
@@ -124,6 +126,7 @@ F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debu
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debug\net8.0\MedPal.API.csproj.CoreCompileInputs.cache
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debug\net8.0\MedPal.API.MvcApplicationPartsAssemblyInfo.cs
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debug\net8.0\MedPal.API.MvcApplicationPartsAssemblyInfo.cache
+F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debug\net8.0\MedPal.API.sourcelink.json
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debug\net8.0\staticwebassets.build.json
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debug\net8.0\staticwebassets.development.json
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debug\net8.0\staticwebassets\msbuild.MedPal.API.Microsoft.AspNetCore.StaticWebAssets.props
@@ -138,4 +141,3 @@ F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debu
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debug\net8.0\MedPal.API.pdb
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debug\net8.0\MedPal.API.genruntimeconfig.cache
 F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\obj\Debug\net8.0\ref\MedPal.API.dll
-F:\PersonalProjects\SchedulingApp\Backend\Services\MedPalApi\MedPal.API\bin\Debug\net8.0\BCrypt.Net-Next.dll

@@ -5,6 +5,7 @@ using AutoMapper;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MedPal.API.Controllers
 {
@@ -14,15 +15,24 @@ namespace MedPal.API.Controllers
     {
         private readonly IMedicalHistoryRepository _medicalHistoryRepository;
         private readonly IMapper _mapper;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IUserService _userService;
 
-        public MedicalHistoryController(IMedicalHistoryRepository medicalHistoryRepository, IMapper mapper)
+        public MedicalHistoryController(
+            IMedicalHistoryRepository medicalHistoryRepository,
+            IMapper mapper,
+            IAuthorizationService authorizationService,
+            IUserService userService)
         {
             _medicalHistoryRepository = medicalHistoryRepository;
             _mapper = mapper;
+            _authorizationService = authorizationService;
+            _userService = userService;
         }
 
         // GET: api/medicalhistory
         [HttpGet]
+        [Authorize(Policy = "MedicalRecords.ViewAll")]
         public async Task<ActionResult<IEnumerable<MedicalHistoryReadDTO>>> GetAllMedicalHistories()
         {
             var medicalHistories = await _medicalHistoryRepository.GetAllMedicalHistoriesAsync();
@@ -39,15 +49,36 @@ namespace MedPal.API.Controllers
             {
                 return NotFound();
             }
+
+            // NOM-004 Authorization Check
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, medicalHistory, "MedicalRecords.Read");
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
+            }
+
             var medicalHistoryReadDTO = _mapper.Map<MedicalHistoryReadDTO>(medicalHistory);
             return Ok(medicalHistoryReadDTO);
         }
 
         // POST: api/medicalhistory
         [HttpPost]
+        [Authorize(Policy = "MedicalRecords.Create")]
         public async Task<ActionResult<MedicalHistoryReadDTO>> CreateMedicalHistory(MedicalHistoryWriteDTO medicalHistoryWriteDto)
         {
             var medicalHistory = _mapper.Map<MedicalHistory>(medicalHistoryWriteDto);
+
+            // Automatically assign HealthcareProfessionalId if the current user is a doctor/professional
+            if (int.TryParse(_userService.UserId, out int userId))
+            {
+                // Logic to check if user is doctor could be here or assumed by policy
+                // For now, we assume the creator is the professional if not specified
+                if (medicalHistory.HealthcareProfessionalId == null || medicalHistory.HealthcareProfessionalId == 0)
+                {
+                    medicalHistory.HealthcareProfessionalId = userId;
+                }
+            }
+
             await _medicalHistoryRepository.AddMedicalHistoryAsync(medicalHistory);
             await _medicalHistoryRepository.CompleteAsync();
 
@@ -59,15 +90,17 @@ namespace MedPal.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMedicalHistory(int id, MedicalHistoryWriteDTO medicalHistoryWriteDto)
         {
-            // if (id != medicalHistoryWriteDto.Id)
-            // {
-            //     return BadRequest();
-            // }
-
             var medicalHistory = await _medicalHistoryRepository.GetMedicalHistoryByIdAsync(id);
             if (medicalHistory == null)
             {
                 return NotFound();
+            }
+
+            // NOM-004 Authorization Check
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, medicalHistory, "MedicalRecords.Update");
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
             }
 
             _mapper.Map(medicalHistoryWriteDto, medicalHistory);
@@ -79,6 +112,7 @@ namespace MedPal.API.Controllers
 
         // DELETE: api/medicalhistory/{id}
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")] // Strict deletion policy
         public async Task<IActionResult> DeleteMedicalHistory(int id)
         {
             var medicalHistory = await _medicalHistoryRepository.GetMedicalHistoryByIdAsync(id);

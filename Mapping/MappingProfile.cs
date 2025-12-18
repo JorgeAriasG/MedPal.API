@@ -1,6 +1,7 @@
 using AutoMapper;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
+using MedPal.API.Models.Authorization;
 
 namespace MedPal.API.Mapping
 {
@@ -19,16 +20,19 @@ namespace MedPal.API.Mapping
             CreateMap<PatientDetails, PatientDetailsWriteDTO>().ReverseMap();
             CreateMap<MedicalHistory, MedicalHistoryReadDTO>().ReverseMap();
             CreateMap<MedicalHistory, MedicalHistoryWriteDTO>().ReverseMap();
-            CreateMap<Appointment, AppointmentReadDTO>()
-            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToString("yyyy-MM-dd")))
-            .ForMember(dest => dest.Time, opt => opt.MapFrom(src => src.Time.ToString("HH:mm")))
-            .ReverseMap();
-            CreateMap<AppointmentWriteDTO, Appointment>()
-            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.Parse(src.Date)))
-            .ForMember(dest => dest.Time, opt => opt.MapFrom(src => TimeOnly.Parse(src.Time)));
-            CreateMap<Appointment, AppointmentWriteDTO>()
-            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToString("yyyy-MM-dd")))
-            .ForMember(dest => dest.Time, opt => opt.MapFrom(src => src.Time.ToString("HH:mm")));
+            CreateMap<Appointment, AppointmentReadDTO>().ReverseMap();
+            CreateMap<AppointmentWriteDTO, Appointment>().ReverseMap();
+
+            // Permission mappings
+            CreateMap<Permission, PermissionDTO>();
+
+            // Role mappings
+            CreateMap<Role, RoleReadDTO>()
+                .ForMember(dest => dest.Permissions, opt => opt.MapFrom(src => src.RolePermissions.Select(rp => rp.Permission).ToList()));
+            
+            // UserRole mappings
+            CreateMap<UserRole, UserRoleDTO>()
+                .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.Name));
         }
     }
 }

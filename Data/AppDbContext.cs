@@ -1,7 +1,9 @@
 using System.Threading.Tasks;
 using MedPal.API.Models;
+using MedPal.API.Models.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Proxies;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MedPal.API.Data
 {
@@ -23,6 +25,12 @@ namespace MedPal.API.Data
         public DbSet<Payment> Payments { get; set; }
         public DbSet<UserClinic> UserClinics { get; set; }
 
+        // Authorization entities
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
@@ -40,6 +48,13 @@ namespace MedPal.API.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure your entity relationships and constraints here
+            var timeOnlyConverter = new ValueConverter<TimeOnly, TimeSpan>(
+                t => t.ToTimeSpan(),
+                ts => TimeOnly.FromTimeSpan(ts));
+
+            var dateOnlyConverter = new ValueConverter<DateOnly, DateTime>(
+                d => d.ToDateTime(TimeOnly.MinValue),
+                dt => DateOnly.FromDateTime(dt));
 
             // Configure foreign keys for UserClinic
             modelBuilder.Entity<UserClinic>()
@@ -92,6 +107,113 @@ namespace MedPal.API.Data
 
             modelBuilder.Entity<Patient>()
                 .HasOne(p => p.Clinic);
+
+            modelBuilder.Entity<Clinic>()
+                .Property(c => c.Open)
+                .HasConversion(timeOnlyConverter);
+
+            modelBuilder.Entity<Clinic>()
+                .Property(c => c.Close)
+                .HasConversion(timeOnlyConverter);
+
+            modelBuilder.Entity<Appointment>()
+                .Property(a => a.Date)
+                .HasConversion(dateOnlyConverter);
+
+            modelBuilder.Entity<Appointment>()
+                .Property(a => a.Time)
+                .HasConversion(timeOnlyConverter);
+
+            modelBuilder.Entity<Invoice>()
+                .Property(i => i.TotalAmount)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Payment>()
+                .Property(p => p.AmountPaid)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<MedicalHistory>()
+                .Property(mh => mh.Diagnosis)
+                .HasColumnName("Diagnosis");
+
+            modelBuilder.Entity<MedicalHistory>()
+                .Property(mh => mh.IsConfidential)
+                .HasDefaultValue(true);
+
+            // Configure foreign keys for MedicalHistory con soft delete
+            modelBuilder.Entity<MedicalHistory>()
+                .HasOne(mh => mh.HealthcareProfessional)
+                .WithMany(u => u.CreatedMedicalHistories)
+                .HasForeignKey(mh => mh.HealthcareProfessionalId)
+                .OnDelete(DeleteBehavior.NoAction); // Cambiar a NoAction
+
+            modelBuilder.Entity<MedicalHistory>()
+                .HasOne(mh => mh.LastModifiedByUser)
+                .WithMany(u => u.ModifiedMedicalHistories)
+                .HasForeignKey(mh => mh.LastModifiedByUserId)
+                .OnDelete(DeleteBehavior.NoAction); // Cambiar a NoAction
+
+            // ========== AUTHORIZATION CONFIGURATION ==========
+
+            // Role configuration
+            modelBuilder.Entity<Role>()
+                .HasIndex(r => r.Name)
+                .IsUnique();
+
+            // Permission configuration
+            modelBuilder.Entity<Permission>()
+                .HasIndex(p => p.Name)
+                .IsUnique();
+
+            // UserRole configuration (composite key)
+            modelBuilder.Entity<UserRole>()
+                .HasKey(ur => new { ur.UserId, ur.RoleId, ur.ClinicId });
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.User)
+                .WithMany(u => u.UserRoles)
+                .HasForeignKey(ur => ur.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.RoleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.Clinic)
+                .WithMany()
+                .HasForeignKey(ur => ur.ClinicId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.AssignedByUser)
+                .WithMany()
+                .HasForeignKey(ur => ur.AssignedByUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // RolePermission configuration (composite key)
+            modelBuilder.Entity<RolePermission>()
+                .HasKey(rp => new { rp.RoleId, rp.PermissionId });
+
+            modelBuilder.Entity<RolePermission>()
+                .HasOne(rp => rp.Role)
+                .WithMany(r => r.RolePermissions)
+                .HasForeignKey(rp => rp.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<RolePermission>()
+                .HasOne(rp => rp.Permission)
+                .WithMany(p => p.RolePermissions)
+                .HasForeignKey(rp => rp.PermissionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<RolePermission>()
+                .HasOne(rp => rp.GrantedByUser)
+                .WithMany()
+                .HasForeignKey(rp => rp.GrantedByUserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             base.OnModelCreating(modelBuilder);
         }

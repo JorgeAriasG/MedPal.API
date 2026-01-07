@@ -125,6 +125,12 @@ namespace MedPal.API.Data.Seeders
                 // Clinic Management Permissions
                 new Permission { Name = "Clinics.View", Resource = "Clinics", Action = "View", Description = "View clinic information", CreatedAt = DateTime.UtcNow },
                 new Permission { Name = "Clinics.Manage", Resource = "Clinics", Action = "Manage", Description = "Create and update clinic information", CreatedAt = DateTime.UtcNow },
+
+                // Role Management Permissions
+                new Permission { Name = "Roles.View", Resource = "Roles", Action = "View", Description = "View roles and their permissions", CreatedAt = DateTime.UtcNow },
+                new Permission { Name = "Roles.Assign", Resource = "Roles", Action = "Assign", Description = "Assign roles to users", CreatedAt = DateTime.UtcNow },
+                new Permission { Name = "Roles.Revoke", Resource = "Roles", Action = "Revoke", Description = "Remove roles from users", CreatedAt = DateTime.UtcNow },
+                new Permission { Name = "Roles.ViewAudit", Resource = "Roles", Action = "ViewAudit", Description = "View role assignment and removal audit logs", CreatedAt = DateTime.UtcNow },
             };
 
             foreach (var permission in permissions)

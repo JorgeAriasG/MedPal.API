@@ -19,9 +19,9 @@ namespace MedPal.API.Models
         [Required]
         public string PasswordHash { get; set; }
 
-        public string Specialty { get; set; }
+        public string? Specialty { get; set; }
 
-        public string ProfessionalLicenseNumber { get; set; }
+        public string? ProfessionalLicenseNumber { get; set; }
 
         public bool IsActive { get; set; } = true;
         public bool IsDeleted { get; set; } = false;

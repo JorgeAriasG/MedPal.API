@@ -21,6 +21,14 @@ namespace MedPal.API.Repositories.Authorization
                 .FirstOrDefaultAsync(r => r.Name == name && !r.IsDeleted);
         }
 
+        public async Task<Role?> GetRoleByIdAsync(int roleId)
+        {
+            return await _context.Roles
+                .Include(r => r.RolePermissions)
+                    .ThenInclude(rp => rp.Permission)
+                .FirstOrDefaultAsync(r => r.Id == roleId && !r.IsDeleted);
+        }
+
         public async Task<IEnumerable<Role>> GetRolesWithPermissionsAsync()
         {
             return await _context.Roles

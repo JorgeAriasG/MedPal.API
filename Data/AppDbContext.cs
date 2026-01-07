@@ -30,6 +30,7 @@ namespace MedPal.API.Data
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<RoleAuditLog> RoleAuditLogs { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -214,6 +215,37 @@ namespace MedPal.API.Data
                 .WithMany()
                 .HasForeignKey(rp => rp.GrantedByUserId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // RoleAuditLog configuration
+            modelBuilder.Entity<RoleAuditLog>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Role)
+                    .WithMany()
+                    .HasForeignKey(e => e.RoleId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Clinic)
+                    .WithMany()
+                    .HasForeignKey(e => e.ClinicId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.AssignedByUser)
+                    .WithMany()
+                    .HasForeignKey(e => e.AssignedByUserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Indexes for optimized queries
+                entity.HasIndex(e => new { e.UserId, e.Timestamp });
+                entity.HasIndex(e => new { e.ClinicId, e.Timestamp });
+                entity.HasIndex(e => e.Timestamp);
+            });
 
             base.OnModelCreating(modelBuilder);
         }

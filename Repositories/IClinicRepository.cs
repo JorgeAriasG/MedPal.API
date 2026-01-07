@@ -15,5 +15,13 @@ namespace MedPal.API.Repositories
         Task UpdateClinicAsync(Clinic clinic);
         Task DeleteClinicAsync(int id);
         Task<bool> ClinicExistsAsync(int id);
+
+        /// <summary>
+        /// Check if a user belongs to a specific clinic
+        /// </summary>
+        /// <param name="userId">User ID to check</param>
+        /// <param name="clinicId">Clinic ID to check</param>
+        /// <returns>True if user belongs to the clinic, false otherwise</returns>
+        Task<bool> UserBelongsToClinicAsync(int userId, int clinicId);
     }
 }

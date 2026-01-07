@@ -104,5 +104,11 @@ namespace MedPal.API.Repositories.Implementations
             clinic.CreatedAt = System.DateTime.Now;
             clinic.UpdatedAt = System.DateTime.Now;
         }
+
+        public async Task<bool> UserBelongsToClinicAsync(int userId, int clinicId)
+        {
+            return await _context.UserClinics
+                .AnyAsync(uc => uc.UserId == userId && uc.ClinicId == clinicId);
+        }
     }
 }

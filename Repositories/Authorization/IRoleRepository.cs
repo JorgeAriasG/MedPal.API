@@ -13,6 +13,13 @@ namespace MedPal.API.Repositories.Authorization
         Task<Role?> GetRoleByNameAsync(string name);
 
         /// <summary>
+        /// Get a role by its ID
+        /// </summary>
+        /// <param name="roleId">Role ID</param>
+        /// <returns>Role if found, null otherwise</returns>
+        Task<Role?> GetRoleByIdAsync(int roleId);
+
+        /// <summary>
         /// Get all active roles with their permissions
         /// </summary>
         Task<IEnumerable<Role>> GetRolesWithPermissionsAsync();

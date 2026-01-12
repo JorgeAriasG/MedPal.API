@@ -15,12 +15,29 @@ namespace MedPal.API.Repositories.Implementations
 
         public async Task<IEnumerable<PatientDetails>> GetAllPatientDetailsAsync()
         {
-            return await _context.PatientDetails.ToListAsync();
+            return await _context.PatientDetails
+                .Include(pd => pd.Patient)
+                .Include(pd => pd.MedicalHistories)
+                .Include(pd => pd.Allergies)
+                .ToListAsync();
         }
 
         public async Task<PatientDetails> GetPatientDetailsByIdAsync(int id)
         {
-            return await _context.PatientDetails.FindAsync(id);
+            return await _context.PatientDetails
+                .Include(pd => pd.Patient)
+                .Include(pd => pd.MedicalHistories)
+                .Include(pd => pd.Allergies)
+                .FirstOrDefaultAsync(pd => pd.Id == id);
+        }
+
+        public async Task<PatientDetails> GetPatientDetailsByPatientIdAsync(int patientId)
+        {
+            return await _context.PatientDetails
+                .Include(pd => pd.Patient)
+                .Include(pd => pd.MedicalHistories)
+                .Include(pd => pd.Allergies)
+                .FirstOrDefaultAsync(pd => pd.PatientId == patientId);
         }
 
         public async Task<PatientDetails> AddPatientDetailsAsync(PatientDetails patientDetails)

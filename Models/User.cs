@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using MedPal.API.Interfaces;
 
 namespace MedPal.API.Models
 {
-    public class User
+    public class User : ISoftDelete
     {
         [Key]
         public int Id { get; set; }
@@ -19,25 +20,14 @@ namespace MedPal.API.Models
         [Required]
         public string PasswordHash { get; set; }
 
-        [Required]
-        public string Role { get; set; } // "Doctor", "Nutriologist", "Dentist", "Patient", "Admin"
+        public string? Specialty { get; set; }
 
-        // Profesión/Especialidad (si es healthcare professional)
-        public string Specialty { get; set; } // "Cardiología", "Odontología", "Nutrición", etc.
+        public string? ProfessionalLicenseNumber { get; set; }
 
-        // Número de cédula profesional (para validación en México)
-        public string ProfessionalLicenseNumber { get; set; }
-
-        // Estado activo/inactivo (cumplimiento LSSI-PC)
         public bool IsActive { get; set; } = true;
-
-        // Soft delete flag
         public bool IsDeleted { get; set; } = false;
-
-        // Fecha de último acceso (auditoría)
         public DateTime? LastAccessAt { get; set; }
 
-        // Indica si el usuario aceptó términos de privacidad
         public bool HasAcceptedPrivacyTerms { get; set; } = false;
 
         [Required]
@@ -46,22 +36,20 @@ namespace MedPal.API.Models
         [Required]
         public DateTime UpdatedAt { get; set; }
 
-        // Usuario que desactivó la cuenta (si aplica)
         public int? DeactivatedByUserId { get; set; }
 
-        // Fecha de borrado lógico
         public DateTime? DeletedAt { get; set; }
+        public int? DeletedByUserId { get; set; }
 
-        public int? DefaultClinicId { get; set; }
-
-        // Navegaciones
-        public virtual Clinic DefaultClinic { get; set; }
+        // Navigations
         public virtual ICollection<UserClinic> UserClinics { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
-        public virtual ICollection<UserTask> UserTasks { get; set; }
         public virtual Settings Settings { get; set; }
 
-        // Relación con MedicalHistory (auditoría: quién creó/modificó registros)
+        // Authorization relationships
+        public virtual ICollection<Authorization.UserRole> UserRoles { get; set; } = new List<Authorization.UserRole>();
+
+        // Audit relationships
         public virtual ICollection<MedicalHistory> CreatedMedicalHistories { get; set; }
         public virtual ICollection<MedicalHistory> ModifiedMedicalHistories { get; set; }
     }

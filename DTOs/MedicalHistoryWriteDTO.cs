@@ -17,16 +17,14 @@ namespace MedPal.API.DTOs
         [Required]
         public DateTime DiagnosisDate { get; set; }
 
-        [Required]
-        public string TreatmentPlan { get; set; }
-
-        public string PrescribedMedications { get; set; }
-
         public string ClinicalNotes { get; set; }
 
-        public string TreatmentStatus { get; set; } = "Activo";
-
         public DateTime? FollowUpDate { get; set; }
+
+        public string SpecialtyData { get; set; }
+
+        // Relación opcional con una Prescription
+        public int? PrescriptionId { get; set; }
 
         public bool IsConfidential { get; set; } = true;
     }

@@ -6,6 +6,7 @@ namespace MedPal.API.Repositories
     {
         Task<IEnumerable<PatientDetails>> GetAllPatientDetailsAsync();
         Task<PatientDetails> GetPatientDetailsByIdAsync(int id);
+        Task<PatientDetails> GetPatientDetailsByPatientIdAsync(int patientId);
         Task<PatientDetails> AddPatientDetailsAsync(PatientDetails patientDetails);
         void UpdatePatientDetails(PatientDetails patientDetails);
         void RemovePatientDetails(PatientDetails patientDetails);

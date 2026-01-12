@@ -8,7 +8,9 @@ using MedPal.API.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MedPal.API.Services;
 using MedPal.API.Authorization;
+using MedPal.API.Middleware;
 using Microsoft.AspNetCore.Authorization;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 // JWT Auth 
@@ -114,6 +116,41 @@ builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 // Audit service (NOM-024 compliance)
 builder.Services.AddScoped<IRoleAuditService, RoleAuditService>();
 
+// Prescription Services
+builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
+builder.Services.AddScoped<IQrCodeService, QrCodeService>();
+
+// ARCO Services
+builder.Services.AddScoped<IArcoService, ArcoService>();
+
+// Invoice and Payment Services (Phase 2 Completion)
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+
+// Emergency Contact Service and Repository (Phase 4)
+builder.Services.AddScoped<IEmergencyContactService, EmergencyContactService>();
+builder.Services.AddScoped<IEmergencyContactRepository, EmergencyContactRepository>();
+
+// Payment Repository (Phase 4)
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+
+// Invoice Repository (Phase 4)
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+
+// Notification Message Repository (Phase 4)
+builder.Services.AddScoped<INotificationMessageRepository, NotificationMessageRepository>();
+
+// Notification Services (Phase 3)
+// Using MockChannel for now (Strategy Pattern ready for WhatsApp/Email)
+builder.Services.AddSingleton<INotificationChannel, MockNotificationChannel>();
+// builder.Services.AddHostedService<AppointmentReminderJob>(); // TEMPORARY: Commented out due to schema issues
+
+// Encryption Service (Phase 4)
+builder.Services.AddSingleton<EncryptionProvider>();
+
+// FluentValidation (Phase 4)
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
 // Register Authorization Handlers
 builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, MedicalRecordAccessHandler>();
@@ -192,6 +229,10 @@ else
 {
     app.UseHttpsRedirection();
 }
+
+// Exception Handling Middleware (Phase 4)
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

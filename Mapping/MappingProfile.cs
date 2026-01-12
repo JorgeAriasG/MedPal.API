@@ -20,6 +20,8 @@ namespace MedPal.API.Mapping
             CreateMap<PatientDetails, PatientDetailsWriteDTO>().ReverseMap();
             CreateMap<MedicalHistory, MedicalHistoryReadDTO>().ReverseMap();
             CreateMap<MedicalHistory, MedicalHistoryWriteDTO>().ReverseMap();
+            CreateMap<Allergy, AllergyReadDTO>().ReverseMap();
+            CreateMap<Allergy, AllergyWriteDTO>().ReverseMap();
             CreateMap<Appointment, AppointmentReadDTO>().ReverseMap();
             CreateMap<AppointmentWriteDTO, Appointment>().ReverseMap();
 
@@ -33,6 +35,24 @@ namespace MedPal.API.Mapping
             // UserRole mappings
             CreateMap<UserRole, UserRoleDTO>()
                 .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.Name));
+
+            // Phase 4: EmergencyContact mappings
+            CreateMap<EmergencyContact, EmergencyContactReadDTO>().ReverseMap();
+            CreateMap<EmergencyContactWriteDTO, EmergencyContact>();
+
+            // Phase 4: Payment mappings
+            CreateMap<Payment, PaymentReadDTO>().ReverseMap();
+            CreateMap<PaymentWriteDTO, Payment>();
+
+            // Phase 4: Invoice mappings
+            CreateMap<Invoice, InvoiceReadDTO>()
+                .ForMember(dest => dest.RemainingAmount, opt => opt.MapFrom(src => src.TotalAmount - src.PaidAmount))
+                .ForMember(dest => dest.Payments, opt => opt.MapFrom(src => src.Payments.Where(p => !p.IsDeleted).ToList()));
+            CreateMap<InvoiceWriteDTO, Invoice>();
+
+            // Phase 4: NotificationMessage mappings
+            CreateMap<NotificationMessage, NotificationMessageReadDTO>().ReverseMap();
+            CreateMap<NotificationMessageWriteDTO, NotificationMessage>();
         }
     }
 }

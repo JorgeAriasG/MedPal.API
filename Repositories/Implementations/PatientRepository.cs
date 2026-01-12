@@ -37,6 +37,13 @@ namespace MedPal.API.Repositories.Implementations
 
         public async Task<Patient> AddPatientAsync(Patient patient)
         {
+            // Inicializar detalles del paciente para evitar 404 en el frontend
+            patient.PatientDetails = new PatientDetails
+            {
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
             await _context.Patients.AddAsync(patient);
             await _context.SaveChangesAsync();
             return patient;

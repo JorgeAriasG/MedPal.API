@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MedPal.API.Interfaces;
 
 namespace MedPal.API.Models.Authorization
 {
@@ -9,7 +10,7 @@ namespace MedPal.API.Models.Authorization
     /// Supports multi-tenancy: users can have different roles at different clinics
     /// Supports temporal roles: roles can expire at a specific date/time
     /// </summary>
-    public class UserRole
+    public class UserRole : ISoftDelete
     {
         [Required]
         public int UserId { get; set; }
@@ -37,6 +38,11 @@ namespace MedPal.API.Models.Authorization
         /// Who assigned this role (for audit trail)
         /// </summary>
         public int? AssignedByUserId { get; set; }
+
+        // ISoftDelete implementation
+        public bool IsDeleted { get; set; } = false;
+        public DateTime? DeletedAt { get; set; }
+        public int? DeletedByUserId { get; set; }
 
         // Navigation properties
         [ForeignKey("UserId")]

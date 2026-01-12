@@ -41,6 +41,23 @@ namespace MedPal.API.Controllers
             return Ok(patientDetailsReadDTO);
         }
 
+        // GET: api/patientdetails/patient/{patientId}
+        [HttpGet("patient/{patientId}")]
+        public async Task<ActionResult<PatientDetailsReadDTO>> GetPatientDetailsByPatientId(int patientId)
+        {
+            var patientDetails = await _patientDetailsRepository.GetPatientDetailsByPatientIdAsync(patientId);
+
+            if (patientDetails == null)
+            {
+                // If details don't exist yet for this patient, we might want to return 404
+                // or create it? standard REST suggests 404 if the resource (details) is not found.
+                return NotFound($"Patient Details not found for Patient ID {patientId}");
+            }
+
+            var patientDetailsReadDTO = _mapper.Map<PatientDetailsReadDTO>(patientDetails);
+            return Ok(patientDetailsReadDTO);
+        }
+
         // POST: api/patientdetails
         [HttpPost]
         public async Task<ActionResult<PatientDetailsReadDTO>> CreatePatientDetails(PatientDetailsWriteDTO patientDetailsWriteDto)

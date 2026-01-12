@@ -68,9 +68,17 @@ namespace MedPal.API.Controllers
         {
             var medicalHistory = _mapper.Map<MedicalHistory>(medicalHistoryWriteDto);
 
-            // Automatically assign HealthcareProfessionalId if the current user is a doctor/professional
+            // Set audit fields
+            var now = DateTime.UtcNow;
+            medicalHistory.CreatedAt = now;
+            medicalHistory.UpdatedAt = now;
+
+            // Automatically assign HealthcareProfessionalId and audit user if the current user is a doctor/professional
             if (int.TryParse(_userService.UserId, out int userId))
             {
+                medicalHistory.CreatedByUserId = userId;
+                medicalHistory.UpdatedByUserId = userId;
+
                 // Logic to check if user is doctor could be here or assumed by policy
                 // For now, we assume the creator is the professional if not specified
                 if (medicalHistory.HealthcareProfessionalId == null || medicalHistory.HealthcareProfessionalId == 0)
@@ -104,6 +112,14 @@ namespace MedPal.API.Controllers
             }
 
             _mapper.Map(medicalHistoryWriteDto, medicalHistory);
+            
+            // Update audit fields
+            medicalHistory.UpdatedAt = DateTime.UtcNow;
+            if (int.TryParse(_userService.UserId, out int userId))
+            {
+                medicalHistory.UpdatedByUserId = userId;
+            }
+            
             _medicalHistoryRepository.UpdateMedicalHistory(medicalHistory);
             await _medicalHistoryRepository.CompleteAsync();
 

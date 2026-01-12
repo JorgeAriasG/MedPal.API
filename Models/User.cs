@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using MedPal.API.Interfaces;
 
 namespace MedPal.API.Models
 {
-    public class User
+    public class User : ISoftDelete
     {
         [Key]
         public int Id { get; set; }
@@ -38,11 +39,11 @@ namespace MedPal.API.Models
         public int? DeactivatedByUserId { get; set; }
 
         public DateTime? DeletedAt { get; set; }
+        public int? DeletedByUserId { get; set; }
 
         // Navigations
         public virtual ICollection<UserClinic> UserClinics { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
-        public virtual ICollection<UserTask> UserTasks { get; set; }
         public virtual Settings Settings { get; set; }
 
         // Authorization relationships

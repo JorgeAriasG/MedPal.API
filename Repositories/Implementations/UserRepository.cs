@@ -33,6 +33,11 @@ namespace MedPal.API.Repositories.Implementations
             return user;
         }
 
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
         public async Task<User> AddUserAsync(User user)
         {
             // Hash the password before saving the user

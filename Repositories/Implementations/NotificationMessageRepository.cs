@@ -1,52 +1,51 @@
 using MedPal.API.Data;
 using MedPal.API.Models;
 using MedPal.API.Enums;
+using MedPal.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedPal.API.Repositories.Implementations
 {
-    public class NotificationMessageRepository : INotificationMessageRepository
+    public class NotificationMessageRepository : TenantAwareRepository<NotificationMessage>, INotificationMessageRepository
     {
-        private readonly AppDbContext _context;
-
-        public NotificationMessageRepository(AppDbContext context)
+        public NotificationMessageRepository(AppDbContext context, ITenantContextService tenantContext)
+            : base(context, tenantContext)
         {
-            _context = context;
         }
 
         public async Task<IEnumerable<NotificationMessage>> GetAllNotificationsAsync()
         {
-            return await _context.NotificationMessages
-                .Where(n => !n.IsDeleted)
+            return await ApplyTenantFilter(_context.NotificationMessages
+                .Where(n => !n.IsDeleted))
                 .ToListAsync();
         }
 
         public async Task<NotificationMessage> GetNotificationByIdAsync(int id)
         {
-            return await _context.NotificationMessages
+            return await ApplyTenantFilter(_context.NotificationMessages)
                 .FirstOrDefaultAsync(n => n.Id == id && !n.IsDeleted);
         }
 
         public async Task<IEnumerable<NotificationMessage>> GetNotificationsByUserIdAsync(int userId)
         {
-            return await _context.NotificationMessages
-                .Where(n => n.UserId == userId && !n.IsDeleted)
+            return await ApplyTenantFilter(_context.NotificationMessages
+                .Where(n => n.UserId == userId && !n.IsDeleted))
                 .OrderByDescending(n => n.CreatedAt)
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<NotificationMessage>> GetUnreadNotificationsByUserIdAsync(int userId)
         {
-            return await _context.NotificationMessages
-                .Where(n => n.UserId == userId && !n.IsRead && !n.IsDeleted)
+            return await ApplyTenantFilter(_context.NotificationMessages
+                .Where(n => n.UserId == userId && !n.IsRead && !n.IsDeleted))
                 .OrderByDescending(n => n.CreatedAt)
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<NotificationMessage>> GetNotificationsByTypeAsync(NotificationType type)
         {
-            return await _context.NotificationMessages
-                .Where(n => n.Type == type && !n.IsDeleted)
+            return await ApplyTenantFilter(_context.NotificationMessages
+                .Where(n => n.Type == type && !n.IsDeleted))
                 .OrderByDescending(n => n.CreatedAt)
                 .ToListAsync();
         }

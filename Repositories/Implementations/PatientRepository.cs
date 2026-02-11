@@ -2,18 +2,18 @@ using AutoMapper;
 using MedPal.API.Data;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
+using MedPal.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedPal.API.Repositories.Implementations
 {
-    public class PatientRepository : IPatientRepository
+    public class PatientRepository : TenantAwareRepository<Patient>, IPatientRepository
     {
-        private readonly AppDbContext _context;
         private readonly IMapper _mapper;
 
-        public PatientRepository(AppDbContext context, IMapper mapper)
+        public PatientRepository(AppDbContext context, IMapper mapper, ITenantContextService tenantContext)
+            : base(context, tenantContext)
         {
-            _context = context;
             _mapper = mapper;
         }
 
@@ -26,7 +26,8 @@ namespace MedPal.API.Repositories.Implementations
 
         public async Task<Patient> GetPatientByIdAsync(int id)
         {
-            var patient = await _context.Patients.FindAsync(id);
+            var patient = await ApplyTenantFilter(_context.Patients)
+                .FirstOrDefaultAsync(p => p.Id == id);
             if (patient == null)
             {
                 // Handle the case where the patient is not found

@@ -26,15 +26,36 @@ namespace MedPal.API.Data.Seeders
         {
             var roles = new List<Role>
             {
+                // System-wide roles (Fase 2: Multi-tenancy)
                 new Role
                 {
-                    Name = "Admin",
-                    Description = "System administrator with full access to all features",
+                    Name = "SuperAdmin",
+                    Description = "Super administrator with full access to all accounts and features",
                     IsSystemRole = true,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 },
+                new Role
+                {
+                    Name = "AccountAdmin",
+                    Description = "Account administrator with full access to account resources and multiple clinics",
+                    IsSystemRole = true,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                },
+                new Role
+                {
+                    Name = "ClinicAdmin",
+                    Description = "Clinic administrator with full access to clinic resources",
+                    IsSystemRole = true,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                },
+                
+                // Clinical roles
                 new Role
                 {
                     Name = "Doctor",
@@ -57,6 +78,15 @@ namespace MedPal.API.Data.Seeders
                 {
                     Name = "Receptionist",
                     Description = "Receptionist managing appointments and patient demographics",
+                    IsSystemRole = true,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                },
+                new Role
+                {
+                    Name = "HealthProfessional",
+                    Description = "Health professional with access to patient records and medical information",
                     IsSystemRole = true,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
@@ -147,30 +177,64 @@ namespace MedPal.API.Data.Seeders
         private static async Task SeedRolePermissionsAsync(AppDbContext context)
         {
             // Get all roles and permissions
-            var admin = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Admin");
+            var superAdmin = await context.Roles.FirstOrDefaultAsync(r => r.Name == "SuperAdmin");
+            var accountAdmin = await context.Roles.FirstOrDefaultAsync(r => r.Name == "AccountAdmin");
+            var clinicAdmin = await context.Roles.FirstOrDefaultAsync(r => r.Name == "ClinicAdmin");
             var doctor = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Doctor");
             var nurse = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Nurse");
             var receptionist = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Receptionist");
+            var healthProfessional = await context.Roles.FirstOrDefaultAsync(r => r.Name == "HealthProfessional");
             var patient = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Patient");
 
-            if (admin == null || doctor == null || nurse == null || receptionist == null || patient == null)
+            if (superAdmin == null || accountAdmin == null || clinicAdmin == null || 
+                doctor == null || nurse == null || receptionist == null || healthProfessional == null || patient == null)
                 return;
 
-            // Admin: All permissions
             var allPermissions = await context.Permissions.ToListAsync();
+
+            // SuperAdmin: All permissions (full system access)
             foreach (var permission in allPermissions)
             {
-                if (!await context.RolePermissions.AnyAsync(rp => rp.RoleId == admin.Id && rp.PermissionId == permission.Id))
+                if (!await context.RolePermissions.AnyAsync(rp => rp.RoleId == superAdmin.Id && rp.PermissionId == permission.Id))
                 {
                     await context.RolePermissions.AddAsync(new RolePermission
                     {
-                        RoleId = admin.Id,
+                        RoleId = superAdmin.Id,
                         PermissionId = permission.Id,
                         GrantedAt = DateTime.UtcNow
                     });
                 }
             }
 
+            // AccountAdmin: All permissions within their account
+            foreach (var permission in allPermissions)
+            {
+                if (!await context.RolePermissions.AnyAsync(rp => rp.RoleId == accountAdmin.Id && rp.PermissionId == permission.Id))
+                {
+                    await context.RolePermissions.AddAsync(new RolePermission
+                    {
+                        RoleId = accountAdmin.Id,
+                        PermissionId = permission.Id,
+                        GrantedAt = DateTime.UtcNow
+                    });
+                }
+            }
+
+            // ClinicAdmin: All permissions within their clinic
+            foreach (var permission in allPermissions)
+            {
+                if (!await context.RolePermissions.AnyAsync(rp => rp.RoleId == clinicAdmin.Id && rp.PermissionId == permission.Id))
+                {
+                    await context.RolePermissions.AddAsync(new RolePermission
+                    {
+                        RoleId = clinicAdmin.Id,
+                        PermissionId = permission.Id,
+                        GrantedAt = DateTime.UtcNow
+                    });
+                }
+            }
+
+            // Admin: All permissions
             // Doctor: Patient and medical record management, appointments
             var doctorPermissions = new[]
             {
@@ -179,9 +243,22 @@ namespace MedPal.API.Data.Seeders
                 "MedicalRecords.ViewAssigned", "MedicalRecords.Create", "MedicalRecords.Update",
                 "Billing.View",
                 "Reports.View",
-                "Clinics.View"
+                "Clinics.View",
+                "Roles.View"
             };
             await AssignPermissionsToRole(context, doctor.Id, doctorPermissions);
+
+            // HealthProfessional: Similar to Doctor, access to patient and medical records
+            var healthProfessionalPermissions = new[]
+            {
+                "Patients.ViewAll", "Patients.Update",
+                "Appointments.ViewAll", "Appointments.Create", "Appointments.Update",
+                "MedicalRecords.ViewAssigned", "MedicalRecords.Create",
+                "Billing.View",
+                "Clinics.View",
+                "Roles.View"
+            };
+            await AssignPermissionsToRole(context, healthProfessional.Id, healthProfessionalPermissions);
 
             // Nurse: View patients, manage appointments, limited medical records
             var nursePermissions = new[]
@@ -189,7 +266,8 @@ namespace MedPal.API.Data.Seeders
                 "Patients.ViewAll", "Patients.Update",
                 "Appointments.ViewAll", "Appointments.Create", "Appointments.Update",
                 "MedicalRecords.ViewAssigned",
-                "Clinics.View"
+                "Clinics.View",
+                "Roles.View"
             };
             await AssignPermissionsToRole(context, nurse.Id, nursePermissions);
 
@@ -199,7 +277,8 @@ namespace MedPal.API.Data.Seeders
                 "Patients.ViewAll", "Patients.Create", "Patients.Update",
                 "Appointments.ViewAll", "Appointments.Create", "Appointments.Update", "Appointments.Cancel",
                 "Billing.View",
-                "Clinics.View"
+                "Clinics.View",
+                "Roles.View"
             };
             await AssignPermissionsToRole(context, receptionist.Id, receptionistPermissions);
 

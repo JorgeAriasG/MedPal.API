@@ -7,10 +7,12 @@ using MedPal.API.Repositories.Authorization;
 using MedPal.API.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MedPal.API.Services;
+using MedPal.API.Services.Implementations;
 using MedPal.API.Authorization;
 using MedPal.API.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using FluentValidation;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 // JWT Auth 
@@ -90,13 +92,23 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.AddAutoMapper(typeof(MappingProfile)); // Ensure this line is present
 
-// Configure DbContext with lazy loading proxies and SQL Server
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-           .UseLazyLoadingProxies());
-
 // Register services
 builder.Services.AddHttpContextAccessor();
+
+// Register Tenant Context Service (Phase 2 - Multi-tenancy)
+// MUST be registered BEFORE DbContext to avoid circular dependency
+builder.Services.AddScoped<ITenantContextService, TenantContextService>();
+
+// Register Patient Consent Service (Phase 3 - Consent and Audit)
+builder.Services.AddScoped<IPatientConsentService, ConsentService>();
+
+// Configure DbContext with lazy loading proxies and SQL Server
+// DbContext is registered after TenantContextService to avoid circular dependency
+builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+           .UseLazyLoadingProxies();
+}, contextLifetime: ServiceLifetime.Scoped, optionsLifetime: ServiceLifetime.Scoped);
 
 // Register repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -199,7 +211,124 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("Roles.View", policy => policy.Requirements.Add(new PermissionRequirement("Roles.View")))
     .AddPolicy("Roles.Assign", policy => policy.Requirements.Add(new PermissionRequirement("Roles.Assign")))
     .AddPolicy("Roles.Revoke", policy => policy.Requirements.Add(new PermissionRequirement("Roles.Revoke")))
-    .AddPolicy("Roles.ViewAudit", policy => policy.Requirements.Add(new PermissionRequirement("Roles.ViewAudit")));
+    .AddPolicy("Roles.ViewAudit", policy => policy.Requirements.Add(new PermissionRequirement("Roles.ViewAudit")))
+
+    // Fase 2: Multi-tenancy Authorization Policies
+    .AddPolicy("ViewUsersPolicy", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var roleClaim = context.User.FindFirst(ClaimTypes.Role);
+            return roleClaim?.Value switch
+            {
+                "SuperAdmin" => true,
+                "AccountAdmin" => true,
+                "ClinicAdmin" => true,
+                _ => false
+            };
+        });
+    })
+    .AddPolicy("ViewPatientsPolicy", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var roleClaim = context.User.FindFirst(ClaimTypes.Role);
+            return roleClaim?.Value switch
+            {
+                "SuperAdmin" => true,
+                "AccountAdmin" => true,
+                "ClinicAdmin" => true,
+                "Doctor" => true,
+                "HealthProfessional" => true,
+                _ => false
+            };
+        });
+    })
+    .AddPolicy("ViewAppointmentsPolicy", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var roleClaim = context.User.FindFirst(ClaimTypes.Role);
+            return roleClaim?.Value switch
+            {
+                "SuperAdmin" => true,
+                "AccountAdmin" => true,
+                "ClinicAdmin" => true,
+                "Doctor" => true,
+                "Receptionist" => true,
+                _ => false
+            };
+        });
+    })
+    .AddPolicy("ManageUsersPolicy", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var roleClaim = context.User.FindFirst(ClaimTypes.Role);
+            return roleClaim?.Value switch
+            {
+                "SuperAdmin" => true,
+                "AccountAdmin" => true,
+                "ClinicAdmin" => true,
+                _ => false
+            };
+        });
+    })
+    .AddPolicy("ManagePatientsPolicy", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var roleClaim = context.User.FindFirst(ClaimTypes.Role);
+            return roleClaim?.Value switch
+            {
+                "SuperAdmin" => true,
+                "AccountAdmin" => true,
+                "ClinicAdmin" => true,
+                "Doctor" => true,
+                _ => false
+            };
+        });
+    })
+    .AddPolicy("ViewAuditLogPolicy", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var roleClaim = context.User.FindFirst(ClaimTypes.Role);
+            return roleClaim?.Value switch
+            {
+                "SuperAdmin" => true,
+                "AccountAdmin" => true,
+                _ => false
+            };
+        });
+    })
+    .AddPolicy("AdministerAccountPolicy", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var roleClaim = context.User.FindFirst(ClaimTypes.Role);
+            return roleClaim?.Value switch
+            {
+                "SuperAdmin" => true,
+                "AccountAdmin" => true,
+                _ => false
+            };
+        });
+    })
+    .AddPolicy("AdministerClinicPolicy", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var roleClaim = context.User.FindFirst(ClaimTypes.Role);
+            return roleClaim?.Value switch
+            {
+                "SuperAdmin" => true,
+                "AccountAdmin" => true,
+                "ClinicAdmin" => true,
+                _ => false
+            };
+        });
+    });
 
 builder.Services.AddCors(options =>
 {
@@ -216,6 +345,7 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await AuthorizationSeeder.SeedAsync(context);
+    await SuperAdminSeeder.SeedSuperAdminAsync(context);  // ← Crear SuperAdmin si no existe
 }
 
 // Configure the HTTP request pipeline.

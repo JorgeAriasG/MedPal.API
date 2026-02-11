@@ -5,5 +5,6 @@ namespace MedPal.API.Repositories
         string UserId { get; }
         string Role { get; set; }
         string Username { get; set; }
+        string AccountId { get;  }
     }
 }

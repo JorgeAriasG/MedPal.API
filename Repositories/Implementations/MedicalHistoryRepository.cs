@@ -3,26 +3,27 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MedPal.API.Models;
 using MedPal.API.Data;
+using MedPal.API.Services;
+using MedPal.API.Repositories.Implementations;
 
 namespace MedPal.API.Repositories
 {
-    public class MedicalHistoryRepository : IMedicalHistoryRepository
+    public class MedicalHistoryRepository : TenantAwareRepository<MedicalHistory>, IMedicalHistoryRepository
     {
-        private readonly AppDbContext _context;
-
-        public MedicalHistoryRepository(AppDbContext context)
+        public MedicalHistoryRepository(AppDbContext context, ITenantContextService tenantContext)
+            : base(context, tenantContext)
         {
-            _context = context;
         }
 
         public async Task<IEnumerable<MedicalHistory>> GetAllMedicalHistoriesAsync()
         {
-            return await _context.MedicalHistories.ToListAsync();
+            return await ApplyTenantFilter(_context.MedicalHistories).ToListAsync();
         }
 
         public async Task<MedicalHistory> GetMedicalHistoryByIdAsync(int id)
         {
-            return await _context.MedicalHistories.FindAsync(id);
+            return await ApplyTenantFilter(_context.MedicalHistories)
+                .FirstOrDefaultAsync(mh => mh.Id == id);
         }
 
         public async Task<MedicalHistory> AddMedicalHistoryAsync(MedicalHistory medicalHistory)

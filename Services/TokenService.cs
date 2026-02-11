@@ -57,8 +57,20 @@ namespace MedPal.API.Services
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim("user_id", user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            // Fase 2: Agregar claims para multi-tenancy
+            if (user.AccountId.HasValue)
+            {
+                claims.Add(new Claim("account_id", user.AccountId.Value.ToString()));
+            }
+
+            if (user.PrincipalClinicId.HasValue)
+            {
+                claims.Add(new Claim("clinic_id", user.PrincipalClinicId.Value.ToString()));
+            }
 
             // Añadir roles del usuario (desde la relación UserRoles)
             if (user.UserRoles != null && user.UserRoles.Count > 0)
@@ -68,6 +80,12 @@ namespace MedPal.API.Services
                     if (userRole.Role != null)
                     {
                         claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
+                        // Fase 2: Agregar el primer rol como "role" para multi-tenancy
+                        // (Si un usuario tiene múltiples roles, se usa el primero)
+                        if (!claims.Any(c => c.Type == "role"))
+                        {
+                            claims.Add(new Claim("role", userRole.Role.Name));
+                        }
                     }
                 }
             }
@@ -75,6 +93,7 @@ namespace MedPal.API.Services
             {
                 // Si no tiene roles asignados, asignar el rol por defecto
                 claims.Add(new Claim(ClaimTypes.Role, "User"));
+                claims.Add(new Claim("role", "Patient")); // Fase 2: Role por defecto para multi-tenancy
             }
 
             var token = new JwtSecurityToken(

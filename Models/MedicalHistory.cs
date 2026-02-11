@@ -59,6 +59,10 @@ namespace MedPal.API.Models
         // Indicador de confidencialidad (para cumplir LSSI-PC)
         public bool IsConfidential { get; set; } = true;
 
+        // Clinic that owns/created this medical record (for multi-tenancy isolation)
+        [ForeignKey("OwnerClinic")]
+        public int? OwnerClinicId { get; set; }
+
         // ISoftDelete implementation
         public bool IsDeleted { get; set; } = false;
         public DateTime? DeletedAt { get; set; }
@@ -69,5 +73,6 @@ namespace MedPal.API.Models
         public virtual User HealthcareProfessional { get; set; }
         public virtual User LastModifiedByUser { get; set; }
         public virtual Prescription Prescription { get; set; }
+        public virtual Clinic OwnerClinic { get; set; }
     }
 }

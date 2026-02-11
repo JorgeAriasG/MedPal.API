@@ -27,6 +27,7 @@ namespace MedPal.API.Controllers
 
         [HttpGet]
         [Authorize(Policy = "Patients.ViewAll")]
+        [Authorize(Policy = "ViewPatientsPolicy")] // Fase 2: Multi-tenancy policy
         public async Task<ActionResult<IEnumerable<PatientReadDTO>>> GetAllPatients(int clinicId)
         {
             var patients = await _patientRepository.GetAllPatientsAsync(clinicId);
@@ -68,6 +69,12 @@ namespace MedPal.API.Controllers
         {
             var patient = _mapper.Map<Patient>(patientWriteDto);
             patient.Dob.ToLocalTime();
+            var accountIdClaim = User.FindFirst("account_id");
+            if (!int.TryParse(accountIdClaim?.Value, out int accountId))
+            {
+                return Unauthorized("Usuario no tiene AccountId asignado");
+            }
+            patient.AccountId = accountId;
             var createdPatient = await _patientRepository.AddPatientAsync(patient);
             var patientReadDTO = _mapper.Map<PatientReadDTO>(createdPatient);
             return CreatedAtAction(nameof(GetPatientById), new { id = patientReadDTO.Id }, patientReadDTO);

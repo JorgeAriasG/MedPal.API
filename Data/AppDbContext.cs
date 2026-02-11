@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using MedPal.API.Models;
 using MedPal.API.Models.Authorization;
 using MedPal.API.Services;
+using MedPal.API.Services.Implementations;
 using MedPal.API.Data.Converters;
 using MedPal.API.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,9 @@ namespace MedPal.API.Data
 {
     public class AppDbContext : DbContext
     {
+        // Multi-tenancy (Fase 1)
+        public DbSet<Account> Accounts { get; set; }
+
         public DbSet<Patient> Patients { get; set; }
         public DbSet<PatientDetails> PatientDetails { get; set; }
         public DbSet<MedicalHistory> MedicalHistories { get; set; }
@@ -44,11 +48,32 @@ namespace MedPal.API.Data
         public DbSet<ArcoRequest> ArcoRequests { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
 
-        private readonly EncryptionProvider? _encryptionProvider;
+        // Phase 3: Consent and Audit (Consentimiento y Auditoría)
+        public DbSet<PatientConsent> PatientConsents { get; set; }
+        public DbSet<MedicalRecordAccessLog> MedicalRecordAccessLogs { get; set; }
 
-        public AppDbContext(DbContextOptions<AppDbContext> options, EncryptionProvider? encryptionProvider = null) : base(options)
+        private readonly EncryptionProvider? _encryptionProvider;
+        private readonly IServiceProvider? _serviceProvider;
+        private ITenantContextService? _tenantContext;
+
+        public AppDbContext(DbContextOptions<AppDbContext> options, EncryptionProvider? encryptionProvider = null, IServiceProvider? serviceProvider = null) : base(options)
         {
             _encryptionProvider = encryptionProvider;
+            _serviceProvider = serviceProvider;
+        }
+
+        /// <summary>
+        /// Lazy-loads TenantContextService to avoid circular dependency issues.
+        /// TenantContextService is only needed when query filters are applied.
+        /// </summary>
+        private ITenantContextService? GetTenantContext()
+        {
+            if (_tenantContext != null) return _tenantContext;
+            
+            // Try to get from service provider (runtime)
+            _tenantContext = _serviceProvider?.GetService(typeof(ITenantContextService)) as ITenantContextService;
+            
+            return _tenantContext;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -57,12 +82,33 @@ namespace MedPal.API.Data
             {
                 optionsBuilder.UseSqlServer("DefaultConnection")
                               .UseLazyLoadingProxies()
-                              .EnableSensitiveDataLogging();
+                              .EnableSensitiveDataLogging()
+                              .LogTo(Console.WriteLine)
+                              .LogTo(message => System.Diagnostics.Debug.WriteLine(message));
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Fase 1: Multi-tenancy Account relationships
+            modelBuilder.Entity<Account>()
+                .HasMany(a => a.Clinics)
+                .WithOne(c => c.Account)
+                .HasForeignKey(c => c.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(a => a.Users)
+                .WithOne(u => u.Account)
+                .HasForeignKey(u => u.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(a => a.Patients)
+                .WithOne(p => p.Account)
+                .HasForeignKey(p => p.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Configure your entity relationships and constraints here
             var timeOnlyConverter = new ValueConverter<TimeOnly, TimeSpan>(
                 t => t.ToTimeSpan(),
@@ -330,6 +376,110 @@ namespace MedPal.API.Data
                     .HasConversion(encryptedConverter);
             }
 
+            // ========== PHASE 3: CONSENT AND AUDIT CONFIGURATION ==========
+
+            // PatientConsent Configuration
+            modelBuilder.Entity<PatientConsent>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                // Foreign key relationships
+                entity.HasOne(e => e.PatientDetails)
+                    .WithMany()
+                    .HasForeignKey(e => e.PatientDetailsId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.RequestingClinic)
+                    .WithMany()
+                    .HasForeignKey(e => e.RequestingClinicId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.OwnerClinic)
+                    .WithMany()
+                    .HasForeignKey(e => e.OwnerClinicId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.ApprovedByUser)
+                    .WithMany()
+                    .HasForeignKey(e => e.ApprovedByUserId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                // Composite unique index: Only one active consent per clinic pair per patient
+                entity.HasIndex(e => new { e.PatientDetailsId, e.RequestingClinicId, e.OwnerClinicId, e.IsDeleted })
+                    .HasName("IX_PatientConsent_Unique");
+
+                // Indexes for common queries
+                entity.HasIndex(e => new { e.PatientDetailsId, e.IsApproved })
+                    .HasName("IX_PatientConsent_PatientApproved");
+
+                entity.HasIndex(e => new { e.RequestingClinicId, e.IsDeleted })
+                    .HasName("IX_PatientConsent_RequestingClinic");
+
+                entity.HasIndex(e => e.ExpiryDate)
+                    .HasName("IX_PatientConsent_ExpiryDate");
+
+                entity.HasIndex(e => e.CreatedAt)
+                    .HasName("IX_PatientConsent_CreatedAt");
+            });
+
+            // MedicalRecordAccessLog Configuration
+            modelBuilder.Entity<MedicalRecordAccessLog>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                // Foreign key relationships
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.MedicalHistory)
+                    .WithMany()
+                    .HasForeignKey(e => e.MedicalHistoryId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.PatientDetails)
+                    .WithMany()
+                    .HasForeignKey(e => e.PatientDetailsId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.AccessingClinic)
+                    .WithMany()
+                    .HasForeignKey(e => e.AccessingClinicId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(e => e.OwnerClinic)
+                    .WithMany()
+                    .HasForeignKey(e => e.MedicalRecordOwnerClinicId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                // Indexes for audit queries (NOM-004 compliance)
+                entity.HasIndex(e => new { e.UserId, e.AccessTime })
+                    .HasName("IX_AccessLog_UserTime");
+
+                entity.HasIndex(e => new { e.PatientDetailsId, e.AccessTime })
+                    .HasName("IX_AccessLog_PatientTime");
+
+                entity.HasIndex(e => new { e.MedicalHistoryId, e.AccessTime })
+                    .HasName("IX_AccessLog_HistoryTime");
+
+                entity.HasIndex(e => e.AccessTime)
+                    .HasName("IX_AccessLog_AccessTime");
+
+                entity.HasIndex(e => e.HadValidConsent)
+                    .HasName("IX_AccessLog_Consent");
+
+                entity.HasIndex(e => new { e.AccessingClinicId, e.AccessTime })
+                    .HasName("IX_AccessLog_ClinicTime");
+            });
+
+            // Update MedicalHistory to include OwnerClinic configuration
+            modelBuilder.Entity<MedicalHistory>()
+                .HasOne(mh => mh.OwnerClinic)
+                .WithMany()
+                .HasForeignKey(mh => mh.OwnerClinicId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             // Add query filters for soft delete pattern
             // Automatically filter out deleted records from all queries
             modelBuilder.Entity<Patient>().HasQueryFilter(p => !p.IsDeleted);
@@ -351,6 +501,49 @@ namespace MedPal.API.Data
             modelBuilder.Entity<PrescriptionItem>().HasQueryFilter(pri => !pri.IsDeleted);
             modelBuilder.Entity<UserRole>().HasQueryFilter(ur => !ur.IsDeleted);
             modelBuilder.Entity<UserClinic>().HasQueryFilter(uc => !uc.IsDeleted);
+            modelBuilder.Entity<PatientConsent>().HasQueryFilter(pc => !pc.IsDeleted);
+            // NOTE: MedicalRecordAccessLog does NOT have soft delete filter (immutable audit trail per NOM-004)
+
+            // // Fase 2: Query Filters para Multi-tenancy (Control de Acceso)
+            // var tenantContext = GetTenantContext();
+            // if (tenantContext != null)
+            // {
+            //     // Query Filter para User: 
+            //     // SuperAdmin ve todos, AccountAdmin/ClinicAdmin ve solo de su scope
+            //     modelBuilder.Entity<User>()
+            //         .HasQueryFilter(u =>
+            //             tenantContext.IsSuperAdmin ||
+            //             (tenantContext.CurrentAccountId != null && u.AccountId == tenantContext.CurrentAccountId)
+            //         );
+
+            //     // Query Filter para Clinic:
+            //     // SuperAdmin ve todos, AccountAdmin/ClinicAdmin ve solo de su scope
+            //     modelBuilder.Entity<Clinic>()
+            //         .HasQueryFilter(c =>
+            //             tenantContext.IsSuperAdmin ||
+            //             c.AccountId == null ||  // Permitir datos legacy sin AccountId
+            //             (tenantContext.CurrentAccountId != null && c.AccountId == tenantContext.CurrentAccountId)
+            //         );
+
+            //     // Query Filter para Patient:
+            //     // SuperAdmin ve todos, AccountAdmin ve pacientes de su cuenta, ClinicAdmin/Doctor ve de su clínica
+            //     modelBuilder.Entity<Patient>()
+            //         .HasQueryFilter(p =>
+            //             tenantContext.IsSuperAdmin ||
+            //             p.AccountId == null ||  // Permitir datos legacy sin AccountId
+            //             (tenantContext.IsAccountAdmin && p.AccountId == tenantContext.CurrentAccountId) ||
+            //             (tenantContext.IsClinicAdmin && p.ClinicId == tenantContext.CurrentClinicId)
+            //         );
+
+            //     // Query Filter para Appointment:
+            //     // Similar a Patient pero también filtra por clínica
+            //     modelBuilder.Entity<Appointment>()
+            //         .HasQueryFilter(a =>
+            //             tenantContext.IsSuperAdmin ||
+            //             (tenantContext.IsAccountAdmin && a.Patient.AccountId == tenantContext.CurrentAccountId) ||
+            //             (tenantContext.IsClinicAdmin && a.ClinicId == tenantContext.CurrentClinicId)
+            //         );
+            // }
 
             base.OnModelCreating(modelBuilder);
         }

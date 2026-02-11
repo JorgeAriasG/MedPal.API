@@ -23,7 +23,7 @@ public class ClinicController : BaseController
 
     // GET: api/clinic
     [HttpGet]
-    [Authorize(Policy = "Clinics.View")]
+    [Authorize(Policy = "AdministerClinicPolicy")] // Fase 2: Multi-tenancy policy
     public async Task<ActionResult<IEnumerable<ClinicReadDTO>>> GetAllClinicsById()
     {
         var id = int.TryParse(_userService.UserId, out var userId) ? userId : 0;
@@ -35,6 +35,7 @@ public class ClinicController : BaseController
     // GET: api/clinic/{id}
     [HttpGet("{id}")]
     [Authorize(Policy = "Clinics.View")]
+    [Authorize(Policy = "AdministerClinicPolicy")] // Fase 2: Multi-tenancy policy
     public async Task<ActionResult<ClinicReadDTO>> GetClinicById(int id)
     {
         var clinic = await _clinicRepository.GetClinicByIdAsync(id);
@@ -48,6 +49,8 @@ public class ClinicController : BaseController
 
     // POST: api/clinic
     [HttpPost]
+    [Authorize(Policy = "Clinics.Manage")]
+    [Authorize(Policy = "AdministerClinicPolicy")] // Fase 2: Multi-tenancy policy
     [Authorize(Policy = "Clinics.Manage")]
     public async Task<ActionResult<ClinicReadDTO>> CreateClinic(int userId, ClinicWriteDTO clinicWriteDto)
     {

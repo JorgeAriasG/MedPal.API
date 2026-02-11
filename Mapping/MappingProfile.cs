@@ -13,7 +13,6 @@ namespace MedPal.API.Mapping
             CreateMap<Patient, PatientWriteDTO>().ReverseMap();
             CreateMap<Patient, Patient>().ReverseMap();
             CreateMap<User, UserReadDTO>().ReverseMap();
-            CreateMap<User, UserWriteDTO>().ReverseMap();
             CreateMap<Clinic, ClinicReadDTO>().ReverseMap();
             CreateMap<Clinic, ClinicWriteDTO>().ReverseMap();
             CreateMap<PatientDetails, PatientDetailsReadDTO>().ReverseMap();
@@ -24,6 +23,15 @@ namespace MedPal.API.Mapping
             CreateMap<Allergy, AllergyWriteDTO>().ReverseMap();
             CreateMap<Appointment, AppointmentReadDTO>().ReverseMap();
             CreateMap<AppointmentWriteDTO, Appointment>().ReverseMap();
+            CreateMap<Clinic, ClinicBasicDTO>().ReverseMap();
+
+            // Custom mappings for User and UserWriteDTO
+            CreateMap<User, UserWriteDTO>().ReverseMap()
+                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password));
+
+            // Custom mappings for User and UserRegisterDTO
+            CreateMap<User, UserRegisterDTO>().ReverseMap()
+                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password));
 
             // Permission mappings
             CreateMap<Permission, PermissionDTO>();

@@ -111,7 +111,7 @@ namespace MedPal.API.Controllers
                 // Validate clinic context if clinicId is specified
                 if (assignRoleDto.ClinicId.HasValue)
                 {
-                    var hasGlobalRole = await _roleRepository.UserHasRoleAsync(assignedById, "Admin", null);
+                    var hasGlobalRole = await _roleRepository.UserHasRoleAsync(assignedById, "SuperAdmin", null);
 
                     if (!hasGlobalRole)
                     {
@@ -155,7 +155,7 @@ namespace MedPal.API.Controllers
 
                 if (role.IsSystemRole)
                 {
-                    var isGlobalAdmin = await _roleRepository.UserHasRoleAsync(assignedById, "Admin", null);
+                    var isGlobalAdmin = await _roleRepository.UserHasRoleAsync(assignedById, "SuperAdmin", null);
 
                     if (!isGlobalAdmin)
                     {
@@ -241,7 +241,7 @@ namespace MedPal.API.Controllers
                 if (clinicId.HasValue)
                 {
                     // Check if the user performing the action has a global role
-                    var hasGlobalRole = await _roleRepository.UserHasRoleAsync(removedById, "Admin", null);
+                    var hasGlobalRole = await _roleRepository.UserHasRoleAsync(removedById, "SuperAdmin", null);
 
                     if (!hasGlobalRole)
                     {
@@ -288,7 +288,7 @@ namespace MedPal.API.Controllers
                 if (role.IsSystemRole)
                 {
                     // Only global admins can revoke system roles
-                    var isGlobalAdmin = await _roleRepository.UserHasRoleAsync(removedById, "Admin", null);
+                    var isGlobalAdmin = await _roleRepository.UserHasRoleAsync(removedById, "SuperAdmin", null);
 
                     if (!isGlobalAdmin)
                     {

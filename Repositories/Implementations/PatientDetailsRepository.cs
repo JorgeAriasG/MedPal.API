@@ -1,42 +1,41 @@
 using MedPal.API.Data;
 using MedPal.API.Models;
+using MedPal.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedPal.API.Repositories.Implementations
 {
-    public class PatientDetailsRepository : IPatientDetailsRepository
+    public class PatientDetailsRepository : TenantAwareRepository<PatientDetails>, IPatientDetailsRepository
     {
-        private readonly AppDbContext _context;
-
-        public PatientDetailsRepository(AppDbContext context)
+        public PatientDetailsRepository(AppDbContext context, ITenantContextService tenantContext)
+            : base(context, tenantContext)
         {
-            _context = context;
         }
 
         public async Task<IEnumerable<PatientDetails>> GetAllPatientDetailsAsync()
         {
-            return await _context.PatientDetails
+            return await ApplyTenantFilter(_context.PatientDetails
                 .Include(pd => pd.Patient)
                 .Include(pd => pd.MedicalHistories)
-                .Include(pd => pd.Allergies)
+                .Include(pd => pd.Allergies))
                 .ToListAsync();
         }
 
         public async Task<PatientDetails> GetPatientDetailsByIdAsync(int id)
         {
-            return await _context.PatientDetails
+            return await ApplyTenantFilter(_context.PatientDetails
                 .Include(pd => pd.Patient)
                 .Include(pd => pd.MedicalHistories)
-                .Include(pd => pd.Allergies)
+                .Include(pd => pd.Allergies))
                 .FirstOrDefaultAsync(pd => pd.Id == id);
         }
 
         public async Task<PatientDetails> GetPatientDetailsByPatientIdAsync(int patientId)
         {
-            return await _context.PatientDetails
+            return await ApplyTenantFilter(_context.PatientDetails
                 .Include(pd => pd.Patient)
                 .Include(pd => pd.MedicalHistories)
-                .Include(pd => pd.Allergies)
+                .Include(pd => pd.Allergies))
                 .FirstOrDefaultAsync(pd => pd.PatientId == patientId);
         }
 

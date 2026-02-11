@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using MedPal.API.Data;
 using MedPal.API.DTOs;
+using MedPal.API.Enums;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
 using MedPal.API.Repositories.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Extensions;
 
 namespace MedPal.API.Controllers
 {
@@ -19,6 +22,7 @@ namespace MedPal.API.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IClinicRepository _clinicRepository;
         private readonly IRoleRepository _roleRepository;
+        private readonly AppDbContext _context;
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
         private readonly IUserService _userService;
@@ -27,6 +31,7 @@ namespace MedPal.API.Controllers
             IUserRepository userRepository,
             IClinicRepository clinicRepository,
             IRoleRepository roleRepository,
+            AppDbContext context,
             IMapper mapper,
             ITokenService tokenService,
             IUserService userService)
@@ -34,6 +39,7 @@ namespace MedPal.API.Controllers
             _userRepository = userRepository;
             _clinicRepository = clinicRepository;
             _roleRepository = roleRepository;
+            _context = context;
             _mapper = mapper;
             _tokenService = tokenService;
             _userService = userService;
@@ -41,6 +47,7 @@ namespace MedPal.API.Controllers
 
         [HttpGet]
         [Authorize(Policy = "Users.ViewAll")]
+        [Authorize(Policy = "ViewUsersPolicy")] // Fase 2: Multi-tenancy policy
         public async Task<ActionResult<IEnumerable<UserReadDTO>>> GetAllUsers()
         {
             var users = await _userRepository.GetAllUsersAsync();
@@ -50,6 +57,7 @@ namespace MedPal.API.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Policy = "Users.ViewAll")]
+        [Authorize(Policy = "ViewUsersPolicy")] // Fase 2: Multi-tenancy policy
         public async Task<ActionResult<UserReadDTO>> GetUserById(int id)
         {
             var user = await _userRepository.GetUserByIdAsync(id);
@@ -61,15 +69,74 @@ namespace MedPal.API.Controllers
             return Ok(userReadDTO);
         }
 
-        // TODO: Fix the AddUser method, current status is returning error when no clinic is provided or existing clinic is not found.
+        [HttpGet("account")]
+        [Authorize(Policy = "Users.ViewAll")]
+        [Authorize(Policy = "ViewUsersPolicy")] // Fase 2: Multi-tenancy policy
+        public async Task<ActionResult<IEnumerable<UserReadDTO>>> GetAllUsersByAccountId()
+        {
+            var users = await _userRepository.GetAllUsersByAccountId(int.Parse(_userService.AccountId));
+            var userReadDTOs = _mapper.Map<IEnumerable<UserReadDTO>>(users);
+            
+            if(!userReadDTOs.Any())
+            {
+                return NotFound();
+            }
+            
+            return Ok(userReadDTOs);
+        }
+
         [HttpPost]
         [Authorize(Policy = "Users.Manage")]
+        [Authorize(Policy = "ManageUsersPolicy")] // Fase 2: Multi-tenancy policy
         public async Task<ActionResult> AddUser(UserWriteDTO userWriteDto)
         {
-            var user = _mapper.Map<User>(userWriteDto);
-            var createdUser = await _userRepository.AddUserAsync(user);
-            var userReadDTO = _mapper.Map<UserReadDTO>(createdUser);
+            // Validar que el email no sea nulo o vacío
+            if (string.IsNullOrWhiteSpace(userWriteDto.Email))
+            {
+                return BadRequest(new { message = "El email es requerido" });
+            }
 
+            // Normalizar email: trim y convertir a minúsculas
+            userWriteDto.Email = userWriteDto.Email.Trim().ToLower();
+
+            // Verificar si el email ya existe
+            var existingUser = await _userRepository.GetUserByEmailAsync(userWriteDto.Email);
+            if (existingUser != null)
+            {
+                return BadRequest(new { message = "El email ya está registrado en el sistema" });
+            }
+
+            // Fase 2: Extraer AccountId del JWT del usuario autenticado (sin query extra)
+            var accountIdClaim = User.FindFirst("account_id");
+            if (!int.TryParse(accountIdClaim?.Value, out int accountId))
+            {
+                return Unauthorized("Usuario no tiene AccountId asignado");
+            }
+
+            var user = _mapper.Map<User>(userWriteDto);
+            user.AccountId = accountId;  // Asignar el AccountId del usuario que crea el nuevo usuario
+            var createdUser = await _userRepository.AddUserAsync(user);
+
+            // Fase 2: Si se especifica un rol, asignarlo al usuario
+            if (userWriteDto.RoleId != 0)
+            {
+                var role = await _roleRepository.GetRoleByIdAsync(userWriteDto.RoleId);
+                if (role == null)
+                {
+                    return BadRequest(new { message = $"El rol '{userWriteDto.RoleId}' no existe en el sistema" });
+                }
+
+                // Asignar el rol al usuario (si se proporciona clinicId, asignarlo a esa clínica, si no, a nivel global)
+                await _roleRepository.AssignRoleToUserAsync(
+                    createdUser.Id,
+                    role.Id,
+                    clinicId: userWriteDto.PrincipalClinicId,
+                    expiresAt: null,
+                    assignedByUserId: int.TryParse(_userService.UserId, out int userId) ? userId : null
+                );
+            }
+
+            var userReadDTO = _mapper.Map<UserReadDTO>(createdUser);
             return CreatedAtAction(nameof(GetUserById), new { id = userReadDTO.Id }, userReadDTO);
         }
 
@@ -90,8 +157,10 @@ namespace MedPal.API.Controllers
         }
 
         /// <summary>
-        /// Registra un nuevo usuario en el sistema con rol de Admin por defecto.
-        /// Todos los nuevos usuarios se crean automáticamente como administradores.
+        /// <summary>
+        /// Registra un nuevo usuario y crea automáticamente su Account.
+        /// El usuario se crea como AccountAdmin de su nueva Account.
+        /// Este endpoint es público para permitir que nuevas clínicas/hospitales se registren.
         /// </summary>
         [AllowAnonymous]
         [HttpPost("register")]
@@ -103,6 +172,9 @@ namespace MedPal.API.Controllers
                 return BadRequest(ModelState);
             }
 
+            // Normalizar email: trim y convertir a minúsculas
+            registerDto.Email = registerDto.Email?.Trim().ToLower() ?? string.Empty;
+
             // Verificar si el email ya existe
             var existingUser = await _userRepository.GetUserByEmailAsync(registerDto.Email);
             if (existingUser != null)
@@ -110,36 +182,62 @@ namespace MedPal.API.Controllers
                 return BadRequest(new { message = "El email ya está registrado en el sistema" });
             }
 
-            // Crear el nuevo usuario
-            var newUser = new User
+            // Crear una nueva Account para la clínica/hospital que se registra
+            // El nombre de la Account será el nombre del usuario/organización
+            var newAccount = new Account
             {
                 Name = registerDto.Name,
-                Email = registerDto.Email,
-                PasswordHash = registerDto.Password,
-                Specialty = registerDto.Specialty,
-                ProfessionalLicenseNumber = registerDto.ProfessionalLicenseNumber,
+                Description = $"Cuenta de {registerDto.Name} - Creada al registrarse",
                 IsActive = true,
-                IsDeleted = false,
-                HasAcceptedPrivacyTerms = registerDto.AcceptPrivacyTerms,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
 
-            // Agregar el usuario a la base de datos
-            var createdUser = await _userRepository.AddUserAsync(newUser);
-
-            // Obtener el rol de Admin
-            var adminRole = await _roleRepository.GetRoleByNameAsync("Admin");
-            if (adminRole == null)
+            // Guardar la nueva Account
+            await _context.Accounts.AddAsync(newAccount);
+            await _context.SaveChangesAsync();
+            
+            if (newAccount.Id == 0)
             {
-                // Si no existe el rol Admin, devolver error
-                return BadRequest(new { message = "El rol de administrador no está configurado en el sistema" });
+                return BadRequest(new { message = "No se pudo crear la Account" });
             }
 
-            // Asignar el rol de Admin al nuevo usuario de forma global (sin clínica específica)
-            await _roleRepository.AssignRoleToUserAsync(createdUser.Id, adminRole.Id, clinicId: null, expiresAt: null, assignedByUserId: null);
+            var user = _mapper.Map<User>(registerDto);
+            user.HasAcceptedPrivacyTerms = true;
+            user.CreatedAt = DateTime.UtcNow;
+            user.UpdatedAt = DateTime.UtcNow;
+            user.AccountId = newAccount.Id;  // ← Assign new accountId to the user
 
-            // Generar token JWT para el nuevo usuario
+            // Crear el nuevo usuario asignado a la Account que acaba de crear
+            // var newUser = new User
+            // {
+            //     Name = registerDto.Name,
+            //     Email = registerDto.Email,
+            //     PasswordHash = registerDto.Password,
+            //     Specialty = registerDto.Specialty,
+            //     ProfessionalLicenseNumber = registerDto.ProfessionalLicenseNumber,
+            //     IsActive = true,
+            //     IsDeleted = false,
+            //     HasAcceptedPrivacyTerms = registerDto.AcceptPrivacyTerms,
+            //     AccountId = newAccount.Id,  // ← Asignar a la Account que acaba de crear
+            //     CreatedAt = DateTime.UtcNow,
+            //     UpdatedAt = DateTime.UtcNow
+            // };
+
+            // Agregar el usuario a la base de datos
+            var createdUser = await _userRepository.AddUserAsync(user);
+
+            // Obtener el rol de AccountAdmin
+            var accountAdminRole = await _roleRepository.GetRoleByNameAsync("AccountAdmin");
+            if (accountAdminRole == null)
+            {
+                return BadRequest(new { message = "El rol AccountAdmin no está configurado en el sistema" });
+            }
+
+            // Asignar el rol AccountAdmin al nuevo usuario de forma global (para toda su Account)
+            await _roleRepository.AssignRoleToUserAsync(createdUser.Id, accountAdminRole.Id, clinicId: null, expiresAt: null, assignedByUserId: null);
+
+            // Generar token JWT para el nuevo usuario (incluye AccountId automáticamente)
             var token = _tokenService.GenerateToken(createdUser);
             var userReadDTO = _mapper.Map<UserReadDTO>(createdUser);
             userReadDTO.Token = token;
@@ -197,28 +295,14 @@ namespace MedPal.API.Controllers
                 return Unauthorized("Usuario no identificado");
             }
 
-            var user = await _userRepository.GetUserByIdAsync(userId);
+            var user = await _userRepository.GetOwnProfileAsync(userId);
             if (user == null)
             {
                 return NotFound("Usuario no encontrado");
             }
 
             // Obtener roles del usuario
-            var userRoles = user.UserRoles?
-                .Where(ur => !ur.IsDeleted)
-                .Select(ur => ur.Role?.Name)
-                .Where(name => name != null)
-                .ToList() ?? new List<string>();
-
-            // Obtener clínicas del usuario
-            var userClinics = user.UserClinics?
-                .Where(uc => !uc.IsDeleted)
-                .Select(uc => new ClinicBasicDTO
-                {
-                    Id = uc.ClinicId,
-                    Name = uc.Clinic?.Name ?? "Clínica Desconocida"
-                })
-                .ToList() ?? new List<ClinicBasicDTO>();
+            var userRoles = await _userRepository.GetUserRolesAsync(userId);
 
             var profile = new UserProfileDTO
             {
@@ -231,9 +315,16 @@ namespace MedPal.API.Controllers
                 LastAccessAt = user.LastAccessAt ?? DateTime.UtcNow,
                 HasAcceptedPrivacyTerms = user.HasAcceptedPrivacyTerms,
                 CreatedAt = user.CreatedAt,
-                Roles = userRoles,
-                Clinics = userClinics
+                Roles = userRoles
             };
+
+            if(!userRoles.Contains(SystemRole.SuperAdmin.GetDisplayName())) {
+                // Obtener clínicas del usuario
+                var userClinics = await _userRepository.GetUserClinicsAsync(userId);
+                List<ClinicBasicDTO> userClinicsDTO = _mapper.Map<List<ClinicBasicDTO>>(userClinics);
+                profile.Clinics = userClinicsDTO;
+            }
+
 
             return Ok(profile);
         }

@@ -3,18 +3,18 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MedPal.API.Data;
 using MedPal.API.Models;
+using MedPal.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedPal.API.Repositories.Implementations
 {
-    public class ClinicRepository : IClinicRepository
+    public class ClinicRepository : TenantAwareRepository<Clinic>, IClinicRepository
     {
-        private readonly AppDbContext _context;
         private readonly IMapper _mapper;
 
-        public ClinicRepository(AppDbContext context, IMapper mapper)
+        public ClinicRepository(AppDbContext context, IMapper mapper, ITenantContextService tenantContext)
+            : base(context, tenantContext)
         {
-            _context = context;
             _mapper = mapper;
         }
 
@@ -27,7 +27,8 @@ namespace MedPal.API.Repositories.Implementations
 
         public async Task<Clinic> GetClinicByIdAsync(int id)
         {
-            var clinic = await _context.Clinics.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+            var clinic = await ApplyTenantFilter(_context.Clinics.AsNoTracking())
+                .FirstOrDefaultAsync(c => c.Id == id);
 
             if (clinic == null)
             {

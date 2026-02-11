@@ -25,6 +25,7 @@ namespace MedPal.API.Controllers
         // GET: api/appointments
         [HttpGet]
         [Authorize(Policy = "Appointments.ViewAll")]
+        [Authorize(Policy = "ViewAppointmentsPolicy")] // Fase 2: Multi-tenancy policy
         public async Task<ActionResult<IEnumerable<AppointmentReadDTO>>> GetAllAppointmentsById(int clinicId)
         {
             var appointments = await _appointmentRepository.GetAllAppointmentsByIdAsync(clinicId);
@@ -35,6 +36,7 @@ namespace MedPal.API.Controllers
         // GET: api/appointments/{id}
         [HttpGet("{id}")]
         [Authorize(Policy = "Appointments.ViewAll")]
+        [Authorize(Policy = "ViewAppointmentsPolicy")] // Fase 2: Multi-tenancy policy
         public async Task<ActionResult<AppointmentReadDTO>> GetAppointmentById(int id)
         {
             var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
@@ -48,6 +50,8 @@ namespace MedPal.API.Controllers
 
         // POST: api/appointments
         [HttpPost]
+        [Authorize(Policy = "Appointments.Create")]
+        [Authorize(Policy = "ManagePatientsPolicy")] // Fase 2: Multi-tenancy policy
         [Authorize(Policy = "Appointments.Create")]
         public async Task<ActionResult<AppointmentReadDTO>> CreateAppointment(AppointmentWriteDTO appointmentWriteDto)
         {

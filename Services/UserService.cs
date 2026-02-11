@@ -12,11 +12,13 @@ namespace MedPal.API.Services
             _httpContextAccessor = httpContextAccessor;
             Username = GetUsername() ?? string.Empty;
             Role = GetRole() ?? string.Empty;
+            AccountId = GetAccountId() ?? string.Empty;
         }
 
         public string UserId => GetUserId() ?? string.Empty;
         public string Username { get; set; }
         public string Role { get; set; }
+        public string AccountId { get; set; }   
 
         private string? GetUserId()
         {
@@ -34,6 +36,12 @@ namespace MedPal.API.Services
         {
             var user = _httpContextAccessor.HttpContext?.User;
             return user?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        }
+
+        private string? GetAccountId()
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+            return user?.Claims.FirstOrDefault(x => x.Type == "account_id")?.Value;
         }
     }
 }

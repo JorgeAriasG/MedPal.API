@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using MedPal.API.Interfaces;
 
 namespace MedPal.API.Models
@@ -41,7 +42,15 @@ namespace MedPal.API.Models
         public DateTime CreatedAt { get; set; }
         [Required]
         public DateTime? UpdatedAt { get; set; }
+        
+        // Multi-tenancy (Fase 1): Patient obtiene AccountId vía Clinic
+        // Relación indirecta: Patient → Clinic → Account
         public int ClinicId { get; set; }
+        
+        // Multi-tenancy denormalized para queries rápidas
+        [ForeignKey("Account")]
+        public int? AccountId { get; set; }
+
         // Relación opcional con User (para portal de pacientes)
         public int? UserId { get; set; }
 
@@ -59,6 +68,7 @@ namespace MedPal.API.Models
         public bool IsMarketingBlocked { get; set; } = false;
 
         // Navigation Properties
+        public virtual Account Account { get; set; }
         public virtual Clinic Clinic { get; set; }
         public virtual User User { get; set; }
         public virtual PatientDetails PatientDetails { get; set; }

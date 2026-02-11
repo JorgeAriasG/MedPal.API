@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\MedPal.API.props" />
-</Project>

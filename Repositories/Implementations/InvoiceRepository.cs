@@ -1,54 +1,53 @@
 using MedPal.API.Data;
 using MedPal.API.Models;
 using MedPal.API.Enums;
+using MedPal.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedPal.API.Repositories.Implementations
 {
-    public class InvoiceRepository : IInvoiceRepository
+    public class InvoiceRepository : TenantAwareRepository<Invoice>, IInvoiceRepository
     {
-        private readonly AppDbContext _context;
-
-        public InvoiceRepository(AppDbContext context)
+        public InvoiceRepository(AppDbContext context, ITenantContextService tenantContext)
+            : base(context, tenantContext)
         {
-            _context = context;
         }
 
         public async Task<IEnumerable<Invoice>> GetAllInvoicesAsync()
         {
-            return await _context.Invoices
+            return await ApplyTenantFilter(_context.Invoices
                 .Include(i => i.Patient)
                 .Include(i => i.Appointment)
-                .Include(i => i.Payments)
+                .Include(i => i.Payments))
                 .ToListAsync();
         }
 
         public async Task<Invoice> GetInvoiceByIdAsync(int id)
         {
-            return await _context.Invoices
+            return await ApplyTenantFilter(_context.Invoices
                 .Include(i => i.Patient)
                 .Include(i => i.Appointment)
-                .Include(i => i.Payments)
+                .Include(i => i.Payments))
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public async Task<IEnumerable<Invoice>> GetInvoicesByPatientIdAsync(int patientId)
         {
-            return await _context.Invoices
+            return await ApplyTenantFilter(_context.Invoices
                 .Include(i => i.Patient)
                 .Include(i => i.Appointment)
                 .Include(i => i.Payments)
-                .Where(i => i.PatientId == patientId)
+                .Where(i => i.PatientId == patientId))
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<Invoice>> GetInvoicesByAppointmentIdAsync(int appointmentId)
         {
-            return await _context.Invoices
+            return await ApplyTenantFilter(_context.Invoices
                 .Include(i => i.Patient)
                 .Include(i => i.Appointment)
                 .Include(i => i.Payments)
-                .Where(i => i.AppointmentId == appointmentId)
+                .Where(i => i.AppointmentId == appointmentId))
                 .ToListAsync();
         }
 

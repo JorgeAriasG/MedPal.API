@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using MedPal.API.Interfaces;
 
 namespace MedPal.API.Models
@@ -41,7 +42,15 @@ namespace MedPal.API.Models
         public DateTime? DeletedAt { get; set; }
         public int? DeletedByUserId { get; set; }
 
+        // Multi-tenancy: Account relationship (Fase 1)
+        [ForeignKey("Account")]
+        public int? AccountId { get; set; }
+
+        // Multi-tenancy: Principal clinic (Fase 1)
+        public int? PrincipalClinicId { get; set; }
+
         // Navigations
+        public virtual Account Account { get; set; }
         public virtual ICollection<UserClinic> UserClinics { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
         public virtual Settings Settings { get; set; }

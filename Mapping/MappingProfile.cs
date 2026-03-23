@@ -24,6 +24,7 @@ namespace MedPal.API.Mapping
             CreateMap<Appointment, AppointmentReadDTO>().ReverseMap();
             CreateMap<AppointmentWriteDTO, Appointment>().ReverseMap();
             CreateMap<Clinic, ClinicBasicDTO>().ReverseMap();
+            CreateMap<User, UserUpdateDTO>().ReverseMap();
 
             // Custom mappings for User and UserWriteDTO
             CreateMap<User, UserWriteDTO>().ReverseMap()

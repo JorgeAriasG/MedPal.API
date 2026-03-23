@@ -12,7 +12,7 @@ namespace MedPal.API.Repositories
         Task<User> GetOwnProfileAsync(int userId);
         Task<User> GetUserByEmailAsync(string email);
         Task<User> AddUserAsync(User user);
-        Task UpdateUserAsync(int id, User user);
+        Task UpdateUserAsync(User user);
         Task DeleteUserAsync(int id);
         Task<User?> ValidateUserAsync(string email, string password);
         Task SoftDeleteUserAsync(int userId, int deletedByUserId);

@@ -245,13 +245,13 @@ namespace MedPal.API.Controllers
             return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, userReadDTO);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         [Authorize(Policy = "Users.Manage")]
-        public async Task<ActionResult> UpdateUser(int id, UserWriteDTO userWriteDto)
+        public async Task<ActionResult> UpdateUser(UserUpdateDTO userUpdateDto)
         {
-            var user = _mapper.Map<User>(userWriteDto);
+            var user = _mapper.Map<User>(userUpdateDto);
             user.Id = int.TryParse(_userService.UserId, out int userId) ? userId : 0;
-            await _userRepository.UpdateUserAsync(id, user);
+            await _userRepository.UpdateUserAsync(user);
             return NoContent();
         }
 

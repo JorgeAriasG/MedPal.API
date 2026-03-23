@@ -86,14 +86,14 @@ namespace MedPal.API.Repositories.Implementations
             return user;
         }
 
-        public async Task UpdateUserAsync(int id, User user)
+        public async Task UpdateUserAsync(User user)
         {
-            var existingUser = await _context.Users.FindAsync(id);
+            var existingUser = await _context.Users.FindAsync(user.Id);
             if (existingUser == null)
             {
-                throw new KeyNotFoundException($"User with Id {id} not found.");
+                throw new KeyNotFoundException($"User with Id {user.Id} not found.");
             }
-            _mapper.Map(user, existingUser);
+            // _mapper.Map(user, existingUser);
             _context.Users.Update(existingUser);
             await _context.SaveChangesAsync();
         }
@@ -166,7 +166,7 @@ namespace MedPal.API.Repositories.Implementations
             user.DeactivatedByUserId = deletedByUserId;
             user.UpdatedAt = DateTime.UtcNow;
 
-            await UpdateUserAsync(userId, user);
+            await UpdateUserAsync(user);
         }
 
         // Restaurar usuario (si es necesario)
@@ -180,7 +180,7 @@ namespace MedPal.API.Repositories.Implementations
             user.DeactivatedByUserId = null;
             user.UpdatedAt = DateTime.UtcNow;
 
-            await UpdateUserAsync(userId, user);
+            await UpdateUserAsync(user);
         }
 
         public async Task UpdateUserLastAccessAtAsync(int userId)
@@ -193,7 +193,7 @@ namespace MedPal.API.Repositories.Implementations
             if (user != null)
             {
                 user.LastAccessAt = DateTime.UtcNow;
-                await UpdateUserAsync(userId, user);
+                await UpdateUserAsync(user);
             }
         }
 

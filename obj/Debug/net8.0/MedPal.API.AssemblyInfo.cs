@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MedPal.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ee92265e46d08dbcac45ad04fbe5782d33c0f2da")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+20f05681bff8b37b5d946f5b4a49f1f5b183e7de")]
 [assembly: System.Reflection.AssemblyProductAttribute("MedPal.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MedPal.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

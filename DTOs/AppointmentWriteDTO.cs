@@ -9,5 +9,7 @@ namespace MedPal.API.DTOs
         public string Notes { get; set; }
         public DateOnly Date { get; set; }
         public TimeOnly Time { get; set; }
+        /// <summary>Duración en minutos. Debe estar entre 15 y 120.</summary>
+        public int DurationMinutes { get; set; } = 30;
     }
 }

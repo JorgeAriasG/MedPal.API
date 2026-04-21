@@ -32,6 +32,31 @@ namespace MedPal.API.Repositories
             return appointment;
         }
 
+        public async Task<bool> HasOverlapAsync(int doctorId, DateOnly date, TimeOnly time, int durationMinutes, int? excludeAppointmentId = null)
+        {
+            var newStart = time;
+            var newEnd = time.AddMinutes(durationMinutes);
+
+            var appointments = await ApplyTenantFilter(_context.Appointments)
+                .Where(a => a.UserId == doctorId && a.Date == date && !a.IsDeleted)
+                .Where(a => excludeAppointmentId == null || a.Id != excludeAppointmentId)
+                .ToListAsync();
+
+            foreach (var app in appointments)
+            {
+                var existingStart = app.Time;
+                var existingEnd = app.Time.AddMinutes(app.DurationMinutes);
+
+                // Overlap check: (NewStart < ExistingEnd) AND (ExistingStart < NewEnd)
+                if (newStart < existingEnd && existingStart < newEnd)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public void UpdateAppointment(Appointment appointment)
         {
             _context.Appointments.Update(appointment);

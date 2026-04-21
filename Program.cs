@@ -12,6 +12,7 @@ using MedPal.API.Authorization;
 using MedPal.API.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -345,7 +346,13 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await AuthorizationSeeder.SeedAsync(context);
-    await SuperAdminSeeder.SeedSuperAdminAsync(context);  // ← Crear SuperAdmin si no existe
+    // await SuperAdminSeeder.SeedSuperAdminAsync(context);  // Omitido a petición del usuario para evitar duplicidades
+    
+    // Inyectar datos Dummy sólo en Desarrollo
+    if (app.Environment.IsDevelopment())
+    {
+        await DummyDataSeeder.SeedDummyDataAsync(context);
+    }
 }
 
 // Configure the HTTP request pipeline.

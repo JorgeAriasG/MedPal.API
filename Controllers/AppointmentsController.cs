@@ -6,6 +6,7 @@ using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using FluentValidation;
 
 namespace MedPal.API.Controllers
 {
@@ -15,11 +16,13 @@ namespace MedPal.API.Controllers
     {
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IMapper _mapper;
+        private readonly IValidator<AppointmentWriteDTO> _validator;
 
-        public AppointmentsController(IAppointmentRepository appointmentRepository, IMapper mapper)
+        public AppointmentsController(IAppointmentRepository appointmentRepository, IMapper mapper, IValidator<AppointmentWriteDTO> validator)
         {
             _appointmentRepository = appointmentRepository;
             _mapper = mapper;
+            _validator = validator;
         }
 
         // GET: api/appointments
@@ -55,6 +58,7 @@ namespace MedPal.API.Controllers
         [Authorize(Policy = "Appointments.Create")]
         public async Task<ActionResult<AppointmentReadDTO>> CreateAppointment(AppointmentWriteDTO appointmentWriteDto)
         {
+            await _validator.ValidateAndThrowAsync(appointmentWriteDto);
             var appointment = _mapper.Map<Appointment>(appointmentWriteDto);
 
             // Assign parsed date and time after mapping
@@ -73,6 +77,7 @@ namespace MedPal.API.Controllers
         [Authorize(Policy = "Appointments.Update")]
         public async Task<IActionResult> UpdateAppointment(int id, AppointmentWriteDTO appointmentWriteDto)
         {
+            await _validator.ValidateAndThrowAsync(appointmentWriteDto);
             var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
             if (appointment == null)
             {

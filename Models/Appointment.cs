@@ -34,6 +34,9 @@ namespace MedPal.API.Models
 		public TimeOnly Time { get; set; }
 
 		[Required]
+		public int DurationMinutes { get; set; } = 30;
+
+		[Required]
 		public DateTime CreatedAt { get; set; }
 
 		public DateTime? UpdatedAt { get; set; }

@@ -50,20 +50,39 @@ namespace MedPal.API.Controllers
                 return NotFound("Patient not found");
             }
 
+            // [SECURITY/HEALTH] Allergy Checking - Phase 4.2
+            var patientAllergies = await _patientRepository.GetPatientAllergyNamesAsync(prescriptionDto.PatientId, default);
+            var prescribedMeds = prescriptionDto.Items.Select(i => i.MedicationName.ToLower()).ToList();
+            
+            var matchingAllergies = prescribedMeds.Intersect(patientAllergies).ToList();
+            
+            if (matchingAllergies.Any())
+            {
+                return BadRequest(new { 
+                    error = "ALLERGY_BLOCK", 
+                    message = $"Prescription blocked due to patient allergies: {string.Join(", ", matchingAllergies)}",
+                    allergies = matchingAllergies
+                });
+            }
+
             var prescription = new Prescription
             {
                 DoctorId = doctorId,
                 PatientId = prescriptionDto.PatientId,
                 Diagnosis = prescriptionDto.Diagnosis,
                 Notes = prescriptionDto.Notes,
-                ExpiresAt = prescriptionDto.ExpiresAt,
+                ExpiresAt = prescriptionDto.ExpiresAt == default ? DateTime.UtcNow.AddDays(30) : prescriptionDto.ExpiresAt, // Default 30 days
+                Status = PrescriptionStatus.Active,
+                MedicalHistoryId = prescriptionDto.MedicalHistoryId,
                 Items = prescriptionDto.Items.Select(i => new PrescriptionItem
                 {
                     MedicationName = i.MedicationName,
                     Dosage = i.Dosage,
                     Frequency = i.Frequency,
                     Duration = i.Duration,
-                    Instructions = i.Instructions
+                    Instructions = i.Instructions,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 }).ToList()
             };
 
@@ -75,9 +94,26 @@ namespace MedPal.API.Controllers
             return CreatedAtAction(nameof(GetPrescriptionToken), new { id = createdPrescription.Id }, MapToReadDTO(createdPrescription));
         }
 
+        // POST: api/Prescription/check-allergies
+        [HttpPost("check-allergies")]
+        [Authorize(Policy = "MedicalRecords.Create")]
+        public async Task<ActionResult> CheckAllergies([FromBody] AllergyCheckRequestDTO request)
+        {
+            var patientAllergies = await _patientRepository.GetPatientAllergyNamesAsync(request.PatientId, default);
+            var proposedMeds = request.MedicationNames.Select(m => m.ToLower()).ToList();
+
+            var matches = proposedMeds.Intersect(patientAllergies).ToList();
+
+            return Ok(new
+            {
+                HasAllergies = matches.Any(),
+                MatchingAllergies = matches
+            });
+        }
+
         // GET: api/Prescription/{id}
         [HttpGet("{id}")]
-        [Authorize(Policy = "MedicalRecords.ViewOwn")]
+        [Authorize(Policy = "MedicalRecords.ViewAssigned")]
         public async Task<ActionResult<PrescriptionReadDTO>> GetPrescriptionToken(int id)
         {
             var prescription = await _prescriptionRepository.GetByIdAsync(id);
@@ -96,7 +132,7 @@ namespace MedPal.API.Controllers
 
         // GET: api/Prescription/patient/{patientId}
         [HttpGet("patient/{patientId}")]
-        [Authorize(Policy = "MedicalRecords.ViewOwn")]
+        [Authorize(Policy = "MedicalRecords.ViewAssigned")]
         public async Task<ActionResult<IEnumerable<PrescriptionReadDTO>>> GetPrescriptionsByPatientId(int patientId)
         {
             // Optional: Validate if User has access to this Patient (Doctor assigned or Patient themselves)

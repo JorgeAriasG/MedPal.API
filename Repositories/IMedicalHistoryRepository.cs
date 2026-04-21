@@ -9,6 +9,7 @@ namespace MedPal.API.Repositories
         Task<IEnumerable<MedicalHistory>> GetAllMedicalHistoriesAsync();
         Task<MedicalHistory> GetMedicalHistoryByIdAsync(int id);
         Task<MedicalHistory> AddMedicalHistoryAsync(MedicalHistory medicalHistory);
+        Task<IEnumerable<MedicalHistory>> GetMedicalHistoriesByPatientIdAsync(int patientId);
         void UpdateMedicalHistory(MedicalHistory medicalHistory);
         void RemoveMedicalHistory(MedicalHistory medicalHistory);
         Task<int> CompleteAsync();

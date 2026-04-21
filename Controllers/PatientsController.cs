@@ -28,9 +28,13 @@ namespace MedPal.API.Controllers
         [HttpGet]
         [Authorize(Policy = "Patients.ViewAll")]
         [Authorize(Policy = "ViewPatientsPolicy")] // Fase 2: Multi-tenancy policy
-        public async Task<ActionResult<IEnumerable<PatientReadDTO>>> GetAllPatients(int clinicId)
+        public async Task<ActionResult<IEnumerable<PatientReadDTO>>> GetAllPatients(
+            [FromQuery] int clinicId, 
+            [FromQuery] string? search = null, 
+            [FromQuery] string? sortBy = "name", 
+            [FromQuery] bool descending = false)
         {
-            var patients = await _patientRepository.GetAllPatientsAsync(clinicId);
+            var patients = await _patientRepository.GetAllPatientsAsync(clinicId, search, sortBy, descending);
             var patientReadDTOs = _mapper.Map<IEnumerable<PatientReadDTO>>(patients);
             return Ok(patientReadDTOs);
         }
@@ -95,6 +99,13 @@ namespace MedPal.API.Controllers
         {
             await _patientRepository.DeletePatientAsync(id);
             return NoContent();
+        }
+
+        [HttpGet("check-email")]
+        public async Task<ActionResult<bool>> CheckEmail([FromQuery] string email)
+        {
+            var exists = await _patientRepository.EmailExistsAsync(email, default);
+            return Ok(exists);
         }
     }
 }

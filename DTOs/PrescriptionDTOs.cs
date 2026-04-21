@@ -59,4 +59,9 @@ namespace MedPal.API.DTOs
         public DateTime ExpiresAt { get; set; }
         public IEnumerable<PrescriptionItemDTO> Items { get; set; } // Show meds to pharmacist
     }
+    public class AllergyCheckRequestDTO
+    {
+        public int PatientId { get; set; }
+        public List<string> MedicationNames { get; set; }
+    }
 }

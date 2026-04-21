@@ -609,6 +609,32 @@ namespace MedPal.API.Data
                     patient.UpdatedAt = DateTime.UtcNow;
             }
 
+            // Auto-stamp UpdatedAt para Appointments
+            var appointmentsToStamp = ChangeTracker.Entries<Appointment>()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
+                .Select(e => e.Entity)
+                .ToList();
+
+            foreach (var appt in appointmentsToStamp)
+            {
+                if (appt.UpdatedAt == null)
+                    appt.UpdatedAt = DateTime.UtcNow;
+            }
+
+            // Auto-stamp UpdatedAt/CreatedAt para PrescriptionItems
+            var prescItemsToStamp = ChangeTracker.Entries<PrescriptionItem>()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
+                .Select(e => e.Entity)
+                .ToList();
+
+            foreach (var pi in prescItemsToStamp)
+            {
+                if (pi.UpdatedAt == null || pi.UpdatedAt == default(DateTime))
+                    pi.UpdatedAt = DateTime.UtcNow;
+                if (pi.CreatedAt == null || pi.CreatedAt == default(DateTime))
+                    pi.CreatedAt = DateTime.UtcNow;
+            }
+
             return await base.SaveChangesAsync(cancellationToken);
         }
     }

@@ -3,11 +3,13 @@ using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MedPal.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class PatientDetailsController : ControllerBase
     {
         private readonly IPatientDetailsRepository _patientDetailsRepository;

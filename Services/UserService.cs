@@ -19,6 +19,7 @@ namespace MedPal.API.Services
         public string Username { get; set; }
         public string Role { get; set; }
         public string AccountId { get; set; }   
+        public string Specialty => GetSpecialty() ?? string.Empty;
 
         private string? GetUserId()
         {
@@ -42,6 +43,12 @@ namespace MedPal.API.Services
         {
             var user = _httpContextAccessor.HttpContext?.User;
             return user?.Claims.FirstOrDefault(x => x.Type == "account_id")?.Value;
+        }
+
+        private string? GetSpecialty()
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+            return user?.Claims.FirstOrDefault(x => x.Type == "specialty")?.Value;
         }
     }
 }

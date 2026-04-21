@@ -26,6 +26,14 @@ namespace MedPal.API.Repositories
                 .FirstOrDefaultAsync(mh => mh.Id == id);
         }
 
+        public async Task<IEnumerable<MedicalHistory>> GetMedicalHistoriesByPatientIdAsync(int patientId)
+        {
+            return await ApplyTenantFilter(_context.MedicalHistories)
+                .Where(mh => mh.PatientDetailsId == patientId)
+                .OrderByDescending(mh => mh.CreatedAt)
+                .ToListAsync();
+        }
+
         public async Task<MedicalHistory> AddMedicalHistoryAsync(MedicalHistory medicalHistory)
         {
             await _context.MedicalHistories.AddAsync(medicalHistory);

@@ -6,6 +6,7 @@ using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using MedPal.API.Services;
 
 namespace MedPal.API.Controllers
 {
@@ -141,6 +142,51 @@ namespace MedPal.API.Controllers
             await _medicalHistoryRepository.CompleteAsync();
 
             return NoContent();
+        }
+
+        // GET: api/medicalhistory/patient/{patientId}
+        [HttpGet("patient/{patientId}")]
+        public async Task<ActionResult<IEnumerable<MedicalHistoryReadDTO>>> GetMedicalHistoriesByPatientId(int patientId)
+        {
+            var histories = await _medicalHistoryRepository.GetMedicalHistoriesByPatientIdAsync(patientId);
+            
+            // Logica NOM-004: Solo ver su propia especialidad a menos que haya consentimiento
+            var userSpecialty = _userService.Specialty;
+            var userRole = _userService.Role;
+            int.TryParse(_userService.UserId, out int currentUserId);
+
+            var filteredHistories = new List<MedicalHistory>();
+
+            foreach (var history in histories)
+            {
+                // Permitir si es la misma especialidad
+                if (history.SpecialtyType == userSpecialty)
+                {
+                    filteredHistories.Add(history);
+                    continue;
+                }
+
+                // Permitir si es el autor del registro
+                if (history.CreatedByUserId == currentUserId || history.HealthcareProfessionalId == currentUserId)
+                {
+                    filteredHistories.Add(history);
+                    continue;
+                }
+
+                // Permitir si es Admin (gestion)
+                if (userRole == "Admin" || userRole == "AccountAdmin")
+                {
+                    filteredHistories.Add(history);
+                    continue;
+                }
+
+                // TODO: En el futuro verificaremos PatientConsent activo para acceso entre especialidades.
+                // Por ahora, cumpliendo con la regla del usuario: "Solo con consentimiento explicito".
+                // Como no hay consentimiento cargado aún para esta sesión, no se muestran especialidades ajenas.
+            }
+
+            var medicalHistoryReadDTOs = _mapper.Map<IEnumerable<MedicalHistoryReadDTO>>(filteredHistories);
+            return Ok(medicalHistoryReadDTOs);
         }
     }
 }

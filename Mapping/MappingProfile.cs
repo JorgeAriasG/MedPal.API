@@ -1,7 +1,9 @@
+using System;
 using AutoMapper;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Models.Authorization;
+using MedPal.API.Enums;
 
 namespace MedPal.API.Mapping
 {
@@ -9,30 +11,54 @@ namespace MedPal.API.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<Patient, PatientReadDTO>().ReverseMap();
-            CreateMap<Patient, PatientWriteDTO>().ReverseMap();
+            CreateMap<Patient, PatientReadDTO>()
+                .ForMember(dest => dest.EmergencyContact, opt => opt.Ignore());
+            CreateMap<Patient, PatientWriteDTO>()
+                .ForMember(dest => dest.EmergencyContact, opt => opt.Ignore());
+            CreateMap<PatientWriteDTO, Patient>(MemberList.Source)
+                .ForSourceMember(src => src.EmergencyContact, opt => opt.DoNotValidate());
             CreateMap<Patient, Patient>().ReverseMap();
-            CreateMap<User, UserReadDTO>().ReverseMap();
+            
+            CreateMap<User, UserReadDTO>()
+                .ForMember(dest => dest.Token, opt => opt.Ignore());
+            CreateMap<UserReadDTO, User>(MemberList.Source)
+                .ForSourceMember(src => src.Token, opt => opt.DoNotValidate());
+
             CreateMap<Clinic, ClinicReadDTO>().ReverseMap();
-            CreateMap<Clinic, ClinicWriteDTO>().ReverseMap();
+            CreateMap<ClinicWriteDTO, Clinic>(MemberList.Source);
             CreateMap<PatientDetails, PatientDetailsReadDTO>().ReverseMap();
-            CreateMap<PatientDetails, PatientDetailsWriteDTO>().ReverseMap();
+            CreateMap<PatientDetailsWriteDTO, PatientDetails>(MemberList.Source);
             CreateMap<MedicalHistory, MedicalHistoryReadDTO>().ReverseMap();
-            CreateMap<MedicalHistory, MedicalHistoryWriteDTO>().ReverseMap();
+            CreateMap<MedicalHistoryWriteDTO, MedicalHistory>(MemberList.Source);
             CreateMap<Allergy, AllergyReadDTO>().ReverseMap();
-            CreateMap<Allergy, AllergyWriteDTO>().ReverseMap();
+            CreateMap<AllergyWriteDTO, Allergy>(MemberList.Source);
             CreateMap<Appointment, AppointmentReadDTO>().ReverseMap();
-            CreateMap<AppointmentWriteDTO, Appointment>().ReverseMap();
+            CreateMap<AppointmentWriteDTO, Appointment>(MemberList.Source)
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<AppointmentStatus>(src.Status, true)));
             CreateMap<Clinic, ClinicBasicDTO>().ReverseMap();
-            CreateMap<User, UserUpdateDTO>().ReverseMap();
+            CreateMap<UserUpdateDTO, User>(MemberList.Source);
+            
+            // Prescription mappings (Phase 4)
+            CreateMap<Prescription, PrescriptionReadDTO>()
+                .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.Doctor.Name))
+                .ForMember(dest => dest.DoctorSpecialty, opt => opt.MapFrom(src => src.Doctor.Specialty))
+                .ForMember(dest => dest.DoctorLicense, opt => opt.MapFrom(src => src.Doctor.ProfessionalLicenseNumber))
+                .ForMember(dest => dest.PatientName, opt => opt.MapFrom(src => src.Patient.Name));
+            CreateMap<PrescriptionWriteDTO, Prescription>(MemberList.Source);
+            CreateMap<PrescriptionItem, PrescriptionItemDTO>().ReverseMap();
 
             // Custom mappings for User and UserWriteDTO
-            CreateMap<User, UserWriteDTO>().ReverseMap()
-                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password));
+            CreateMap<UserWriteDTO, User>(MemberList.Source)
+                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password))
+                .ForSourceMember(src => src.RoleId, opt => opt.DoNotValidate())
+                .ForSourceMember(src => src.ConfirmPassword, opt => opt.DoNotValidate())
+                .ForSourceMember(src => src.AcceptPrivacyTerms, opt => opt.DoNotValidate());
 
             // Custom mappings for User and UserRegisterDTO
-            CreateMap<User, UserRegisterDTO>().ReverseMap()
-                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password));
+            CreateMap<UserRegisterDTO, User>(MemberList.Source)
+                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password))
+                .ForSourceMember(src => src.ConfirmPassword, opt => opt.DoNotValidate())
+                .ForSourceMember(src => src.AcceptPrivacyTerms, opt => opt.DoNotValidate());
 
             // Permission mappings
             CreateMap<Permission, PermissionDTO>();
@@ -43,25 +69,30 @@ namespace MedPal.API.Mapping
             
             // UserRole mappings
             CreateMap<UserRole, UserRoleDTO>()
-                .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.Name));
+                .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.Name))
+                .ForMember(dest => dest.IsActive, opt => opt.Ignore());
 
             // Phase 4: EmergencyContact mappings
             CreateMap<EmergencyContact, EmergencyContactReadDTO>().ReverseMap();
-            CreateMap<EmergencyContactWriteDTO, EmergencyContact>();
+            CreateMap<EmergencyContactWriteDTO, EmergencyContact>(MemberList.Source);
 
             // Phase 4: Payment mappings
-            CreateMap<Payment, PaymentReadDTO>().ReverseMap();
-            CreateMap<PaymentWriteDTO, Payment>();
+            CreateMap<Payment, PaymentReadDTO>()
+                .ForMember(dest => dest.TransactionReference, opt => opt.Ignore())
+                .ForMember(dest => dest.Notes, opt => opt.Ignore());
+            CreateMap<PaymentWriteDTO, Payment>(MemberList.Source)
+                .ForSourceMember(src => src.TransactionReference, opt => opt.DoNotValidate())
+                .ForSourceMember(src => src.Notes, opt => opt.DoNotValidate());
 
             // Phase 4: Invoice mappings
             CreateMap<Invoice, InvoiceReadDTO>()
                 .ForMember(dest => dest.RemainingAmount, opt => opt.MapFrom(src => src.TotalAmount - src.PaidAmount))
                 .ForMember(dest => dest.Payments, opt => opt.MapFrom(src => src.Payments.Where(p => !p.IsDeleted).ToList()));
-            CreateMap<InvoiceWriteDTO, Invoice>();
+            CreateMap<InvoiceWriteDTO, Invoice>(MemberList.Source);
 
             // Phase 4: NotificationMessage mappings
             CreateMap<NotificationMessage, NotificationMessageReadDTO>().ReverseMap();
-            CreateMap<NotificationMessageWriteDTO, NotificationMessage>();
+            CreateMap<NotificationMessageWriteDTO, NotificationMessage>(MemberList.Source);
         }
     }
 }

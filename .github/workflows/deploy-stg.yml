@@ -51,24 +51,20 @@ jobs:
 
   deploy:
     needs: build-and-push
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     
     steps:
-      - name: Deploy to Proxmox VM (Ubuntu Server) via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOMELAB_VM_IP }}
-          username: ${{ secrets.HOMELAB_VM_USER }}
-          key: ${{ secrets.HOMELAB_VM_SSH_KEY }}
-          script: |
-            # Navigate to the DevOps infrastructure folder
-            cd /opt/medpal/infrastructure
-            
-            # Pull the latest staging image
-            docker compose -f docker-compose.stg.yml pull api-stg
-            
-            # Recreate the container with the new image
-            docker compose -f docker-compose.stg.yml up -d --no-deps api-stg
-            
-            # Clean up old dangling images to save space
-            docker image prune -f
+      - name: Deploy to Local Homelab Server
+        run: |
+          # Navigate to the DevOps infrastructure folder
+          cd /opt/medpal/infrastructure
+          
+          # Pull the latest staging image from GHCR
+          docker compose -f docker-compose.stg.yml pull api-stg
+          
+          # Recreate the container with the new image
+          docker compose -f docker-compose.stg.yml up -d --no-deps api-stg
+          
+          # Clean up old dangling images to save space
+          docker image prune -f
+

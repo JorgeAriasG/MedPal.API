@@ -125,6 +125,9 @@ namespace MedPal.API.Migrations
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
 
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 

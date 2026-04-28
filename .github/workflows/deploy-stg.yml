@@ -3,8 +3,8 @@ name: Deploy Backend to Staging
 on:
   push:
     branches:
+      - dev
       - master
-      - main
     paths:
       - 'Backend/Services/MedPalApi/MedPal.API/**'
       - '.github/workflows/deploy-backend-stg.yml'

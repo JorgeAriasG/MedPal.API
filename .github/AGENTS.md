@@ -8,8 +8,20 @@
 
 Este workspace contiene **agentes especializados** que pueden ayudarte con tareas específicas:
 
+⭐ **NEW: Para automatización completa, usa:**
+```
+@orchestrationagent [feature]
+```
+Esto coordina TODOS los agentes automáticamente sin intervención manual.
+Ver: `scheduling.ui/.github/AUTOMATION_GUIDE.md`
+
+---
+
+**Agentes Individuales:**
+
 | Agente | Especialidad | Comando | Ubicación |
-|--------|--------------|---------|-----------|
+|--------|--------------|---------|----------|
+| **@orchestrationagent** | Automatización completa | `@orchestrationagent [feature]` | Workspace Frontend |
 | **@backendagent** | .NET / Entity Framework / SQL | `@backendagent [tarea]` | `.github/agents/backendagent.agent.md` |
 | **@qaagent** | Testing / xUnit / Integration Tests | `@qaagent [tarea]` | Workspace Frontend |
 | **@secopsagent** | Seguridad / JWT / RBAC / Auditoría | `@secopsagent [tarea]` | Workspace Frontend |

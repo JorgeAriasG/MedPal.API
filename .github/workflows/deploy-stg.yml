@@ -5,9 +5,6 @@ on:
     branches:
       - dev
       - master
-    paths:
-      - 'Backend/Services/MedPalApi/MedPal.API/**'
-      - '.github/workflows/deploy-backend-stg.yml'
 
 env:
   REGISTRY: ghcr.io
@@ -40,11 +37,11 @@ jobs:
             type=sha,format=long
             latest
 
-      # Note: We need a Dockerfile in the Backend directory for this to work correctly in isolation
+      # Note: We need a Dockerfile in the repository root
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./Backend/Services/MedPalApi/MedPal.API
+          context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

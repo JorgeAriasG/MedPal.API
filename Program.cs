@@ -335,9 +335,10 @@ builder.Services.AddAuthorizationBuilder()
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("http://localhost:4200")
+        builder => builder.WithOrigins("http://localhost:4200", "https://portal.clinicflow.com.mx")
                             .AllowAnyHeader()
-                            .AllowAnyMethod());
+                            .AllowAnyMethod()
+                            .AllowCredentials());
 });
 
 var app = builder.Build();
@@ -351,7 +352,7 @@ using (var scope = app.Services.CreateScope())
     await context.Database.MigrateAsync();
     
     await AuthorizationSeeder.SeedAsync(context);
-    // await SuperAdminSeeder.SeedSuperAdminAsync(context);  // Omitido a petición del usuario para evitar duplicidades
+    await SuperAdminSeeder.SeedSuperAdminAsync(context);
     
     // Inyectar datos Dummy sólo en Desarrollo
     if (app.Environment.IsDevelopment())
@@ -361,11 +362,12 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
+app.UseCors("AllowSpecificOrigin");
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseCors("AllowSpecificOrigin");
 }
 else
 {

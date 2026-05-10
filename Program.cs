@@ -346,6 +346,10 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    
+    // Aplicar migraciones pendientes (y crear la base de datos si no existe)
+    await context.Database.MigrateAsync();
+    
     await AuthorizationSeeder.SeedAsync(context);
     // await SuperAdminSeeder.SeedSuperAdminAsync(context);  // Omitido a petición del usuario para evitar duplicidades
     

@@ -1,0 +1,30 @@
+# C# / .NET Ignore
+[Bb]in/
+[Oo]bj/
+[Tt]est[Rr]esults/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.cache
+*.log
+*.txt
+.vscode/
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]inaries/
+[Oo]utput/
+[Pp]roject[Oo]utput/
+[Tt]race[Ee]vents/
+
+# OS/Mac
+.DS_Store

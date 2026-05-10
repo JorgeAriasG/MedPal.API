@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/medpal-api-stg
+  IMAGE_NAME: jorgeariasg/medpal-api-stg
 
 jobs:
   build-and-push:
@@ -53,14 +53,14 @@ jobs:
     steps:
       - name: Deploy to Local Homelab Server
         run: |
-          # Navigate to the DevOps infrastructure folder
-          cd /opt/medpal/infrastructure
+          # Navigate to the SaaS infrastructure folder
+          cd /home/runner/saas-infra
           
           # Pull the latest staging image from GHCR
-          docker compose -f docker-compose.stg.yml pull api-stg
+          docker compose -f docker-compose.backend.yml pull medpal-api
           
           # Recreate the container with the new image
-          docker compose -f docker-compose.stg.yml up -d --no-deps api-stg
+          docker compose -f docker-compose.backend.yml up -d --no-deps medpal-api
           
           # Clean up old dangling images to save space
           docker image prune -f

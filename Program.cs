@@ -121,6 +121,7 @@ builder.Services.AddScoped<IMedicalHistoryRepository, MedicalHistoryRepository>(
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
 // Authorization repositories
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();

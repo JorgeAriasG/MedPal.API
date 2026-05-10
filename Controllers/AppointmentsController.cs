@@ -7,6 +7,7 @@ using MedPal.API.Models;
 using MedPal.API.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using FluentValidation;
+using MedPal.API.Services;
 
 namespace MedPal.API.Controllers
 {
@@ -14,15 +15,11 @@ namespace MedPal.API.Controllers
     [Route("api/[controller]")]
     public class AppointmentsController : BaseController
     {
-        private readonly IAppointmentRepository _appointmentRepository;
-        private readonly IMapper _mapper;
-        private readonly IValidator<AppointmentWriteDTO> _validator;
+        private readonly IAppointmentService _appointmentService;
 
-        public AppointmentsController(IAppointmentRepository appointmentRepository, IMapper mapper, IValidator<AppointmentWriteDTO> validator)
+        public AppointmentsController(IAppointmentService appointmentService)
         {
-            _appointmentRepository = appointmentRepository;
-            _mapper = mapper;
-            _validator = validator;
+            _appointmentService = appointmentService;
         }
 
         // GET: api/appointments
@@ -31,8 +28,7 @@ namespace MedPal.API.Controllers
         [Authorize(Policy = "ViewAppointmentsPolicy")] // Fase 2: Multi-tenancy policy
         public async Task<ActionResult<IEnumerable<AppointmentReadDTO>>> GetAllAppointmentsById(int clinicId)
         {
-            var appointments = await _appointmentRepository.GetAllAppointmentsByIdAsync(clinicId);
-            var appointmentReadDTOs = _mapper.Map<IEnumerable<AppointmentReadDTO>>(appointments);
+            var appointmentReadDTOs = await _appointmentService.GetAllAppointmentsByIdAsync(clinicId);
             return Ok(appointmentReadDTOs);
         }
 
@@ -42,12 +38,11 @@ namespace MedPal.API.Controllers
         [Authorize(Policy = "ViewAppointmentsPolicy")] // Fase 2: Multi-tenancy policy
         public async Task<ActionResult<AppointmentReadDTO>> GetAppointmentById(int id)
         {
-            var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
-            if (appointment == null)
+            var appointmentReadDTO = await _appointmentService.GetAppointmentByIdAsync(id);
+            if (appointmentReadDTO == null)
             {
                 return NotFound();
             }
-            var appointmentReadDTO = _mapper.Map<AppointmentReadDTO>(appointment);
             return Ok(appointmentReadDTO);
         }
 
@@ -58,17 +53,7 @@ namespace MedPal.API.Controllers
         [Authorize(Policy = "Appointments.Create")]
         public async Task<ActionResult<AppointmentReadDTO>> CreateAppointment(AppointmentWriteDTO appointmentWriteDto)
         {
-            await _validator.ValidateAndThrowAsync(appointmentWriteDto);
-            var appointment = _mapper.Map<Appointment>(appointmentWriteDto);
-
-            // Assign parsed date and time after mapping
-            appointment.CreatedAt = DateTime.UtcNow;
-            appointment.UpdatedAt = DateTime.UtcNow;
-
-            await _appointmentRepository.AddAppointmentAsync(appointment);
-            await _appointmentRepository.CompleteAsync();
-
-            var appointmentReadDTO = _mapper.Map<AppointmentReadDTO>(appointment);
+            var appointmentReadDTO = await _appointmentService.CreateAppointmentAsync(appointmentWriteDto);
             return CreatedAtAction(nameof(GetAppointmentById), new { id = appointmentReadDTO.Id }, appointmentReadDTO);
         }
 
@@ -77,29 +62,11 @@ namespace MedPal.API.Controllers
         [Authorize(Policy = "Appointments.Update")]
         public async Task<IActionResult> UpdateAppointment(int id, AppointmentWriteDTO appointmentWriteDto)
         {
-            await _validator.ValidateAndThrowAsync(appointmentWriteDto);
-            var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
-            if (appointment == null)
+            var result = await _appointmentService.UpdateAppointmentAsync(id, appointmentWriteDto);
+            if (result == null)
             {
                 return NotFound();
             }
-
-            appointment.UpdatedAt = DateTime.UtcNow;
-
-            var originalPatientId = appointment.PatientId;
-            var originalUserId = appointment.UserId;
-
-            _mapper.Map(appointmentWriteDto, appointment);
-
-            // If PatientId was not provided, restore the original value
-            if (!appointmentWriteDto.PatientId.HasValue)
-                appointment.PatientId = originalPatientId;
-            // If UserId was not provided, restore the original value
-            if (!appointmentWriteDto.UserId.HasValue)
-                appointment.UserId = originalUserId;
-
-            _appointmentRepository.UpdateAppointment(appointment);
-            await _appointmentRepository.CompleteAsync();
 
             return NoContent();
         }
@@ -109,14 +76,11 @@ namespace MedPal.API.Controllers
         [Authorize(Policy = "Appointments.Cancel")]
         public async Task<IActionResult> DeleteAppointment(int id)
         {
-            var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
-            if (appointment == null)
+            var success = await _appointmentService.DeleteAppointmentAsync(id);
+            if (!success)
             {
                 return NotFound();
             }
-
-            _appointmentRepository.RemoveAppointment(appointment);
-            await _appointmentRepository.CompleteAsync();
 
             return NoContent();
         }

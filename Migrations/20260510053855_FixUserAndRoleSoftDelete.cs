@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MedPal.API.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUserSoftDelete : Migration
+    public partial class FixUserAndRoleSoftDelete : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 5126
-ENV ASPNETCORE_URLS=http+:5126
+ENV ASPNETCORE_URLS=http://+:5126
 
 # Use the SDK image for building
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build

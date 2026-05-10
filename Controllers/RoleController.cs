@@ -145,7 +145,6 @@ namespace MedPal.API.Controllers
                     });
                 }
 
-                // Validate system role protection
                 var role = await _roleRepository.GetRoleByIdAsync(roleId);
                 if (role == null)
                 {
@@ -153,21 +152,28 @@ namespace MedPal.API.Controllers
                     return NotFound(new { message = $"Rol con ID {roleId} no encontrado." });
                 }
 
-                if (role.IsSystemRole)
+                // Hierarchical Role Protection
+                var isSuperAdmin = await _roleRepository.UserHasRoleAsync(assignedById, "SuperAdmin", null);
+                var isAccountAdmin = await _roleRepository.UserHasRoleAsync(assignedById, "AccountAdmin", null);
+                var isClinicAdmin = assignRoleDto.ClinicId.HasValue && 
+                                  await _roleRepository.UserHasRoleAsync(assignedById, "ClinicAdmin", assignRoleDto.ClinicId.Value);
+
+                if (role.Name == "SuperAdmin" && !isSuperAdmin)
                 {
-                    var isGlobalAdmin = await _roleRepository.UserHasRoleAsync(assignedById, "SuperAdmin", null);
+                    _logger.LogWarning("Security violation: User {UserId} attempted to assign SuperAdmin", assignedById);
+                    return StatusCode(403, new { message = "Solo un Super Administrador puede asignar el rol de SuperAdmin." });
+                }
 
-                    if (!isGlobalAdmin)
-                    {
-                        _logger.LogWarning(
-                            "Security violation: User {UserId} attempted to assign system role '{RoleName}' without admin privileges",
-                            assignedById, role.Name);
+                if ((role.Name == "AccountAdmin" || role.Name == "ClinicAdmin") && !isSuperAdmin && !isAccountAdmin)
+                {
+                    _logger.LogWarning("Security violation: User {UserId} attempted to assign administrative role '{RoleName}'", assignedById, role.Name);
+                    return StatusCode(403, new { message = $"No tiene permisos para asignar el rol administrativo '{role.Name}'." });
+                }
 
-                        return StatusCode(403, new
-                        {
-                            message = $"No tiene permisos para asignar el rol de sistema '{role.Name}'."
-                        });
-                    }
+                if (!isSuperAdmin && !isAccountAdmin && !isClinicAdmin)
+                {
+                    _logger.LogWarning("Security violation: User {UserId} attempted to assign role without administrative permissions", assignedById);
+                    return StatusCode(403, new { message = "No tiene permisos administrativos suficientes para asignar roles." });
                 }
 
                 await _roleRepository.AssignRoleToUserAsync(
@@ -277,7 +283,6 @@ namespace MedPal.API.Controllers
                     });
                 }
 
-                // Validate system role protection
                 var role = await _roleRepository.GetRoleByIdAsync(roleId);
                 if (role == null)
                 {
@@ -285,22 +290,28 @@ namespace MedPal.API.Controllers
                     return NotFound(new { message = $"Rol con ID {roleId} no encontrado." });
                 }
 
-                if (role.IsSystemRole)
+                // Hierarchical Role Protection
+                var isSuperAdmin = await _roleRepository.UserHasRoleAsync(removedById, "SuperAdmin", null);
+                var isAccountAdmin = await _roleRepository.UserHasRoleAsync(removedById, "AccountAdmin", null);
+                var isClinicAdmin = clinicId.HasValue && 
+                                  await _roleRepository.UserHasRoleAsync(removedById, "ClinicAdmin", clinicId.Value);
+
+                if (role.Name == "SuperAdmin" && !isSuperAdmin)
                 {
-                    // Only global admins can revoke system roles
-                    var isGlobalAdmin = await _roleRepository.UserHasRoleAsync(removedById, "SuperAdmin", null);
+                    _logger.LogWarning("Security violation: User {UserId} attempted to remove SuperAdmin", removedById);
+                    return StatusCode(403, new { message = "Solo un Super Administrador puede remover el rol de SuperAdmin." });
+                }
 
-                    if (!isGlobalAdmin)
-                    {
-                        _logger.LogWarning(
-                            "Security violation: User {UserId} attempted to remove system role '{RoleName}' without admin privileges",
-                            removedById, role.Name);
+                if ((role.Name == "AccountAdmin" || role.Name == "ClinicAdmin") && !isSuperAdmin && !isAccountAdmin)
+                {
+                    _logger.LogWarning("Security violation: User {UserId} attempted to remove administrative role '{RoleName}'", removedById, role.Name);
+                    return StatusCode(403, new { message = $"No tiene permisos para remover el rol administrativo '{role.Name}'." });
+                }
 
-                        return StatusCode(403, new
-                        {
-                            message = $"No tiene permisos para remover el rol de sistema '{role.Name}'. Solo administradores globales pueden remover roles de sistema."
-                        });
-                    }
+                if (!isSuperAdmin && !isAccountAdmin && !isClinicAdmin)
+                {
+                    _logger.LogWarning("Security violation: User {UserId} attempted to remove role without administrative permissions", removedById);
+                    return StatusCode(403, new { message = "No tiene permisos administrativos suficientes para remover roles." });
                 }
 
                 await _roleRepository.RemoveRoleFromUserAsync(userId, roleId, clinicId);

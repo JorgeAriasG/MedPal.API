@@ -35,6 +35,8 @@ namespace MedPal.API.Mapping
             CreateMap<Appointment, AppointmentReadDTO>().ReverseMap();
             CreateMap<AppointmentWriteDTO, Appointment>(MemberList.Source)
                 .ForSourceMember(src => src.Status, opt => opt.DoNotValidate())
+                .ForSourceMember(src => src.PatientName, opt => opt.DoNotValidate())
+                .ForSourceMember(src => src.PatientPhone, opt => opt.DoNotValidate())
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Status) ? AppointmentStatus.Scheduled : Enum.Parse<AppointmentStatus>(src.Status, true)));
             CreateMap<Clinic, ClinicBasicDTO>().ReverseMap();
             CreateMap<UserUpdateDTO, User>(MemberList.Source);

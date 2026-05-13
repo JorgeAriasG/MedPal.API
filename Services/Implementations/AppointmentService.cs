@@ -12,15 +12,18 @@ namespace MedPal.API.Services.Implementations
     public class AppointmentService : IAppointmentService
     {
         private readonly IAppointmentRepository _appointmentRepository;
+        private readonly IPatientRepository _patientRepository;
         private readonly IMapper _mapper;
         private readonly IValidator<AppointmentWriteDTO> _validator;
 
         public AppointmentService(
             IAppointmentRepository appointmentRepository,
+            IPatientRepository patientRepository,
             IMapper mapper,
             IValidator<AppointmentWriteDTO> validator)
         {
             _appointmentRepository = appointmentRepository;
+            _patientRepository = patientRepository;
             _mapper = mapper;
             _validator = validator;
         }
@@ -41,6 +44,14 @@ namespace MedPal.API.Services.Implementations
 
         public async Task<AppointmentReadDTO> CreateAppointmentAsync(AppointmentWriteDTO request)
         {
+            // Creación Fantasma: si no viene PatientId pero sí PatientName,
+            // crear el paciente automáticamente en background
+            if (!request.PatientId.HasValue && !string.IsNullOrWhiteSpace(request.PatientName))
+            {
+                var ghostPatient = await CreateGhostPatientAsync(request);
+                request.PatientId = ghostPatient.Id;
+            }
+
             await _validator.ValidateAndThrowAsync(request);
 
             var appointment = _mapper.Map<Appointment>(request);
@@ -84,6 +95,37 @@ namespace MedPal.API.Services.Implementations
             await _appointmentRepository.CompleteAsync();
             
             return true;
+        }
+
+        /// <summary>
+        /// Crea un paciente "fantasma" con datos mínimos a partir del nombre y teléfono
+        /// proporcionados en la cita. El médico puede completar el perfil después.
+        /// Sigue la estrategia UX de "Creación Fantasma" — cero fricción.
+        /// </summary>
+        private async Task<Patient> CreateGhostPatientAsync(AppointmentWriteDTO request)
+        {
+            // Parsear nombre: "Juan Pérez" → Name="Juan", Lastname="Pérez"
+            var nameParts = request.PatientName!.Trim().Split(' ', 2);
+            var firstName = nameParts[0];
+            var lastName = nameParts.Length > 1 ? nameParts[1] : "Sin apellido";
+
+            var ghostPatient = new Patient
+            {
+                Name = firstName,
+                Middlename = "",
+                Lastname = lastName,
+                Dob = DateTime.UtcNow.AddYears(-30), // Default: 30 años (el médico actualizará)
+                Gender = "No especificado",
+                Address = "Sin configurar",
+                Phone = request.PatientPhone ?? "",
+                Email = $"pendiente_{Guid.NewGuid():N}@clinicflow.temp", // Email temporal único
+                ClinicId = request.ClinicId ?? 0,
+                AccountId = null, // Se asignará vía tenant context si aplica
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            return await _patientRepository.AddPatientAsync(ghostPatient);
         }
     }
 }

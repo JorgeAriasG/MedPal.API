@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using MedPal.API.Data;
 using MedPal.API.DTOs;
 using MedPal.API.Enums;
 using MedPal.API.Models;
@@ -22,7 +21,7 @@ namespace MedPal.API.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IClinicRepository _clinicRepository;
         private readonly IRoleRepository _roleRepository;
-        private readonly AppDbContext _context;
+        private readonly IAccountRepository _accountRepository;
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
         private readonly IUserService _userService;
@@ -31,7 +30,7 @@ namespace MedPal.API.Controllers
             IUserRepository userRepository,
             IClinicRepository clinicRepository,
             IRoleRepository roleRepository,
-            AppDbContext context,
+            IAccountRepository accountRepository,
             IMapper mapper,
             ITokenService tokenService,
             IUserService userService)
@@ -39,7 +38,7 @@ namespace MedPal.API.Controllers
             _userRepository = userRepository;
             _clinicRepository = clinicRepository;
             _roleRepository = roleRepository;
-            _context = context;
+            _accountRepository = accountRepository;
             _mapper = mapper;
             _tokenService = tokenService;
             _userService = userService;
@@ -157,9 +156,9 @@ namespace MedPal.API.Controllers
         }
 
         /// <summary>
-        /// <summary>
-        /// Registra un nuevo usuario y crea automáticamente su Account.
-        /// El usuario se crea como AccountAdmin de su nueva Account.
+        /// Registra un nuevo usuario y crea automáticamente su Account, Clínica y roles.
+        /// El usuario se crea como AccountAdmin + ClinicAdmin de su nueva Account/Clínica.
+        /// La clínica se crea con horario default (9:00–18:00).
         /// Este endpoint es público para permitir que nuevas clínicas/hospitales se registren.
         /// </summary>
         [AllowAnonymous]
@@ -182,8 +181,7 @@ namespace MedPal.API.Controllers
                 return BadRequest(new { message = "El email ya está registrado en el sistema" });
             }
 
-            // Crear una nueva Account para la clínica/hospital que se registra
-            // El nombre de la Account será el nombre del usuario/organización
+            // 1. Crear Account (a través del repositorio)
             var newAccount = new Account
             {
                 Name = registerDto.Name,
@@ -192,52 +190,61 @@ namespace MedPal.API.Controllers
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
+            newAccount = await _accountRepository.CreateAccountAsync(newAccount);
 
-            // Guardar la nueva Account
-            await _context.Accounts.AddAsync(newAccount);
-            await _context.SaveChangesAsync();
-            
             if (newAccount.Id == 0)
             {
                 return BadRequest(new { message = "No se pudo crear la Account" });
             }
 
+            // 2. Crear User vinculado a la Account
             var user = _mapper.Map<User>(registerDto);
             user.HasAcceptedPrivacyTerms = true;
             user.CreatedAt = DateTime.UtcNow;
             user.UpdatedAt = DateTime.UtcNow;
-            user.AccountId = newAccount.Id;  // ← Assign new accountId to the user
+            user.AccountId = newAccount.Id;
 
-            // Crear el nuevo usuario asignado a la Account que acaba de crear
-            // var newUser = new User
-            // {
-            //     Name = registerDto.Name,
-            //     Email = registerDto.Email,
-            //     PasswordHash = registerDto.Password,
-            //     Specialty = registerDto.Specialty,
-            //     ProfessionalLicenseNumber = registerDto.ProfessionalLicenseNumber,
-            //     IsActive = true,
-            //     IsDeleted = false,
-            //     HasAcceptedPrivacyTerms = registerDto.AcceptPrivacyTerms,
-            //     AccountId = newAccount.Id,  // ← Asignar a la Account que acaba de crear
-            //     CreatedAt = DateTime.UtcNow,
-            //     UpdatedAt = DateTime.UtcNow
-            // };
-
-            // Agregar el usuario a la base de datos
             var createdUser = await _userRepository.AddUserAsync(user);
 
-            // Obtener el rol de AccountAdmin
+            // 3. Crear Clínica automática con horario default (9:00–18:00)
+            //    AddClinicAsync ya crea la relación UserClinic (User↔Clinic)
+            var newClinic = new Clinic
+            {
+                Name = $"Consultorio de {registerDto.Name}",
+                Location = "Sin configurar",
+                ContactInfo = registerDto.Email,
+                AccountId = newAccount.Id,
+                Open = new TimeOnly(9, 0),   // Horario default: 9:00 AM
+                Close = new TimeOnly(18, 0), // Horario default: 6:00 PM
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+            await _clinicRepository.AddClinicAsync(createdUser.Id, newClinic);
+
+            // 4. Actualizar PrincipalClinicId del usuario
+            createdUser.PrincipalClinicId = newClinic.Id;
+            await _userRepository.UpdateUserAsync(createdUser);
+
+            // 5. Asignar roles: AccountAdmin (global) + ClinicAdmin (scope clínica)
             var accountAdminRole = await _roleRepository.GetRoleByNameAsync("AccountAdmin");
             if (accountAdminRole == null)
             {
                 return BadRequest(new { message = "El rol AccountAdmin no está configurado en el sistema" });
             }
 
-            // Asignar el rol AccountAdmin al nuevo usuario de forma global (para toda su Account)
-            await _roleRepository.AssignRoleToUserAsync(createdUser.Id, accountAdminRole.Id, clinicId: null, expiresAt: null, assignedByUserId: null);
+            await _roleRepository.AssignRoleToUserAsync(
+                createdUser.Id, accountAdminRole.Id,
+                clinicId: null, expiresAt: null, assignedByUserId: null);
 
-            // Generar token JWT para el nuevo usuario (incluye AccountId automáticamente)
+            var clinicAdminRole = await _roleRepository.GetRoleByNameAsync("ClinicAdmin");
+            if (clinicAdminRole != null)
+            {
+                await _roleRepository.AssignRoleToUserAsync(
+                    createdUser.Id, clinicAdminRole.Id,
+                    clinicId: newClinic.Id, expiresAt: null, assignedByUserId: null);
+            }
+
+            // 6. Generar token JWT para el nuevo usuario
             var token = _tokenService.GenerateToken(createdUser);
             var userReadDTO = _mapper.Map<UserReadDTO>(createdUser);
             userReadDTO.Token = token;

@@ -11,23 +11,18 @@ namespace MedPal.API.Repositories.Implementations
     public class ClinicRepository : TenantAwareRepository<Clinic>, IClinicRepository
     {
         private readonly IMapper _mapper;
+        private readonly IUserRepository _userRepository;
 
-        public ClinicRepository(AppDbContext context, IMapper mapper, ITenantContextService tenantContext)
+        public ClinicRepository(AppDbContext context, IMapper mapper, ITenantContextService tenantContext, IUserRepository userRepository)
             : base(context, tenantContext)
         {
             _mapper = mapper;
-        }
-
-        public async Task<IEnumerable<Clinic>> GetAllClinicsAsync(int id)
-        {
-            return await _context.Clinics
-                .Where(c => c.UserClinics.Any(uc => uc.UserId == id))
-                .ToListAsync();
+            _userRepository = userRepository;
         }
 
         public async Task<Clinic> GetClinicByIdAsync(int id)
         {
-            var clinic = await ApplyTenantFilter(_context.Clinics.AsNoTracking())
+            var clinic = await _context.Clinics.AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (clinic == null)
@@ -38,34 +33,13 @@ namespace MedPal.API.Repositories.Implementations
             return clinic;
         }
 
-        public async Task<UserClinic> GetUserClinicByIdAsync(int id)
-        {
-            var clinic = await _context.UserClinics.FirstOrDefaultAsync(c => c.UserId == id);
-            return clinic;
-        }
-
         public async Task<Clinic> AddClinicAsync(int userId, Clinic clinic)
         {
             SetDate(clinic);
             await _context.Clinics.AddAsync(clinic);
             await _context.SaveChangesAsync();
 
-            var userClinic = new UserClinic
-            {
-                UserId = userId,
-                ClinicId = clinic.Id
-            };
-
-            await AddUserClinicAsync(userClinic);
-
             return clinic;
-        }
-
-        public async Task<UserClinic> AddUserClinicAsync(UserClinic userClinic)
-        {
-            await _context.UserClinics.AddAsync(userClinic);
-            await _context.SaveChangesAsync();
-            return userClinic;
         }
 
         public async Task UpdateClinicAsync(Clinic clinic)
@@ -108,8 +82,30 @@ namespace MedPal.API.Repositories.Implementations
 
         public async Task<bool> UserBelongsToClinicAsync(int userId, int clinicId)
         {
-            return await _context.UserClinics
-                .AnyAsync(uc => uc.UserId == userId && uc.ClinicId == clinicId);
+            var user = await _context.Users.AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == userId && u.ClinicId == clinicId && !u.IsDeleted);
+            return user != null;
+        }
+
+        public async Task<IEnumerable<Clinic>> GetAllClinicsAsync(int userId)
+        {
+            var user = await _context.Users.AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted);
+
+            if (user == null)
+                return Enumerable.Empty<Clinic>();
+
+            var clinic = await _context.Clinics
+                .FirstOrDefaultAsync(c => c.Id == user.ClinicId && !c.IsDeleted);
+
+            return clinic != null ? new[] { clinic } : Enumerable.Empty<Clinic>();
+        }
+
+        public async Task<IEnumerable<Clinic>> GetAllClinicsAsync()
+        {
+            return await _context.Clinics
+                .Where(c => !c.IsDeleted)
+                .ToListAsync();
         }
     }
 }

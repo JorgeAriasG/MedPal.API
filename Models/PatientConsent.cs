@@ -26,7 +26,19 @@ namespace MedPal.API.Models
         public int PatientDetailsId { get; set; }
 
         /// <summary>
-        /// FK a Clinic - la clínica que solicita acceso a los registros.
+        /// FK a User - médico específico que recibe el consentimiento (opcional).
+        /// Si es null, el consentimiento es a nivel clínica (cualquier doctor de RequestingClinic).
+        /// </summary>
+        [ForeignKey(nameof(TargetDoctor))]
+        public int? TargetDoctorId { get; set; }
+
+        /// <summary>
+        /// Navegación a User - médico que recibe el consentimiento.
+        /// </summary>
+        public virtual User? TargetDoctor { get; set; }
+
+        /// <summary>
+        /// Navegación a Clinic - la clínica que solicita acceso a los registros.
         /// </summary>
         [ForeignKey(nameof(RequestingClinic))]
         [Required]

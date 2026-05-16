@@ -31,8 +31,15 @@ public class UpdatePatientValidator : AbstractValidator<PatientWriteDTO>
             .Matches(@"^\+?[0-9\-\s()]+$").When(x => !string.IsNullOrEmpty(x.Phone))
             .WithMessage("Invalid phone format");
 
-        RuleFor(x => x.ClinicId)
-            .GreaterThan(0).When(x => x.ClinicId > 0).WithMessage("ClinicId must be greater than 0");
+        RuleFor(x => x.ClinicIds)
+            .NotEmpty().When(x => x.ClinicIds != null && x.ClinicIds.Count > 0);
+        RuleForEach(x => x.ClinicIds)
+            .GreaterThan(0).WithMessage("Each ClinicId must be greater than 0");
+
+        // CURP validation (optional, Mexican format: 18 alphanumeric chars)
+        RuleFor(x => x.Curp)
+            .Matches(@"^[A-Z0-9]{18}$").When(x => !string.IsNullOrEmpty(x.Curp))
+            .WithMessage("CURP must be exactly 18 alphanumeric characters");
 
         // Middlename, Lastname, Address, Gender, EmergencyContact are optional
     }

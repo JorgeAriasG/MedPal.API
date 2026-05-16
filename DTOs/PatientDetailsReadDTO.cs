@@ -7,6 +7,9 @@ namespace MedPal.API.DTOs
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         
+        // Antecedentes médicos del paciente (JSON)
+        public string? AntecedentsData { get; set; }
+
         // Patient demographics
         public PatientReadDTO Patient { get; set; }
         

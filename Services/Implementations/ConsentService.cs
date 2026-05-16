@@ -262,6 +262,36 @@ namespace MedPal.API.Services.Implementations
         }
 
         /// <summary>
+        /// Checks if a patient has granted explicit consent to a specific doctor.
+        /// Looks for PatientConsent with TargetDoctorId matching the requesting doctor.
+        /// </summary>
+        public async Task<bool> IsConsentForDoctorValidAsync(int patientDetailsId, int targetDoctorId)
+        {
+            try
+            {
+                var consent = await _context.PatientConsents
+                    .FirstOrDefaultAsync(pc =>
+                        pc.PatientDetailsId == patientDetailsId &&
+                        pc.TargetDoctorId == targetDoctorId &&
+                        pc.IsApproved &&
+                        !pc.IsDeleted);
+
+                if (consent == null)
+                    return false;
+
+                if (consent.ExpiryDate.HasValue && consent.ExpiryDate.Value < DateTime.UtcNow)
+                    return false;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error checking doctor consent: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Checks if a specific consent record is expired.
         /// </summary>
         public async Task<bool> IsConsentExpiredAsync(PatientConsent consent)

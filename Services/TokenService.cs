@@ -67,9 +67,9 @@ namespace MedPal.API.Services
                 claims.Add(new Claim("account_id", user.AccountId.Value.ToString()));
             }
 
-            if (user.PrincipalClinicId.HasValue)
+            if (user.ClinicId > 0)
             {
-                claims.Add(new Claim("clinic_id", user.PrincipalClinicId.Value.ToString()));
+                claims.Add(new Claim("clinic_id", user.ClinicId.ToString()));
             }
 
             // Añadir roles del usuario (desde la relación UserRoles)

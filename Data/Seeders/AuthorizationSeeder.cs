@@ -121,6 +121,7 @@ namespace MedPal.API.Data.Seeders
                 // Patient Permissions
                 new Permission { Name = "Patients.ViewAll", Resource = "Patients", Action = "ViewAll", Description = "View all patients in the system", CreatedAt = DateTime.UtcNow },
                 new Permission { Name = "Patients.ViewOwn", Resource = "Patients", Action = "ViewOwn", Description = "View own patient record", CreatedAt = DateTime.UtcNow },
+                new Permission { Name = "Patients.ViewAssigned", Resource = "Patients", Action = "ViewAssigned", Description = "View assigned patients", CreatedAt = DateTime.UtcNow },
                 new Permission { Name = "Patients.Create", Resource = "Patients", Action = "Create", Description = "Create new patient records", CreatedAt = DateTime.UtcNow },
                 new Permission { Name = "Patients.Update", Resource = "Patients", Action = "Update", Description = "Update patient information", CreatedAt = DateTime.UtcNow },
                 new Permission { Name = "Patients.Delete", Resource = "Patients", Action = "Delete", Description = "Delete patient records", CreatedAt = DateTime.UtcNow },
@@ -136,6 +137,7 @@ namespace MedPal.API.Data.Seeders
                 new Permission { Name = "MedicalRecords.ViewAll", Resource = "MedicalRecords", Action = "ViewAll", Description = "View all medical records", CreatedAt = DateTime.UtcNow },
                 new Permission { Name = "MedicalRecords.ViewOwn", Resource = "MedicalRecords", Action = "ViewOwn", Description = "View own medical records", CreatedAt = DateTime.UtcNow },
                 new Permission { Name = "MedicalRecords.ViewAssigned", Resource = "MedicalRecords", Action = "ViewAssigned", Description = "View medical records of assigned patients", CreatedAt = DateTime.UtcNow },
+                new Permission { Name = "MedicalRecords.Read", Resource = "MedicalRecords", Action = "Read", Description = "Read a medical record by ID", CreatedAt = DateTime.UtcNow },
                 new Permission { Name = "MedicalRecords.Create", Resource = "MedicalRecords", Action = "Create", Description = "Create medical records", CreatedAt = DateTime.UtcNow },
                 new Permission { Name = "MedicalRecords.Update", Resource = "MedicalRecords", Action = "Update", Description = "Update medical records", CreatedAt = DateTime.UtcNow },
 
@@ -238,9 +240,9 @@ namespace MedPal.API.Data.Seeders
             // Doctor: Patient and medical record management, appointments
             var doctorPermissions = new[]
             {
-                "Patients.ViewAll", "Patients.Create", "Patients.Update",
+                "Patients.ViewAssigned", "Patients.Create", "Patients.Update",
                 "Appointments.ViewAll", "Appointments.Create", "Appointments.Update", "Appointments.Cancel",
-                "MedicalRecords.ViewAssigned", "MedicalRecords.Create", "MedicalRecords.Update",
+                "MedicalRecords.ViewAssigned", "MedicalRecords.Read", "MedicalRecords.Create", "MedicalRecords.Update",
                 "Billing.View",
                 "Reports.View",
                 "Clinics.View",

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace MedPal.API.DTOs
 {
     public class PatientWriteDTO
@@ -11,7 +13,7 @@ namespace MedPal.API.DTOs
         public DateTime Dob { get; set; }
         public string Gender { get; set; }
         public string EmergencyContact { get; set; }
-        public int ClinicId { get; set; }
-        // Add other necessary properties
+        public string? Curp { get; set; }
+        public List<int> ClinicIds { get; set; } = new();
     }
 }

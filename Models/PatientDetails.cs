@@ -23,6 +23,10 @@ namespace MedPal.API.Models
         [Required]
         public DateTime UpdatedAt { get; set; }
 
+        // Antecedentes médicos del paciente (JSON estructurado)
+        // Contiene: familiares, patologicos, noPatologicos, quirurgicos, habitos, observaciones
+        public string? AntecedentsData { get; set; }
+
         // ISoftDelete implementation
         public bool IsDeleted { get; set; } = false;
         public DateTime? DeletedAt { get; set; }

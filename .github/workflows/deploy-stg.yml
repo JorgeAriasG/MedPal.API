@@ -48,7 +48,7 @@ jobs:
 
   deploy:
     needs: build-and-push
-    runs-on: self-hosted
+    runs-on: [self-hosted, api]
     
     steps:
       - name: Deploy to Local Homelab Server

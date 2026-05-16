@@ -54,10 +54,15 @@ namespace MedPal.API.DTOs
     {
         public bool IsValid { get; set; }
         public string Status { get; set; }
-        public string DoctorName { get; set; } // Minimal info
+        public string DoctorName { get; set; }
+        public string DoctorSpecialty { get; set; }
+        public string DoctorLicense { get; set; }
+        public string PatientName { get; set; }
+        public string ClinicName { get; set; }
+        public string ClinicAddress { get; set; }
         public DateTime IssuedAt { get; set; }
         public DateTime ExpiresAt { get; set; }
-        public IEnumerable<PrescriptionItemDTO> Items { get; set; } // Show meds to pharmacist
+        public IEnumerable<PrescriptionItemDTO> Items { get; set; }
     }
     public class AllergyCheckRequestDTO
     {

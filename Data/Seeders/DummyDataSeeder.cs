@@ -12,205 +12,107 @@ namespace MedPal.API.Data.Seeders
     {
         public static async Task SeedDummyDataAsync(AppDbContext context)
         {
-            Console.WriteLine("🚀 Iniciando rutinade Seeders y Limpieza...");
+            if (await context.Users.AnyAsync(u => u.Email == "doctor1@medpal.com"))
+                return;
 
-            // --- 0. Limpieza: Eliminar SuperAdmins Duplicados ---
-            var superAdmins = await context.Users.Where(u => u.Email == "superadmin@medpal.com").OrderBy(u => u.Id).ToListAsync();
-            if (superAdmins.Count > 1)
-            {
-                var duplicatesToDrop = superAdmins.Skip(1).ToList();
-                // Primero quitamos sus roles si los tienen para no violar referential integrity
-                var duplicateIds = duplicatesToDrop.Select(d => d.Id).ToList();
-                var associatedRoles = await context.UserRoles.Where(ur => duplicateIds.Contains(ur.UserId)).ToListAsync();
-                context.UserRoles.RemoveRange(associatedRoles);
-                
-                context.Users.RemoveRange(duplicatesToDrop);
-                await context.SaveChangesAsync();
-                Console.WriteLine($"🧹 Se eliminaron {duplicatesToDrop.Count} SuperAdmins duplicados.");
-            }
-
-            // --- 0.A Deprecar roles obsoletos (soft-delete) ---
-            var obsoleteRoleNames = new[] { "HealthProfessional", "Admin" };
-            var obsoleteRoles = await context.Roles
-                .IgnoreQueryFilters()
-                .Where(r => obsoleteRoleNames.Contains(r.Name) && !r.IsDeleted)
-                .ToListAsync();
-            foreach (var role in obsoleteRoles)
-            {
-                role.IsDeleted = true;
-                role.DeletedAt = DateTime.UtcNow;
-            }
-            if (obsoleteRoles.Any())
-            {
-                await context.SaveChangesAsync();
-                Console.WriteLine($"🚓 Roles obsoletos marcados como deprecados: {string.Join(", ", obsoleteRoles.Select(r => r.Name))}");
-            }
-
-            // 1. Obtener o crear Account "MedPal System"
             var account = await context.Accounts.FirstOrDefaultAsync(a => a.Name == "MedPal System");
             if (account == null)
             {
-                account = new Account
-                {
-                    Name = "MedPal System",
-                    Description = "Cuenta base para Seeder",
-                    IsActive = true,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
-                await context.Accounts.AddAsync(account);
+                account = new Account { Name = "MedPal System", Description = "Cuenta base para Seeder", IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow };
+                context.Accounts.Add(account);
                 await context.SaveChangesAsync();
             }
 
-            // 2. Crear Clínicas
-            var clinicA = await context.Clinics.FirstOrDefaultAsync(c => c.Name == "Clínica Vida Sana");
-            if (clinicA == null)
-            {
-                clinicA = new Clinic { Name = "Clínica Vida Sana", Location = "Av. Principal 123", ContactInfo = "555-1234", AccountId = account.Id, Open = new TimeOnly(8,0), Close = new TimeOnly(20,0), CreatedAt = DateTime.UtcNow };
-                var clinicB = new Clinic { Name = "Centro Médico Los Alpes", Location = "Av. Secundaria 456", ContactInfo = "555-5678", AccountId = account.Id, Open = new TimeOnly(9,0), Close = new TimeOnly(18,0), CreatedAt = DateTime.UtcNow };
-                await context.Clinics.AddRangeAsync(clinicA, clinicB);
-                await context.SaveChangesAsync();
-            }
+            var clinicA = new Clinic { Name = "Clínica Vida Sana", Location = "Av. Principal 123", ContactInfo = "555-1234", AccountId = account.Id, Open = new TimeOnly(8, 0), Close = new TimeOnly(20, 0), CreatedAt = DateTime.UtcNow };
+            var clinicB = new Clinic { Name = "Centro Médico Los Alpes", Location = "Av. Secundaria 456", ContactInfo = "555-5678", AccountId = account.Id, Open = new TimeOnly(9, 0), Close = new TimeOnly(18, 0), CreatedAt = DateTime.UtcNow };
+            context.Clinics.AddRange(clinicA, clinicB);
+            await context.SaveChangesAsync();
 
-            // 3. Crear Doctores
             var doctorRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Doctor");
-            var adminRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "ClinicAdmin");
+            var accountAdminRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "AccountAdmin");
+            var clinicAdminRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "ClinicAdmin");
+            var nurseRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Nurse");
+            var receptionistRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Receptionist");
 
-            var doctor = await context.Users.FirstOrDefaultAsync(u => u.Email == "doctor1@medpal.com");
-            if (doctor == null)
+            var specialtyDoctors = new[]
             {
-                doctor = new User
+                new { Email = "doctor1@medpal.com",         Name = "Dr. John Smith",      Specialty = "Cardiolog\u00eda",   License = "MED-88990" },
+                new { Email = "doctor.general@medpal.com",  Name = "Dra. Mar\u00eda Garc\u00eda", Specialty = "General",       License = "MED-88991" },
+                new { Email = "doctor.pediatria@medpal.com",Name = "Dra. Ana L\u00f3pez",  Specialty = "Pediatr\u00eda",     License = "MED-88992" },
+                new { Email = "doctor.dermatologia@medpal.com", Name = "Dr. Carlos Ruiz", Specialty = "Dermatolog\u00eda",  License = "MED-88993" },
+                new { Email = "doctor.dental@medpal.com",   Name = "Dra. Laura Mart\u00ednez", Specialty = "Dental",        License = "MED-88994" },
+                new { Email = "doctor.nutricion@medpal.com",Name = "Dr. Pedro S\u00e1nchez", Specialty = "Nutrici\u00f3n",     License = "MED-88995" },
+            };
+
+            var doctorUsers = new List<User>();
+            foreach (var d in specialtyDoctors)
+            {
+                var user = new User
                 {
-                    Name = "Dr. John Smith",
-                    Email = "doctor1@medpal.com",
+                    Name = d.Name,
+                    Email = d.Email,
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("Doctor@123"),
-                    Specialty = "Cardiología",
-                    ProfessionalLicenseNumber = "MED-88990",
+                    Specialty = d.Specialty,
+                    ProfessionalLicenseNumber = d.License,
                     IsActive = true,
                     HasAcceptedPrivacyTerms = true,
                     AccountId = account.Id,
-                    PrincipalClinicId = clinicA.Id,
+                    ClinicId = clinicA.Id,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };
-                await context.Users.AddAsync(doctor);
+                context.Users.Add(user);
                 await context.SaveChangesAsync();
 
                 if (doctorRole != null)
                 {
-                    await context.UserRoles.AddAsync(new UserRole { UserId = doctor.Id, RoleId = doctorRole.Id, ClinicId = clinicA.Id, AssignedAt = DateTime.UtcNow });
+                    context.UserRoles.Add(new UserRole { UserId = user.Id, RoleId = doctorRole.Id, ClinicId = clinicA.Id, AssignedAt = DateTime.UtcNow });
+                    await context.SaveChangesAsync();
                 }
-                
-                // Darle privilegios de administrador de su clínica para hacer tests
-                if (adminRole != null)
-                {
-                    await context.UserRoles.AddAsync(new UserRole { UserId = doctor.Id, RoleId = adminRole.Id, ClinicId = clinicA.Id, AssignedAt = DateTime.UtcNow });
-                }
-                
-                await context.SaveChangesAsync();
+                doctorUsers.Add(user);
             }
-            else if (doctor.PrincipalClinicId == null || doctor.PrincipalClinicId != clinicA.Id)
-            {
-                // Parche de actualización en caso de que el doctor ya existiera pero sin clínica principal
-                doctor.PrincipalClinicId = clinicA.Id;
-                context.Users.Update(doctor);
-                await context.SaveChangesAsync();
-            }
-
-            // --- 3.B Usuarios QA Adicionales ---
-            var accountAdminRole  = await context.Roles.FirstOrDefaultAsync(r => r.Name == "AccountAdmin");
-            var clinicAdminRole   = await context.Roles.FirstOrDefaultAsync(r => r.Name == "ClinicAdmin");
-            var nurseRole         = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Nurse");
-            var receptionistRole  = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Receptionist");
 
             var qaUsers = new[]
             {
-                new { Email = "accountadmin@medpal.com",   Name = "Admin QA",         Password = "Admin@123",       Specialty = "Administración",    License = "",          Role = accountAdminRole,  IsAccountLevel = true  },
-                new { Email = "clinicadmin2@medpal.com",   Name = "Clinic Admin QA",   Password = "Clinic@123",      Specialty = "Administración",    License = "",          Role = clinicAdminRole,   IsAccountLevel = false },
-                new { Email = "nurse1@medpal.com",         Name = "Enfermera QA",      Password = "Nurse@123",       Specialty = "Enfermer\u00eda",       License = "ENF-00123", Role = nurseRole,         IsAccountLevel = false },
-                new { Email = "receptionist1@medpal.com",  Name = "Recepcionista QA",  Password = "Recept@123",      Specialty = "Administraci\u00f3n",    License = "",          Role = receptionistRole,  IsAccountLevel = false },
+                new { Email = "accountadmin@medpal.com",  Name = "Admin QA",        Password = "Admin@123",   Role = accountAdminRole,  IsAccountLevel = true  },
+                new { Email = "clinicadmin2@medpal.com",  Name = "Clinic Admin QA",  Password = "Clinic@123",  Role = clinicAdminRole,   IsAccountLevel = false },
+                new { Email = "nurse1@medpal.com",        Name = "Enfermera QA",     Password = "Nurse@123",   Role = nurseRole,         IsAccountLevel = false },
+                new { Email = "receptionist1@medpal.com", Name = "Recepcionista QA", Password = "Recept@123",  Role = receptionistRole,  IsAccountLevel = false },
             };
 
             foreach (var qa in qaUsers)
             {
-                var existing = await context.Users.FirstOrDefaultAsync(u => u.Email == qa.Email);
-                if (existing == null && qa.Role != null)
+                if (qa.Role == null) continue;
+
+                var newUser = new User
                 {
-                    var newUser = new User
-                    {
-                        Name = qa.Name,
-                        Email = qa.Email,
-                        PasswordHash = BCrypt.Net.BCrypt.HashPassword(qa.Password),
-                        Specialty = qa.Specialty,
-                        ProfessionalLicenseNumber = qa.License,
-                        IsActive = true,
-                        HasAcceptedPrivacyTerms = true,
-                        AccountId = account.Id,
-                        PrincipalClinicId = clinicA.Id,
-                        CreatedAt = DateTime.UtcNow,
-                        UpdatedAt = DateTime.UtcNow
-                    };
-                    await context.Users.AddAsync(newUser);
-                    await context.SaveChangesAsync();
-
-                    var clinicIdForRole = qa.IsAccountLevel ? (int?)null : clinicA.Id;
-                    await context.UserRoles.AddAsync(new UserRole
-                    {
-                        UserId = newUser.Id,
-                        RoleId = qa.Role.Id,
-                        ClinicId = clinicIdForRole,
-                        AssignedAt = DateTime.UtcNow
-                    });
-                    await context.SaveChangesAsync();
-                    Console.WriteLine($"✅ Usuario QA creado: {qa.Email} [{qa.Role.Name}]");
-                }
-            }
-
-            // 0.B Limpieza de viejos pacientes y sus citas (Para evitar el crash por FK/UpdatedAt)
-            var oldPatients = await context.Patients
-                .Where(p => p.Email.StartsWith("paciente") && p.Email.EndsWith("@medpal.com"))
-                .ToListAsync();
-
-            if (oldPatients.Any())
-            {
-                var oldPatientIds = oldPatients.Select(p => p.Id).ToList();
-
-                // Primero eliminar prescriptions items de prescipciones de esos pacientes
-                var oldPrescriptions = await context.Prescriptions
-                    .IgnoreQueryFilters()
-                    .Where(p => oldPatientIds.Contains(p.PatientId))
-                    .ToListAsync();
-                var oldPrescriptionIds = oldPrescriptions.Select(p => p.Id).ToList();
-                var oldPrescriptionItems = await context.PrescriptionItems
-                    .IgnoreQueryFilters()
-                    .Where(pi => oldPrescriptionIds.Contains(pi.PrescriptionId))
-                    .ToListAsync();
-                context.PrescriptionItems.RemoveRange(oldPrescriptionItems);
-                context.Prescriptions.RemoveRange(oldPrescriptions);
-
-                // Luego eliminar appointments
-                var oldAppointments = await context.Appointments
-                    .IgnoreQueryFilters()
-                    .Where(a => oldPatientIds.Contains(a.PatientId))
-                    .ToListAsync();
-                context.Appointments.RemoveRange(oldAppointments);
-
-                // Luego eliminar medical histories
-                var oldDetails = await context.PatientDetails
-                    .IgnoreQueryFilters()
-                    .Where(pd => oldPatientIds.Contains(pd.PatientId))
-                    .ToListAsync();
-                context.PatientDetails.RemoveRange(oldDetails);
-
-                context.Patients.RemoveRange(oldPatients);
+                    Name = qa.Name,
+                    Email = qa.Email,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(qa.Password),
+                    Specialty = "Administraci\u00f3n",
+                    ProfessionalLicenseNumber = "",
+                    IsActive = true,
+                    HasAcceptedPrivacyTerms = true,
+                    AccountId = account.Id,
+                    ClinicId = clinicA.Id,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+                context.Users.Add(newUser);
                 await context.SaveChangesAsync();
-                Console.WriteLine($"🧹 Se eliminaron {oldPatients.Count} pacientes y sus datos relacionados.");
+
+                context.UserRoles.Add(new UserRole
+                {
+                    UserId = newUser.Id,
+                    RoleId = qa.Role.Id,
+                    ClinicId = qa.IsAccountLevel ? null : clinicA.Id,
+                    AssignedAt = DateTime.UtcNow
+                });
+                await context.SaveChangesAsync();
             }
 
-            // 4. Crear 50 Pacientes (A gran escala)
-            var patients = new List<Patient>();
             var random = new Random();
-
+            var patients = new List<Patient>();
             for (int i = 1; i <= 50; i++)
             {
                 var patient = new Patient
@@ -226,114 +128,136 @@ namespace MedPal.API.Data.Seeders
                     IsDeleted = false,
                     CreatedAt = DateTime.UtcNow,
                     AccountId = account.Id,
-                    ClinicId = clinicA.Id,
                     PatientDetails = new PatientDetails
                     {
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow,
-                        Allergies = (i == 1) ? new List<Allergy> { 
-                            new Allergy { 
-                                AllergyName = "Penicilina", 
-                                Severity = "High", 
-                                Notes = "QA Test",
-                                CreatedAt = DateTime.UtcNow,
-                                UpdatedAt = DateTime.UtcNow 
-                            } 
-                        } : new List<Allergy>()
+                        Allergies = i == 1 ? new List<Allergy> { new Allergy { AllergyName = "Penicilina", Severity = "High", Notes = "Alergia registrada por seeder", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow } } : new List<Allergy>()
                     }
                 };
                 patients.Add(patient);
             }
-            await context.Patients.AddRangeAsync(patients);
+            context.Patients.AddRange(patients);
             await context.SaveChangesAsync();
 
-            // 5. Historial Médico, Citas (100) y Recetas (50)
+            var patientClinics = patients.Select(p => new PatientClinic { PatientId = p.Id, ClinicId = clinicA.Id, CreatedAt = DateTime.UtcNow }).ToList();
+            context.PatientClinics.AddRange(patientClinics);
+            await context.SaveChangesAsync();
+
+            var today = DateTime.UtcNow;
+            var hours = new[] { 8, 9, 10, 11, 12, 14, 15, 16 };
+            var minutes = new[] { 0, 30 };
             int apptCounter = 0;
-            foreach (var patient in patients)
+            int rxCounter = 0;
+            int doctorCount = doctorUsers.Count;
+
+            foreach (var (patient, index) in patients.Select((p, i) => (p, i)))
             {
-                var history = new MedicalHistory
+                var assignedDoctor = doctorUsers[index % doctorCount];
+
+                context.MedicalHistories.Add(new MedicalHistory
                 {
                     PatientDetailsId = patient.PatientDetails.Id,
-                    SpecialtyType = "General",
+                    SpecialtyType = assignedDoctor.Specialty,
                     SpecialtyData = "{}",
-                    Diagnosis = "Chequeo General de QA",
-                    DiagnosisDate = DateTime.UtcNow.AddDays(-random.Next(1, 30)),
-                    ClinicalNotes = "Evaluación masiva generada por el seeder",
-                    IsConfidential = true,
+                    Diagnosis = "Chequeo general de rutina",
+                    DiagnosisDate = today,
+                    ClinicalNotes = "Paciente registrado mediante seeder de QA",
+                    IsConfidential = false,
                     OwnerClinicId = clinicA.Id,
-                    HealthcareProfessionalId = doctor.Id,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
-                await context.MedicalHistories.AddAsync(history);
+                    HealthcareProfessionalId = assignedDoctor.Id,
+                    CreatedAt = today,
+                    UpdatedAt = today
+                });
 
-                // Cada paciente tendrá 2 citas (Llegando al hito de 100 appointments)
-                var date = DateTime.UtcNow.AddDays(-random.Next(2, 30));
-                var timeHour = random.Next(8, 17);
+                var day1 = random.Next(0, 23);
+                var day2 = random.Next(23, 46);
+                var hour1 = hours[random.Next(hours.Length)];
+                var min1 = minutes[random.Next(minutes.Length)];
+                var hour2 = hours[random.Next(hours.Length)];
+                var min2 = minutes[random.Next(minutes.Length)];
 
-                var pastAppt = new Appointment
+                context.Appointments.AddRange(
+                    new Appointment
+                    {
+                        PatientId = patient.Id,
+                        ClinicId = clinicA.Id,
+                        UserId = assignedDoctor.Id,
+                        Date = DateOnly.FromDateTime(today.AddDays(day1)),
+                        Time = new TimeOnly(hour1, min1),
+                        Status = AppointmentStatus.Scheduled,
+                        Notes = $"Consulta de rutina #{++apptCounter}",
+                        CreatedAt = today,
+                        UpdatedAt = today
+                    },
+                    new Appointment
+                    {
+                        PatientId = patient.Id,
+                        ClinicId = clinicA.Id,
+                        UserId = assignedDoctor.Id,
+                        Date = DateOnly.FromDateTime(today.AddDays(day2)),
+                        Time = new TimeOnly(hour2, min2),
+                        Status = AppointmentStatus.Scheduled,
+                        Notes = $"Consulta de seguimiento #{++apptCounter}",
+                        CreatedAt = today,
+                        UpdatedAt = today
+                    }
+                );
+
+                var rx = new Prescription
                 {
+                    UniqueCode = Guid.NewGuid(),
+                    DoctorId = assignedDoctor.Id,
                     PatientId = patient.Id,
-                    ClinicId = clinicA.Id,
-                    UserId = doctor.Id,
-                    Date = DateOnly.FromDateTime(date),
-                    Time = new TimeOnly(timeHour, 0),
-                    Status = AppointmentStatus.Completed,
-                    Notes = $"Revisión mensual QA #{apptCounter++}",
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
-
-                var futureAppt = new Appointment
-                {
-                    PatientId = patient.Id,
-                    ClinicId = clinicA.Id,
-                    UserId = doctor.Id,
-                    Date = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(random.Next(1, 45))),
-                    Time = new TimeOnly(timeHour == 17 ? 8 : timeHour + 1, 30),
-                    Status = AppointmentStatus.Scheduled,
-                    Notes = $"Seguimiento programado QA #{apptCounter++}",
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
-
-                await context.Appointments.AddRangeAsync(pastAppt, futureAppt);
-                
-                
-                // Receta para la Cita pasada (50 recetas con QR GUID)
-                var prescriptionCode = Guid.NewGuid();
-                var prescription = new Prescription
-                {
-                    UniqueCode = prescriptionCode,  // Representa el QR
-                    DoctorId = doctor.Id,
-                    PatientId = patient.Id,
-                    Diagnosis = "Síndrome de QA recurrente",
-                    Notes = "Generado automáticamente por el Seeder de QA",
-                    IssuedAt = pastAppt.Date.ToDateTime(pastAppt.Time),
-                    ExpiresAt = pastAppt.Date.ToDateTime(pastAppt.Time).AddDays(15),
+                    Diagnosis = "Diagn\u00f3stico de rutina",
+                    Notes = "Receta generada por seeder de QA",
+                    IssuedAt = today,
+                    ExpiresAt = today.AddDays(30),
                     Status = PrescriptionStatus.Active,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = today,
+                    UpdatedAt = today
                 };
-                await context.Prescriptions.AddAsync(prescription);
+                context.Prescriptions.Add(rx);
                 await context.SaveChangesAsync();
 
-                var item = new PrescriptionItem
+                context.PrescriptionItems.Add(new PrescriptionItem
                 {
-                    PrescriptionId = prescription.Id,
-                    MedicationName = "Automatización 500mg",
-                    Dosage = "1 Script",
-                    Frequency = "Cada ejecución",
-                    Duration = "1 Sprint",
-                    Instructions = $"Escaneable vía QR: {prescriptionCode}",
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
-                await context.PrescriptionItems.AddAsync(item);
+                    PrescriptionId = rx.Id,
+                    MedicationName = "Paracetamol 500mg",
+                    Dosage = "1 tableta",
+                    Frequency = "Cada 8 horas",
+                    Duration = "7 d\u00edas",
+                    Instructions = $"C\u00f3digo QR: {rx.UniqueCode}",
+                    CreatedAt = today,
+                    UpdatedAt = today
+                });
                 await context.SaveChangesAsync();
+                rxCounter++;
             }
 
-            Console.WriteLine($"✅ Dummy Data inyectada: 50 Pacientes, {apptCounter} Citas, 50 Recetas con QRs.");
+            // Seed cross-doctor consents: first 3 patients of doctor2 grant consent to doctor1
+            var doctor2 = doctorUsers[1];
+            var doctor2Patients = patients.Where((_, i) => i % doctorCount == 1).Take(3).ToList();
+            foreach (var patient in doctor2Patients)
+            {
+                context.PatientConsents.Add(new PatientConsent
+                {
+                    PatientDetailsId = patient.PatientDetails.Id,
+                    TargetDoctorId = doctorUsers[0].Id,
+                    RequestingClinicId = clinicA.Id,
+                    OwnerClinicId = clinicA.Id,
+                    ConsentScope = "AllRecords",
+                    IsApproved = true,
+                    ConsentDate = today,
+                    ExpiryDate = today.AddYears(1),
+                    IsDeleted = false,
+                    CreatedAt = today,
+                    UpdatedAt = today
+                });
+            }
+
+            await context.SaveChangesAsync();
+            Console.WriteLine($"\u2705 Seeder: 6 doctores, 4 ops, 50 pacientes, {apptCounter} citas, {rxCounter} recetas, {doctor2Patients.Count} cross-doctor consents");
         }
     }
 }

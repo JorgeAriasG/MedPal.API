@@ -96,6 +96,19 @@ namespace MedPal.API.Mapping
             // Phase 4: NotificationMessage mappings
             CreateMap<NotificationMessage, NotificationMessageReadDTO>().ReverseMap();
             CreateMap<NotificationMessageWriteDTO, NotificationMessage>(MemberList.Source);
+
+            // VitalSign mappings (Signos Vitales)
+            CreateMap<VitalSign, VitalSignReadDTO>().ReverseMap();
+            CreateMap<VitalSignWriteDTO, VitalSign>(MemberList.Source);
+
+            // CIE-10 mappings
+            CreateMap<Cie10Code, Cie10CodeDTO>().ReverseMap();
+
+            // Consent mappings
+            CreateMap<PatientConsent, ConsentReadDTO>().ReverseMap();
+
+            // Waitlist mappings
+            CreateMap<WaitlistRegisterDTO, WaitlistEntry>();
         }
     }
 }

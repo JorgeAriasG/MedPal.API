@@ -1,0 +1,5077 @@
+﻿[
+    {
+        "code":  "A00",
+        "description":  "Cólera",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A01",
+        "description":  "Fiebres tifoidea y paratifoidea",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A02",
+        "description":  "Otras infecciones por Salmonella",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A03",
+        "description":  "Shigelosis",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A04",
+        "description":  "Otras infecciones intestinales bacterianas",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A06",
+        "description":  "Amebiasis",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A08",
+        "description":  "Infecciones intestinales por virus",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A09",
+        "description":  "Diarrea y gastroenteritis de presunto origen infeccioso",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A15",
+        "description":  "Tuberculosis respiratoria",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A16",
+        "description":  "Tuberculosis respiratoria no confirmada",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A33",
+        "description":  "Tétanos neonatal",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A35",
+        "description":  "Tétanos",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A36",
+        "description":  "Difteria",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A37",
+        "description":  "Tos ferina",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A39",
+        "description":  "Infección meningocócica",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A40",
+        "description":  "Septicemia estreptocócica",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A41",
+        "description":  "Otras septicemias",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A46",
+        "description":  "Erisipela",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A49",
+        "description":  "Infección bacteriana no especificada",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A51",
+        "description":  "Sífilis temprana",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A54",
+        "description":  "Infección gonocócica",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A56",
+        "description":  "Infecciones de transmisión sexual por clamidias",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A59",
+        "description":  "Tricomoniasis",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A60",
+        "description":  "Infección anogenital por herpesvirus",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A63",
+        "description":  "Enfermedad de transmisión sexual no especificada",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A69",
+        "description":  "Infección por Helicobacter pylori",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A71",
+        "description":  "Tracoma",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A74",
+        "description":  "Otras enfermedades por clamidias",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A80",
+        "description":  "Poliomielitis aguda",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A82",
+        "description":  "Rabia",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A87",
+        "description":  "Meningitis viral",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A90",
+        "description":  "Dengue",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "A91",
+        "description":  "Dengue grave",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B00",
+        "description":  "Infecciones por herpesvirus",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B01",
+        "description":  "Varicela",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B02",
+        "description":  "Herpes zóster",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B05",
+        "description":  "Sarampión",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B06",
+        "description":  "Rubéola",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B07",
+        "description":  "Verrugas virales",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B15",
+        "description":  "Hepatitis A aguda",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B16",
+        "description":  "Hepatitis B aguda",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B17",
+        "description":  "Otras hepatitis virales agudas",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B18",
+        "description":  "Hepatitis viral crónica",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B19",
+        "description":  "Hepatitis viral no especificada",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B20",
+        "description":  "Enfermedad por VIH resultante en infecciones",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B24",
+        "description":  "Enfermedad por VIH no especificada",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B26",
+        "description":  "Parotiditis infecciosa (paperas)",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B27",
+        "description":  "Mononucleosis infecciosa",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B30",
+        "description":  "Conjuntivitis viral",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B35",
+        "description":  "Dermatofitosis (tiña)",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B36",
+        "description":  "Pitiriasis versicolor",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B37",
+        "description":  "Candidiasis",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B38",
+        "description":  "Coccidioidomicosis",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B39",
+        "description":  "Histoplasmosis",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B49",
+        "description":  "Micosis no especificada",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B50",
+        "description":  "Paludismo por Plasmodium falciparum",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B51",
+        "description":  "Paludismo por Plasmodium vivax",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B54",
+        "description":  "Paludismo no especificado",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B55",
+        "description":  "Leishmaniasis",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B57",
+        "description":  "Enfermedad de Chagas",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B58",
+        "description":  "Toxoplasmosis",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B59",
+        "description":  "Neumocistosis",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B68",
+        "description":  "Teniasis",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B69",
+        "description":  "Cisticercosis",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B77",
+        "description":  "Ascariasis",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B80",
+        "description":  "Oxuriasis",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B82",
+        "description":  "Parasitosis intestinal no especificada",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B85",
+        "description":  "Pediculosis",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B86",
+        "description":  "Escabiosis (sarna)",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B90",
+        "description":  "Secuelas de tuberculosis",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "B99",
+        "description":  "Otras enfermedades infecciosas",
+        "category":  "Ciertas enfermedades infecciosas y parasitarias"
+    },
+    {
+        "code":  "C00",
+        "description":  "Neoplasia maligna del labio",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C01",
+        "description":  "Neoplasia maligna de la base de la lengua",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C02",
+        "description":  "Neoplasia maligna de otras partes de la lengua",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C04",
+        "description":  "Neoplasia maligna del piso de la boca",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C06",
+        "description":  "Neoplasia maligna de otras partes de la boca",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C07",
+        "description":  "Neoplasia maligna de la glándula parótida",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C10",
+        "description":  "Neoplasia maligna de la orofaringe",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C15",
+        "description":  "Neoplasia maligna del esófago",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C16",
+        "description":  "Neoplasia maligna del estómago",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C18",
+        "description":  "Neoplasia maligna del colon",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C20",
+        "description":  "Neoplasia maligna del recto",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C22",
+        "description":  "Neoplasia maligna del hígado",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C23",
+        "description":  "Neoplasia maligna de la vesícula biliar",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C25",
+        "description":  "Neoplasia maligna del páncreas",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C32",
+        "description":  "Neoplasia maligna de la laringe",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C34",
+        "description":  "Neoplasia maligna del pulmón",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C43",
+        "description":  "Melanoma maligno de la piel",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C44",
+        "description":  "Otras neoplasias malignas de la piel",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C50",
+        "description":  "Neoplasia maligna de la mama",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C51",
+        "description":  "Neoplasia maligna de la vulva",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C53",
+        "description":  "Neoplasia maligna del cuello del útero",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C54",
+        "description":  "Neoplasia maligna del cuerpo del útero",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C55",
+        "description":  "Neoplasia maligna del útero no especificada",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C56",
+        "description":  "Neoplasia maligna del ovario",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C61",
+        "description":  "Neoplasia maligna de la próstata",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C62",
+        "description":  "Neoplasia maligna del testículo",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C64",
+        "description":  "Neoplasia maligna del riñón",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C67",
+        "description":  "Neoplasia maligna de la vejiga urinaria",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C69",
+        "description":  "Neoplasia maligna del ojo",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C71",
+        "description":  "Neoplasia maligna del encéfalo",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C73",
+        "description":  "Neoplasia maligna de la glándula tiroides",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C80",
+        "description":  "Neoplasia maligna sin especificación de sitio",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C81",
+        "description":  "Enfermedad de Hodgkin",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C82",
+        "description":  "Linfoma no Hodgkin folicular",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C83",
+        "description":  "Linfoma no Hodgkin difuso",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C85",
+        "description":  "Linfoma no Hodgkin de otro tipo",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C90",
+        "description":  "Mieloma múltiple",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C91",
+        "description":  "Leucemia linfoide",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C92",
+        "description":  "Leucemia mieloide",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "C95",
+        "description":  "Leucemia de tipo celular no especificado",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D00",
+        "description":  "Carcinoma in situ de la cavidad oral",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D05",
+        "description":  "Carcinoma in situ de la mama",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D06",
+        "description":  "Carcinoma in situ del cuello del útero",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D07",
+        "description":  "Carcinoma in situ de otros órganos genitales",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D10",
+        "description":  "Neoplasia benigna de la boca",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D12",
+        "description":  "Neoplasia benigna del colon y recto",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D14",
+        "description":  "Neoplasia benigna del sistema respiratorio",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D16",
+        "description":  "Neoplasia benigna del hueso",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D17",
+        "description":  "Neoplasia benigna lipomatosa (lipoma)",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D18",
+        "description":  "Hemangioma",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D22",
+        "description":  "Nevos melanocíticos",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D23",
+        "description":  "Neoplasia benigna de la piel",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D24",
+        "description":  "Neoplasia benigna de la mama",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D25",
+        "description":  "Leiomioma del útero (mioma)",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D27",
+        "description":  "Neoplasia benigna del ovario",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D29",
+        "description":  "Neoplasia benigna de órganos genitales masculinos",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D30",
+        "description":  "Neoplasia benigna del sistema urinario",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D33",
+        "description":  "Neoplasia benigna del encéfalo y SNC",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D34",
+        "description":  "Neoplasia benigna de la tiroides",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D35",
+        "description":  "Neoplasia benigna de glándulas endocrinas",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D37",
+        "description":  "Neoplasia de comportamiento incierto de cavidad oral",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D39",
+        "description":  "Neoplasia de comportamiento incierto de genitales femeninos",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D41",
+        "description":  "Neoplasia de comportamiento incierto del sistema urinario",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D43",
+        "description":  "Neoplasia de comportamiento incierto del encéfalo",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D44",
+        "description":  "Neoplasia de comportamiento incierto de glándulas endocrinas",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D45",
+        "description":  "Policitemia vera",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D46",
+        "description":  "Síndromes mielodisplásicos",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "D48",
+        "description":  "Neoplasia de comportamiento incierto de otros sitios",
+        "category":  "Neoplasias"
+    },
+    {
+        "code":  "E00",
+        "description":  "Síndrome de deficiencia de yodo congénito",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E01",
+        "description":  "Trastornos tiroideos por deficiencia de yodo",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E02",
+        "description":  "Hipotiroidismo subclínico por deficiencia de yodo",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E03",
+        "description":  "Otros hipotiroidismos",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E04",
+        "description":  "Bocio no tóxico",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E05",
+        "description":  "Hipertiroidismo",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E06",
+        "description":  "Tiroiditis",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E07",
+        "description":  "Otros trastornos tiroideos",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E10",
+        "description":  "Diabetes mellitus tipo 1",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E11",
+        "description":  "Diabetes mellitus tipo 2",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E12",
+        "description":  "Diabetes mellitus relacionada con desnutrición",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E13",
+        "description":  "Otros tipos de diabetes mellitus",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E14",
+        "description":  "Diabetes mellitus no especificada",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E15",
+        "description":  "Coma hipoglucémico no diabético",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E16",
+        "description":  "Otros trastornos de la secreción interna del páncreas",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E20",
+        "description":  "Hipoparatiroidismo",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E21",
+        "description":  "Hiperparatiroidismo",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E22",
+        "description":  "Hiperfunción de la glándula hipófisis",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E23",
+        "description":  "Hipofunción de la glándula hipófisis",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E24",
+        "description":  "Síndrome de Cushing",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E25",
+        "description":  "Trastornos adrenogenitales",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E26",
+        "description":  "Hiperaldosteronismo",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E27",
+        "description":  "Otros trastornos de la glándula suprarrenal",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E28",
+        "description":  "Disfunción ovárica",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E29",
+        "description":  "Disfunción testicular",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E30",
+        "description":  "Trastornos de la pubertad",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E31",
+        "description":  "Trastornos poliglandulares",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E34",
+        "description":  "Otros trastornos endocrinos",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E40",
+        "description":  "Kwashiorkor",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E41",
+        "description":  "Marasmo nutricional",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E43",
+        "description":  "Desnutrición proteicocalórica severa",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E44",
+        "description":  "Desnutrición proteicocalórica moderada y leve",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E46",
+        "description":  "Desnutrición proteicocalórica no especificada",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E50",
+        "description":  "Deficiencia de vitamina A",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E51",
+        "description":  "Deficiencia de tiamina (beriberi)",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E53",
+        "description":  "Deficiencia de otras vitaminas del grupo B",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E55",
+        "description":  "Deficiencia de vitamina D",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E56",
+        "description":  "Otras deficiencias vitamínicas",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E58",
+        "description":  "Deficiencia de calcio dietético",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E61",
+        "description":  "Deficiencia de otros elementos nutricionales",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E64",
+        "description":  "Secuelas de desnutrición",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E65",
+        "description":  "Obesidad localizada",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E66",
+        "description":  "Obesidad",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E67",
+        "description":  "Otros tipos de hiperalimentación",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E70",
+        "description":  "Trastornos del metabolismo de aminoácidos",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E71",
+        "description":  "Trastornos del metabolismo de ácidos grasos",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E72",
+        "description":  "Otros trastornos del metabolismo de aminoácidos",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E73",
+        "description":  "Intolerancia a la lactosa",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E74",
+        "description":  "Otros trastornos del metabolismo de carbohidratos",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E78",
+        "description":  "Trastornos del metabolismo de lipoproteínas (dislipidemia)",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E79",
+        "description":  "Trastornos del metabolismo de purinas y pirimidinas",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E80",
+        "description":  "Trastornos del metabolismo de porfirinas y bilirrubina",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E83",
+        "description":  "Trastornos del metabolismo de minerales",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E84",
+        "description":  "Fibrosis quística",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E85",
+        "description":  "Amiloidosis",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E86",
+        "description":  "Deshidratación",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E87",
+        "description":  "Trastornos del equilibrio hidroelectrolítico",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E88",
+        "description":  "Otros trastornos metabólicos",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E89",
+        "description":  "Trastornos endocrinos postquirúrgicos",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "E90",
+        "description":  "Trastornos endocrinos en enfermedades clasificadas en otro sitio",
+        "category":  "Enfermedades endocrinas, nutricionales y metabólicas"
+    },
+    {
+        "code":  "F00",
+        "description":  "Demencia en la enfermedad de Alzheimer",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F01",
+        "description":  "Demencia vascular",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F03",
+        "description":  "Demencia no especificada",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F04",
+        "description":  "Síndrome amnésico orgánico",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F05",
+        "description":  "Delirio",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F06",
+        "description":  "Otros trastornos mentales por lesión cerebral",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F07",
+        "description":  "Trastorno de personalidad por enfermedad cerebral",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F09",
+        "description":  "Trastorno mental orgánico no especificado",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F10",
+        "description":  "Trastornos mentales y del comportamiento debidos al consumo de alcohol",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F11",
+        "description":  "Trastornos mentales debidos al consumo de opiáceos",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F12",
+        "description":  "Trastornos mentales debidos al consumo de cannabinoides",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F13",
+        "description":  "Trastornos mentales debidos al consumo de sedantes",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F14",
+        "description":  "Trastornos mentales debidos al consumo de cocaína",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F15",
+        "description":  "Trastornos mentales debidos al consumo de otros estimulantes",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F16",
+        "description":  "Trastornos mentales debidos al consumo de alucinógenos",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F17",
+        "description":  "Trastornos mentales debidos al consumo de tabaco",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F18",
+        "description":  "Trastornos mentales debidos al consumo de solventes",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F19",
+        "description":  "Trastornos mentales debidos al consumo de múltiples drogas",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F20",
+        "description":  "Esquizofrenia",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F21",
+        "description":  "Trastorno esquizotípico",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F22",
+        "description":  "Trastornos delirantes persistentes",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F23",
+        "description":  "Trastornos psicóticos agudos y transitorios",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F25",
+        "description":  "Trastorno esquizoafectivo",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F29",
+        "description":  "Psicosis no orgánica no especificada",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F30",
+        "description":  "Episodio maníaco",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F31",
+        "description":  "Trastorno afectivo bipolar",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F32",
+        "description":  "Episodio depresivo",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F33",
+        "description":  "Trastorno depresivo recurrente",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F34",
+        "description":  "Trastornos del estado de ánimo persistentes (distimia)",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F38",
+        "description":  "Otros trastornos del estado de ánimo",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F39",
+        "description":  "Trastorno del estado de ánimo no especificado",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F40",
+        "description":  "Trastornos fóbico-ansiosos",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F41",
+        "description":  "Otros trastornos de ansiedad",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F42",
+        "description":  "Trastorno obsesivo-compulsivo",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F43",
+        "description":  "Reacción al estrés grave y trastornos de adaptación",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F44",
+        "description":  "Trastornos disociativos y de conversión",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F45",
+        "description":  "Trastornos somatomorfos",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F48",
+        "description":  "Otros trastornos neuróticos",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F50",
+        "description":  "Trastornos de la conducta alimentaria",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F51",
+        "description":  "Trastornos del sueño no orgánicos",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F52",
+        "description":  "Disfunción sexual no debida a trastorno orgánico",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F53",
+        "description":  "Trastornos mentales del puerperio",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F54",
+        "description":  "Factores psicológicos en enfermedades clasificadas en otro sitio",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F55",
+        "description":  "Abuso de sustancias no adictivas",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F59",
+        "description":  "Síndromes del comportamiento no especificados",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F60",
+        "description":  "Trastornos específicos de la personalidad",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F61",
+        "description":  "Trastornos mixtos de la personalidad",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F63",
+        "description":  "Trastornos de los hábitos e impulsos",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F64",
+        "description":  "Trastornos de la identidad de género",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F65",
+        "description":  "Trastornos de la preferencia sexual",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F69",
+        "description":  "Trastorno de la personalidad no especificado",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F70",
+        "description":  "Discapacidad intelectual leve",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F71",
+        "description":  "Discapacidad intelectual moderada",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F72",
+        "description":  "Discapacidad intelectual grave",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F73",
+        "description":  "Discapacidad intelectual profunda",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F79",
+        "description":  "Discapacidad intelectual no especificada",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F80",
+        "description":  "Trastornos del desarrollo del habla y lenguaje",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F81",
+        "description":  "Trastornos del desarrollo de habilidades escolares",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F82",
+        "description":  "Trastorno del desarrollo de la función motriz",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F84",
+        "description":  "Trastornos generalizados del desarrollo (autismo)",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F88",
+        "description":  "Otros trastornos del desarrollo",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F89",
+        "description":  "Trastorno del desarrollo no especificado",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F90",
+        "description":  "Trastorno de la actividad y atención (TDAH)",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F91",
+        "description":  "Trastornos de la conducta",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F92",
+        "description":  "Trastornos mixtos de la conducta y emociones",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F93",
+        "description":  "Trastornos emocionales de inicio en la infancia",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F94",
+        "description":  "Trastornos del funcionamiento social infantil",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F95",
+        "description":  "Trastornos de tics",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F98",
+        "description":  "Otros trastornos emocionales y del comportamiento infantiles",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "F99",
+        "description":  "Trastorno mental no especificado",
+        "category":  "Trastornos mentales y del comportamiento"
+    },
+    {
+        "code":  "G00",
+        "description":  "Meningitis bacteriana",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G03",
+        "description":  "Meningitis por otras causas",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G04",
+        "description":  "Encefalitis, mielitis y encefalomielitis",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G06",
+        "description":  "Absceso intracraneal e intraespinal",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G09",
+        "description":  "Secuelas de enfermedades inflamatorias del SNC",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G10",
+        "description":  "Enfermedad de Huntington",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G11",
+        "description":  "Ataxia hereditaria",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G12",
+        "description":  "Atrofia muscular espinal",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G20",
+        "description":  "Enfermedad de Parkinson",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G21",
+        "description":  "Parkinsonismo secundario",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G23",
+        "description":  "Otras enfermedades degenerativas de ganglios basales",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G24",
+        "description":  "Distonía",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G25",
+        "description":  "Otros trastornos extrapiramidales del movimiento",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G30",
+        "description":  "Enfermedad de Alzheimer",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G31",
+        "description":  "Otras enfermedades degenerativas del sistema nervioso",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G35",
+        "description":  "Esclerosis múltiple",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G37",
+        "description":  "Otras enfermedades desmielinizantes del SNC",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G40",
+        "description":  "Epilepsia",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G41",
+        "description":  "Estado epiléptico",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G43",
+        "description":  "Migraña",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G44",
+        "description":  "Otras cefaleas",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G45",
+        "description":  "Ataques isquémicos cerebrales transitorios (AIT)",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G46",
+        "description":  "Síndromes vasculares cerebrales",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G47",
+        "description":  "Trastornos del sueño",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G50",
+        "description":  "Trastornos del nervio trigémino (neuralgia)",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G51",
+        "description":  "Trastornos del nervio facial (parálisis de Bell)",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G52",
+        "description":  "Trastornos de otros nervios craneales",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G54",
+        "description":  "Trastornos de raíces y plexos nerviosos",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G56",
+        "description":  "Mononeuropatías del miembro superior (túnel carpiano)",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G57",
+        "description":  "Mononeuropatías del miembro inferior",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G58",
+        "description":  "Otras mononeuropatías",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G60",
+        "description":  "Neuropatía hereditaria e idiopática",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G61",
+        "description":  "Polineuropatía inflamatoria (S. Guillain-Barré)",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G62",
+        "description":  "Otras polineuropatías",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G64",
+        "description":  "Otros trastornos del sistema nervioso periférico",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G70",
+        "description":  "Miastenia gravis",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G71",
+        "description":  "Trastornos musculares primarios",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G72",
+        "description":  "Otras miopatías",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G80",
+        "description":  "Parálisis cerebral infantil",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G81",
+        "description":  "Hemiplejía",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G82",
+        "description":  "Paraplejía y tetraplejía",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G83",
+        "description":  "Otros síndromes paralíticos",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G90",
+        "description":  "Trastornos del sistema nervioso autónomo",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G91",
+        "description":  "Hidrocéfalo",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G92",
+        "description":  "Encefalopatía tóxica",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G93",
+        "description":  "Otros trastornos del encéfalo",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G95",
+        "description":  "Otras enfermedades de la médula espinal",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G96",
+        "description":  "Otros trastornos del sistema nervioso central",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G97",
+        "description":  "Trastornos del sistema nervioso postquirúrgicos",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "G98",
+        "description":  "Otros trastornos del sistema nervioso",
+        "category":  "Enfermedades del sistema nervioso"
+    },
+    {
+        "code":  "I00",
+        "description":  "Fiebre reumática",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I01",
+        "description":  "Cardiopatía reumática aguda",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I05",
+        "description":  "Enfermedad reumática de la válvula mitral",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I06",
+        "description":  "Enfermedad reumática de la válvula aórtica",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I07",
+        "description":  "Enfermedad reumática de la válvula tricúspide",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I08",
+        "description":  "Enfermedad reumática de múltiples válvulas",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I09",
+        "description":  "Otras enfermedades cardíacas reumáticas",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I10",
+        "description":  "Hipertensión arterial esencial (HTA)",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I11",
+        "description":  "Cardiopatía hipertensiva",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I12",
+        "description":  "Nefropatía hipertensiva",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I13",
+        "description":  "Cardiopatía y nefropatía hipertensivas",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I15",
+        "description":  "Hipertensión secundaria",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I20",
+        "description":  "Angina de pecho",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I21",
+        "description":  "Infarto agudo de miocardio (IAM)",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I22",
+        "description":  "IAM recurrente",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I23",
+        "description":  "Complicaciones posteriores al IAM",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I24",
+        "description":  "Otras enfermedades isquémicas agudas del corazón",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I25",
+        "description":  "Enfermedad cardíaca isquémica crónica",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I26",
+        "description":  "Embolia pulmonar",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I27",
+        "description":  "Hipertensión pulmonar",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I28",
+        "description":  "Otras enfermedades de los vasos pulmonares",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I30",
+        "description":  "Pericarditis aguda",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I31",
+        "description":  "Otras enfermedades del pericardio",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I33",
+        "description":  "Endocarditis infecciosa aguda y subaguda",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I34",
+        "description":  "Trastornos no reumáticos de la válvula mitral",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I35",
+        "description":  "Trastornos no reumáticos de la válvula aórtica",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I38",
+        "description":  "Endocarditis de válvula no especificada",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I40",
+        "description":  "Miocarditis aguda",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I42",
+        "description":  "Miocardiopatía dilatada",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I43",
+        "description":  "Miocardiopatía en enfermedades clasificadas en otro sitio",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I44",
+        "description":  "Bloqueo auriculoventricular",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I45",
+        "description":  "Otros trastornos de la conducción cardíaca",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I46",
+        "description":  "Paro cardíaco",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I47",
+        "description":  "Taquicardias paroxísticas",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I48",
+        "description":  "Fibrilación y aleteo auricular",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I49",
+        "description":  "Otras arritmias cardíacas",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I50",
+        "description":  "Insuficiencia cardíaca",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I51",
+        "description":  "Complicaciones de cardiopatías mal definidas",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I60",
+        "description":  "Hemorragia subaracnoidea",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I61",
+        "description":  "Hemorragia intracerebral",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I62",
+        "description":  "Hemorragia intracraneal no traumática",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I63",
+        "description":  "Infarto cerebral",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I64",
+        "description":  "Accidente vascular cerebral (ACV) no especificado",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I65",
+        "description":  "Oclusión de arterias precerebrales",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I66",
+        "description":  "Oclusión de arterias cerebrales",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I67",
+        "description":  "Otras enfermedades cerebrovasculares",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I68",
+        "description":  "Trastornos cerebrovasculares en otras enfermedades",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I69",
+        "description":  "Secuelas de enfermedades cerebrovasculares",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I70",
+        "description":  "Aterosclerosis",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I71",
+        "description":  "Aneurisma aórtico",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I72",
+        "description":  "Aneurisma de otras arterias",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I73",
+        "description":  "Enfermedad vascular periférica",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I74",
+        "description":  "Embolia y trombosis arteriales",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I77",
+        "description":  "Otros trastornos arteriales",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I78",
+        "description":  "Enfermedades de los capilares",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I80",
+        "description":  "Flebitis y tromboflebitis",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I81",
+        "description":  "Trombosis de la vena porta",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I82",
+        "description":  "Otras embolias y trombosis venosas",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I83",
+        "description":  "Várices de las extremidades inferiores",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I84",
+        "description":  "Hemorroides",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I85",
+        "description":  "Várices esofágicas",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I86",
+        "description":  "Várices de otros sitios",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I87",
+        "description":  "Otros trastornos venosos (insuficiencia venosa)",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I88",
+        "description":  "Linfadenitis inespecífica",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I89",
+        "description":  "Otros trastornos del sistema linfático",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I95",
+        "description":  "Hipotensión",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I97",
+        "description":  "Trastornos circulatorios postquirúrgicos",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I98",
+        "description":  "Otros trastornos del sistema circulatorio",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "I99",
+        "description":  "Enfermedad del sistema circulatorio no especificada",
+        "category":  "Enfermedades del sistema circulatorio"
+    },
+    {
+        "code":  "J00",
+        "description":  "Rinofaringitis aguda (resfriado común)",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J01",
+        "description":  "Sinusitis aguda",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J02",
+        "description":  "Faringitis aguda",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J03",
+        "description":  "Amigdalitis aguda",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J04",
+        "description":  "Laringitis y traqueítis aguda",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J05",
+        "description":  "Laringitis obstructiva aguda (crup)",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J06",
+        "description":  "Infección aguda de vías respiratorias superiores no especificada",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J09",
+        "description":  "Influenza por virus A subtipo H1N1",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J10",
+        "description":  "Influenza por virus de influenza identificado",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J11",
+        "description":  "Influenza por virus no identificado",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J12",
+        "description":  "Neumonía viral",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J13",
+        "description":  "Neumonía por Streptococcus pneumoniae",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J14",
+        "description":  "Neumonía por Haemophilus influenzae",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J15",
+        "description":  "Neumonía bacteriana no clasificada en otro sitio",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J16",
+        "description":  "Neumonía por otros microorganismos infecciosos",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J17",
+        "description":  "Neumonía en enfermedades clasificadas en otro sitio",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J18",
+        "description":  "Neumonía de organismo no especificado",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J20",
+        "description":  "Bronquitis aguda",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J21",
+        "description":  "Bronquiolitis aguda",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J22",
+        "description":  "Infección aguda no especificada de vías respiratorias inferiores",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J30",
+        "description":  "Rinitis alérgica y vasomotora",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J31",
+        "description":  "Rinitis, faringitis y nasofaringitis crónicas",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J32",
+        "description":  "Sinusitis crónica",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J33",
+        "description":  "Pólipo nasal",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J34",
+        "description":  "Otros trastornos de la nariz y senos paranasales",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J35",
+        "description":  "Hipertrofia de amígdalas y adenoides",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J36",
+        "description":  "Absceso periamigdalino",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J37",
+        "description":  "Laringitis y laringotraqueítis crónica",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J38",
+        "description":  "Enfermedades de las cuerdas vocales",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J39",
+        "description":  "Otros trastornos de vías respiratorias superiores",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J40",
+        "description":  "Bronquitis no especificada",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J41",
+        "description":  "Bronquitis crónica simple y mucopurulenta",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J42",
+        "description":  "Bronquitis crónica no especificada",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J43",
+        "description":  "Enfisema",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J44",
+        "description":  "Enfermedad pulmonar obstructiva crónica (EPOC)",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J45",
+        "description":  "Asma",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J46",
+        "description":  "Estado asmático",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J47",
+        "description":  "Bronquiectasia",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J60",
+        "description":  "Neumoconiosis de minero de carbón",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J61",
+        "description":  "Neumoconiosis por asbesto",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J62",
+        "description":  "Neumoconiosis por sílice (silicosis)",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J64",
+        "description":  "Neumoconiosis no especificada",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J67",
+        "description":  "Neumonitis por hipersensibilidad",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J69",
+        "description":  "Neumonitis por aspiración",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J70",
+        "description":  "Trastornos respiratorios por agentes externos",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J80",
+        "description":  "Síndrome de insuficiencia respiratoria aguda (SIRA)",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J81",
+        "description":  "Edema pulmonar",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J82",
+        "description":  "Eosinofilia pulmonar",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J84",
+        "description":  "Enfermedad pulmonar intersticial",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J85",
+        "description":  "Absceso del pulmón",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J86",
+        "description":  "Piotórax (empiema)",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J90",
+        "description":  "Derrame pleural",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J91",
+        "description":  "Derrame pleural en enfermedades clasificadas en otro sitio",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J92",
+        "description":  "Placa pleural",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J93",
+        "description":  "Neumotórax",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J94",
+        "description":  "Otras afecciones de la pleura",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J95",
+        "description":  "Trastornos respiratorios postquirúrgicos",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J96",
+        "description":  "Insuficiencia respiratoria",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J98",
+        "description":  "Otros trastornos respiratorios",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "J99",
+        "description":  "Trastornos respiratorios en enfermedades clasificadas en otro sitio",
+        "category":  "Enfermedades del sistema respiratorio"
+    },
+    {
+        "code":  "K00",
+        "description":  "Trastornos del desarrollo de los dientes",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K01",
+        "description":  "Dientes impactados",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K02",
+        "description":  "Caries dental",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K03",
+        "description":  "Otras enfermedades de los tejidos duros dentales",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K04",
+        "description":  "Enfermedades de la pulpa y tejidos periapicales",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K05",
+        "description":  "Gingivitis y enfermedades periodontales",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K06",
+        "description":  "Otros trastornos de la encía",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K07",
+        "description":  "Anomalías dentofaciales",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K08",
+        "description":  "Otros trastornos de la boca y dientes",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K09",
+        "description":  "Quistes de la región oral",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K10",
+        "description":  "Enfermedades de los maxilares",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K11",
+        "description":  "Enfermedades de las glándulas salivales",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K12",
+        "description":  "Estomatitis y lesiones afines",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K13",
+        "description":  "Otras enfermedades del labio y mucosa oral",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K14",
+        "description":  "Enfermedades de la lengua",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K20",
+        "description":  "Esofagitis",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K21",
+        "description":  "Enfermedad por reflujo gastroesofágico",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K22",
+        "description":  "Otros trastornos del esófago",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K25",
+        "description":  "Úlcera gástrica",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K26",
+        "description":  "Úlcera duodenal",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K27",
+        "description":  "Úlcera péptica de sitio no especificado",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K28",
+        "description":  "Úlcera gastroyeyunal",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K29",
+        "description":  "Gastritis y duodenitis",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K30",
+        "description":  "Dispepsia",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K31",
+        "description":  "Otros trastornos del estómago",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K35",
+        "description":  "Apendicitis aguda",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K36",
+        "description":  "Otros tipos de apendicitis",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K37",
+        "description":  "Apendicitis no especificada",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K38",
+        "description":  "Otras enfermedades del apéndice",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K40",
+        "description":  "Hernia inguinal",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K41",
+        "description":  "Hernia femoral",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K42",
+        "description":  "Hernia umbilical",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K43",
+        "description":  "Hernia ventral",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K44",
+        "description":  "Hernia diafragmática",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K45",
+        "description":  "Otras hernias abdominales",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K46",
+        "description":  "Hernia abdominal no especificada",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K50",
+        "description":  "Enfermedad de Crohn",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K51",
+        "description":  "Colitis ulcerativa",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K52",
+        "description":  "Otras gastroenteritis y colitis no infecciosas",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K55",
+        "description":  "Trastornos vasculares del intestino",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K56",
+        "description":  "Íleo paralítico y obstrucción intestinal",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K57",
+        "description":  "Enfermedad diverticular del intestino",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K58",
+        "description":  "Síndrome de intestino irritable",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K59",
+        "description":  "Otros trastornos funcionales del intestino",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K60",
+        "description":  "Fisura anal",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K61",
+        "description":  "Absceso anal y rectal",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K62",
+        "description":  "Otros trastornos del ano y recto",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K63",
+        "description":  "Otras enfermedades del intestino",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K64",
+        "description":  "Hemorroides",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K65",
+        "description":  "Peritonitis",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K66",
+        "description":  "Otros trastornos del peritoneo",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K70",
+        "description":  "Enfermedad hepática alcohólica",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K71",
+        "description":  "Enfermedad hepática tóxica",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K72",
+        "description":  "Insuficiencia hepática",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K73",
+        "description":  "Hepatitis crónica no clasificada en otro sitio",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K74",
+        "description":  "Fibrosis y cirrosis hepática",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K75",
+        "description":  "Otras enfermedades inflamatorias del hígado",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K76",
+        "description":  "Otras enfermedades del hígado",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K77",
+        "description":  "Trastornos hepáticos en enfermedades clasificadas en otro sitio",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K80",
+        "description":  "Colelitiasis (cálculos biliares)",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K81",
+        "description":  "Colecistitis",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K82",
+        "description":  "Otras enfermedades de la vesícula biliar",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K83",
+        "description":  "Otras enfermedades de las vías biliares",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K85",
+        "description":  "Pancreatitis aguda",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K86",
+        "description":  "Otras enfermedades del páncreas",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K87",
+        "description":  "Trastornos de vesícula y páncreas en otras enfermedades",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K90",
+        "description":  "Malabsorción intestinal",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K91",
+        "description":  "Trastornos digestivos postquirúrgicos",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K92",
+        "description":  "Otras enfermedades del sistema digestivo",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "K93",
+        "description":  "Trastornos del sistema digestivo en otras enfermedades",
+        "category":  "Enfermedades del sistema digestivo"
+    },
+    {
+        "code":  "M00",
+        "description":  "Artritis piógena",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M01",
+        "description":  "Artritis en enfermedades infecciosas",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M02",
+        "description":  "Artropatías reactivas",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M03",
+        "description":  "Artritis postinfecciosa",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M05",
+        "description":  "Artritis reumatoide seropositiva",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M06",
+        "description":  "Artritis reumatoide seronegativa",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M07",
+        "description":  "Artropatía psoriásica",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M08",
+        "description":  "Artritis juvenil",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M10",
+        "description":  "Gota",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M11",
+        "description":  "Otras artropatías por cristales",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M12",
+        "description":  "Otras artropatías especificadas",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M13",
+        "description":  "Artritis no especificada",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M15",
+        "description":  "Poliartrosis",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M16",
+        "description":  "Coxartrosis (artrosis de cadera)",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M17",
+        "description":  "Gonartrosis (artrosis de rodilla)",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M18",
+        "description":  "Artrosis de la primera articulación carpometacarpiana",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M19",
+        "description":  "Otras artrosis",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M20",
+        "description":  "Deformidades adquiridas de los dedos de la mano",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M21",
+        "description":  "Otras deformidades adquiridas de los miembros",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M22",
+        "description":  "Trastornos de la rótula",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M23",
+        "description":  "Trastornos internos de la rodilla",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M24",
+        "description":  "Otros trastornos articulares",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M25",
+        "description":  "Otros trastornos articulares no clasificados en otro sitio",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M30",
+        "description":  "Poliarteritis nodosa",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M31",
+        "description":  "Otras vasculopatías necrosantes",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M32",
+        "description":  "Lupus eritematoso sistémico",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M33",
+        "description":  "Dermatomiositis y polimiositis",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M34",
+        "description":  "Esclerosis sistémica (esclerodermia)",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M35",
+        "description":  "Otras enfermedades sistémicas del tejido conjuntivo",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M40",
+        "description":  "Cifosis y lordosis",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M41",
+        "description":  "Escoliosis",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M42",
+        "description":  "Osteocondrosis espinal",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M43",
+        "description":  "Otras deformidades de la columna",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M45",
+        "description":  "Espondilitis anquilosante",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M46",
+        "description":  "Otras espondilopatías inflamatorias",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M47",
+        "description":  "Espondilosis",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M48",
+        "description":  "Otras espondilopatías",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M50",
+        "description":  "Trastornos de disco cervical",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M51",
+        "description":  "Trastornos de disco lumbar y otros (hernia discal)",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M53",
+        "description":  "Otras dorsopatías",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M54",
+        "description":  "Lumbago y dorsalgia (dolor de espalda)",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M60",
+        "description":  "Miositis",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M61",
+        "description":  "Calcificación y osificación del músculo",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M62",
+        "description":  "Otros trastornos musculares",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M63",
+        "description":  "Trastornos musculares en enfermedades clasificadas en otro sitio",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M65",
+        "description":  "Sinovitis y tenosinovitis",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M66",
+        "description":  "Ruptura espontánea de sinovial y tendón",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M67",
+        "description":  "Otros trastornos de la sinovial y tendón",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M70",
+        "description":  "Trastornos de tejidos blandos por uso excesivo",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M71",
+        "description":  "Otras bursopatías",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M72",
+        "description":  "Trastornos fibroblásticos",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M73",
+        "description":  "Trastornos de tejidos blandos en otras enfermedades",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M75",
+        "description":  "Lesiones del hombro (hombro doloroso)",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M76",
+        "description":  "Entesopatías del miembro inferior",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M77",
+        "description":  "Otras entesopatías (talón doloroso)",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M79",
+        "description":  "Otros trastornos de tejidos blandos (mialgia)",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M80",
+        "description":  "Osteoporosis con fractura patológica",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M81",
+        "description":  "Osteoporosis sin fractura patológica",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M82",
+        "description":  "Osteoporosis en enfermedades clasificadas en otro sitio",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M83",
+        "description":  "Osteomalacia",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M84",
+        "description":  "Trastornos de continuidad ósea",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M85",
+        "description":  "Otros trastornos de la densidad y estructura ósea",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M86",
+        "description":  "Osteomielitis",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M87",
+        "description":  "Osteonecrosis",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M88",
+        "description":  "Enfermedad de Paget del hueso",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M89",
+        "description":  "Otros trastornos del hueso",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M90",
+        "description":  "Trastornos óseos en enfermedades clasificadas en otro sitio",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M91",
+        "description":  "Osteocondrosis de cadera y pelvis",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M92",
+        "description":  "Osteocondrosis de otras localizaciones",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M93",
+        "description":  "Otras osteocondropatías",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M94",
+        "description":  "Otros trastornos del cartílago",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M95",
+        "description":  "Deformidades adquiridas del sistema osteomuscular",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M96",
+        "description":  "Trastornos osteomusculares postquirúrgicos",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "M99",
+        "description":  "Lesiones biomecánicas no clasificadas en otro sitio",
+        "category":  "Enfermedades del sistema osteomuscular y tejido conjuntivo"
+    },
+    {
+        "code":  "N00",
+        "description":  "Síndrome nefrítico agudo",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N01",
+        "description":  "Síndrome nefrítico rápidamente progresivo",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N02",
+        "description":  "Hematuria recurrente persistente",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N03",
+        "description":  "Síndrome nefrítico crónico",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N04",
+        "description":  "Síndrome nefrótico",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N05",
+        "description":  "Síndrome nefrítico no especificado",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N06",
+        "description":  "Proteinuria aislada",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N07",
+        "description":  "Nefropatía hereditaria",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N08",
+        "description":  "Trastornos glomerulares en enfermedades clasificadas en otro sitio",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N10",
+        "description":  "Nefritis tubulointersticial aguda",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N11",
+        "description":  "Nefritis tubulointersticial crónica",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N12",
+        "description":  "Nefritis tubulointersticial no especificada",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N13",
+        "description":  "Uropatía obstructiva y por reflujo",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N14",
+        "description":  "Nefropatía inducida por drogas",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N15",
+        "description":  "Otras enfermedades tubulointersticiales",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N16",
+        "description":  "Trastornos tubulointersticiales en otras enfermedades",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N17",
+        "description":  "Insuficiencia renal aguda",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N18",
+        "description":  "Insuficiencia renal crónica (ERC)",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N19",
+        "description":  "Insuficiencia renal no especificada",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N20",
+        "description":  "Cálculo del riñón y uréter (litiasis renal)",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N21",
+        "description":  "Cálculo del tracto urinario inferior",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N22",
+        "description":  "Cálculo urinario en enfermedades clasificadas en otro sitio",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N23",
+        "description":  "Cólico renal no especificado",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N25",
+        "description":  "Trastornos del riñón por disfunción tubular",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N26",
+        "description":  "Riñón contraído no especificado",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N27",
+        "description":  "Riñón de tamaño pequeño",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N28",
+        "description":  "Otros trastornos del riñón",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N29",
+        "description":  "Trastornos renales en enfermedades clasificadas en otro sitio",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N30",
+        "description":  "Cistitis",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N31",
+        "description":  "Disfunción neuromuscular de la vejiga",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N32",
+        "description":  "Otros trastornos de la vejiga",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N33",
+        "description":  "Trastornos de la vejiga en enfermedades clasificadas en otro sitio",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N34",
+        "description":  "Uretritis y síndrome uretral",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N35",
+        "description":  "Estenosis uretral",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N36",
+        "description":  "Otros trastornos de la uretra",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N37",
+        "description":  "Trastornos de la uretra en enfermedades clasificadas en otro sitio",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N39",
+        "description":  "Infección del tracto urinario no especificada",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N40",
+        "description":  "Hiperplasia prostática benigna (HPB)",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N41",
+        "description":  "Prostatitis",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N42",
+        "description":  "Otros trastornos de la próstata",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N43",
+        "description":  "Hidrocele",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N44",
+        "description":  "Torsión testicular",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N45",
+        "description":  "Orquitis y epididimitis",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N46",
+        "description":  "Infertilidad masculina",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N47",
+        "description":  "Fimosis y parafimosis",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N48",
+        "description":  "Otros trastornos del pene",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N49",
+        "description":  "Trastornos inflamatorios de órganos genitales masculinos",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N50",
+        "description":  "Otros trastornos de los órganos genitales masculinos",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N51",
+        "description":  "Trastornos de genitales masculinos en otras enfermedades",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N60",
+        "description":  "Displasias mamarias benignas",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N61",
+        "description":  "Trastornos inflamatorios de la mama (mastitis)",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N62",
+        "description":  "Hipertrofia de la mama",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N63",
+        "description":  "Masa no especificada en la mama",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N64",
+        "description":  "Otros trastornos de la mama",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N70",
+        "description":  "Salpingitis y ooforitis",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N71",
+        "description":  "Enfermedad inflamatoria del útero (endometritis)",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N72",
+        "description":  "Cervicitis",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N73",
+        "description":  "Otras enfermedades inflamatorias pélvicas",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N74",
+        "description":  "Enfermedad inflamatoria pélvica en otras enfermedades",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N75",
+        "description":  "Enfermedades de la glándula de Bartholin",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N76",
+        "description":  "Inflamación vaginal y vulvar (vaginosis)",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N77",
+        "description":  "Ulceración vulvovaginal en otras enfermedades",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N80",
+        "description":  "Endometriosis",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N81",
+        "description":  "Prolapso genital femenino",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N82",
+        "description":  "Fístulas del tracto genital femenino",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N83",
+        "description":  "Trastornos no inflamatorios del ovario",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N84",
+        "description":  "Pólipo del tracto genital femenino",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N85",
+        "description":  "Otros trastornos del útero",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N86",
+        "description":  "Erosión del cuello uterino",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N87",
+        "description":  "Displasia del cuello uterino (NIC)",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N88",
+        "description":  "Otros trastornos del cuello uterino",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N89",
+        "description":  "Otros trastornos de la vagina",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N90",
+        "description":  "Otros trastornos de la vulva",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N91",
+        "description":  "Amenorrea",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N92",
+        "description":  "Menstruación excesiva o irregular",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N93",
+        "description":  "Sangrado uterino anormal",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N94",
+        "description":  "Dolor y otras condiciones relacionadas con genitales femeninos",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N95",
+        "description":  "Trastornos de la menopausia",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N96",
+        "description":  "Aborto recurrente",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N97",
+        "description":  "Infertilidad femenina",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N98",
+        "description":  "Complicaciones de la fertilización asistida",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "N99",
+        "description":  "Trastornos genitourinarios postquirúrgicos",
+        "category":  "Enfermedades del sistema genitourinario"
+    },
+    {
+        "code":  "R00",
+        "description":  "Anormalidades del latido cardíaco",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R01",
+        "description":  "Soplos cardíacos y otros sonidos cardíacos",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R02",
+        "description":  "Gangrena no clasificada en otro sitio",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R03",
+        "description":  "Presión arterial elevada sin diagnóstico de HTA",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R04",
+        "description":  "Hemorragia de vías respiratorias",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R05",
+        "description":  "Tos",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R06",
+        "description":  "Anormalidades de la respiración",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R07",
+        "description":  "Dolor de garganta y pecho",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R09",
+        "description":  "Otros síntomas de sistemas respiratorio y circulatorio",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R10",
+        "description":  "Dolor abdominal",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R11",
+        "description":  "Náusea y vómito",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R12",
+        "description":  "Acidez (pirosis)",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R13",
+        "description":  "Disfagia",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R14",
+        "description":  "Flatulencia y trastornos afines",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R15",
+        "description":  "Incontinencia fecal",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R16",
+        "description":  "Hepatomegalia y esplenomegalia",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R17",
+        "description":  "Ictericia no especificada",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R18",
+        "description":  "Ascitis",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R19",
+        "description":  "Otros síntomas del sistema digestivo",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R20",
+        "description":  "Trastornos de la sensibilidad cutánea",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R21",
+        "description":  "Erupción cutánea y otras erupciones no especificadas",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R22",
+        "description":  "Tumefacción o masa en piel y tejido subcutáneo",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R23",
+        "description":  "Otros cambios en la piel",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R25",
+        "description":  "Movimientos involuntarios anormales",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R26",
+        "description":  "Anormalidades de la marcha y movilidad",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R27",
+        "description":  "Falta de coordinación",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R29",
+        "description":  "Otros síntomas del sistema nervioso",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R30",
+        "description":  "Dolor miccional",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R31",
+        "description":  "Hematuria no especificada",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R32",
+        "description":  "Incontinencia urinaria no especificada",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R33",
+        "description":  "Retención de orina",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R34",
+        "description":  "Anuria y oliguria",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R35",
+        "description":  "Poliuria",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R36",
+        "description":  "Descarga uretral",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R39",
+        "description":  "Otros síntomas del sistema urinario",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R40",
+        "description":  "Somnolencia, estupor y coma",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R41",
+        "description":  "Otros síntomas de función cognitiva",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R42",
+        "description":  "Mareo y vértigo",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R43",
+        "description":  "Trastornos del olfato y el gusto",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R44",
+        "description":  "Otros síntomas de sensación y percepción",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R45",
+        "description":  "Síntomas de tensión emocional",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R46",
+        "description":  "Síntomas de apariencia y conducta",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R47",
+        "description":  "Trastornos del habla",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R48",
+        "description":  "Trastornos de la lectura y escritura",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R49",
+        "description":  "Trastornos de la voz",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R50",
+        "description":  "Fiebre de origen desconocido",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R51",
+        "description":  "Cefalea",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R52",
+        "description":  "Dolor no clasificado en otro sitio",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R53",
+        "description":  "Malestar general y fatiga",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R54",
+        "description":  "Senilidad",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R55",
+        "description":  "Síncope y colapso",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R56",
+        "description":  "Convulsiones no clasificadas en otro sitio",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R57",
+        "description":  "Choque (shock) no clasificado en otro sitio",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R58",
+        "description":  "Hemorragia no clasificada en otro sitio",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R59",
+        "description":  "Adenomegalia (ganglios linfáticos aumentados)",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R60",
+        "description":  "Edema no clasificado en otro sitio",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R61",
+        "description":  "Hiperhidrosis (sudoración excesiva)",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R62",
+        "description":  "Falta del desarrollo fisiológico esperado",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R63",
+        "description":  "Síntomas relacionados con alimentación e ingesta",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R64",
+        "description":  "Caquexia",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R68",
+        "description":  "Otros síntomas y signos generales",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R69",
+        "description":  "Causas desconocidas y no especificadas de morbilidad",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R70",
+        "description":  "Velocidad de sedimentación elevada",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R71",
+        "description":  "Anormalidades de los glóbulos rojos",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R72",
+        "description":  "Anormalidades de los leucocitos",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R73",
+        "description":  "Nivel elevado de glucosa en sangre",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R74",
+        "description":  "Nivel anormal de enzimas en sangre",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R75",
+        "description":  "Serología de VIH anormal",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R76",
+        "description":  "Otros hallazgos inmunológicos anormales",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R77",
+        "description":  "Anormalidades de las proteínas plasmáticas",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R78",
+        "description":  "Hallazgo de drogas en sangre",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R79",
+        "description":  "Otros hallazgos anormales en química sanguínea",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R80",
+        "description":  "Proteinuria aislada no asociada",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R81",
+        "description":  "Glucosuria",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R82",
+        "description":  "Otros hallazgos anormales en orina",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R83",
+        "description":  "Hallazgos anormales en LCR",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R89",
+        "description":  "Hallazgos anormales en otros líquidos corporales",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R90",
+        "description":  "Hallazgos anormales en diagnóstico por imagen del SNC",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R91",
+        "description":  "Hallazgos anormales en diagnóstico por imagen del pulmón",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R92",
+        "description":  "Hallazgos anormales en diagnóstico por imagen de la mama",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R93",
+        "description":  "Hallazgos anormales en otros órganos abdominales",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R94",
+        "description":  "Resultados anormales de estudios funcionales",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R95",
+        "description":  "Muerte súbita infantil",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R96",
+        "description":  "Otras muertes súbitas de causa desconocida",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R98",
+        "description":  "Muerte sin asistencia",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "R99",
+        "description":  "Otras causas mal definidas de muerte",
+        "category":  "Síntomas y hallazgos anormales"
+    },
+    {
+        "code":  "S00",
+        "description":  "Traumatismo superficial de la cabeza",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S01",
+        "description":  "Herida abierta de la cabeza",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S02",
+        "description":  "Fractura de huesos del cráneo y la cara",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S03",
+        "description":  "Luxación de articulaciones de la cabeza",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S04",
+        "description":  "Traumatismo de nervios craneales",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S05",
+        "description":  "Traumatismo del ojo y la órbita",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S06",
+        "description":  "Traumatismo intracraneal (TCE)",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S07",
+        "description":  "Traumatismo por aplastamiento de la cabeza",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S08",
+        "description":  "Amputación traumática de partes de la cabeza",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S09",
+        "description":  "Otros traumatismos de la cabeza",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S10",
+        "description":  "Traumatismo superficial del cuello",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S11",
+        "description":  "Herida abierta del cuello",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S12",
+        "description":  "Fractura del cuello (vértebras cervicales)",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S13",
+        "description":  "Luxación y esguince de articulaciones del cuello",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S14",
+        "description":  "Traumatismo de médula espinal cervical",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S20",
+        "description":  "Traumatismo superficial del tórax",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S21",
+        "description":  "Herida abierta del tórax",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S22",
+        "description":  "Fractura de costillas, esternón y columna torácica",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S23",
+        "description":  "Luxación y esguince de articulaciones del tórax",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S24",
+        "description":  "Traumatismo de médula espinal torácica",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S25",
+        "description":  "Traumatismo de vasos sanguíneos del tórax",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S26",
+        "description":  "Traumatismo del corazón",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S27",
+        "description":  "Traumatismo de otros órganos intratorácicos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S30",
+        "description":  "Traumatismo superficial del abdomen y pelvis",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S31",
+        "description":  "Herida abierta del abdomen y pelvis",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S32",
+        "description":  "Fractura de columna lumbar y pelvis",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S33",
+        "description":  "Luxación y esguince de articulaciones lumbar y pelvis",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S34",
+        "description":  "Traumatismo de médula espinal lumbar y nervios",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S35",
+        "description":  "Traumatismo de vasos sanguíneos del abdomen",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S36",
+        "description":  "Traumatismo de órganos intraabdominales",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S37",
+        "description":  "Traumatismo de órganos urinarios y pélvicos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S40",
+        "description":  "Traumatismo superficial del hombro y brazo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S41",
+        "description":  "Herida abierta del hombro y brazo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S42",
+        "description":  "Fractura del hombro y brazo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S43",
+        "description":  "Luxación y esguince de hombro",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S44",
+        "description":  "Traumatismo de nervios del hombro y brazo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S45",
+        "description":  "Traumatismo de vasos sanguíneos del hombro y brazo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S46",
+        "description":  "Traumatismo de músculos y tendones del hombro y brazo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S47",
+        "description":  "Traumatismo por aplastamiento del hombro y brazo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S50",
+        "description":  "Traumatismo superficial del antebrazo y codo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S51",
+        "description":  "Herida abierta del antebrazo y codo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S52",
+        "description":  "Fractura del antebrazo (radio y cúbito)",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S53",
+        "description":  "Luxación y esguince de codo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S54",
+        "description":  "Traumatismo de nervios del antebrazo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S55",
+        "description":  "Traumatismo de vasos sanguíneos del antebrazo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S56",
+        "description":  "Traumatismo de músculos y tendones del antebrazo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S57",
+        "description":  "Traumatismo por aplastamiento del antebrazo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S60",
+        "description":  "Traumatismo superficial de la muñeca y mano",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S61",
+        "description":  "Herida abierta de la muñeca y mano",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S62",
+        "description":  "Fractura de la muñeca y mano",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S63",
+        "description":  "Luxación y esguince de muñeca y mano",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S64",
+        "description":  "Traumatismo de nervios de la mano",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S65",
+        "description":  "Traumatismo de vasos sanguíneos de la mano",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S66",
+        "description":  "Traumatismo de músculos y tendones de la mano",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S70",
+        "description":  "Traumatismo superficial de la cadera y muslo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S71",
+        "description":  "Herida abierta de la cadera y muslo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S72",
+        "description":  "Fractura del fémur",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S73",
+        "description":  "Luxación de cadera",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S74",
+        "description":  "Traumatismo de nervios del muslo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S75",
+        "description":  "Traumatismo de vasos sanguíneos del muslo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S76",
+        "description":  "Traumatismo de músculos y tendones del muslo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S80",
+        "description":  "Traumatismo superficial de la pierna",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S81",
+        "description":  "Herida abierta de la pierna",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S82",
+        "description":  "Fractura de la pierna (tibia y peroné)",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S83",
+        "description":  "Luxación y esguince de rodilla",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S84",
+        "description":  "Traumatismo de nervios de la pierna",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S85",
+        "description":  "Traumatismo de vasos sanguíneos de la pierna",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S86",
+        "description":  "Traumatismo de músculos y tendones de la pierna",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S87",
+        "description":  "Traumatismo por aplastamiento de la pierna",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S90",
+        "description":  "Traumatismo superficial del tobillo y pie",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S91",
+        "description":  "Herida abierta del tobillo y pie",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S92",
+        "description":  "Fractura del pie (incluye tobillo)",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S93",
+        "description":  "Luxación y esguince de tobillo y pie",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S94",
+        "description":  "Traumatismo de nervios del pie",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S95",
+        "description":  "Traumatismo de vasos sanguíneos del pie",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S96",
+        "description":  "Traumatismo de músculos y tendones del pie",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "S97",
+        "description":  "Traumatismo por aplastamiento del pie",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T00",
+        "description":  "Traumatismos superficiales que afectan múltiples regiones",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T01",
+        "description":  "Heridas abiertas que afectan múltiples regiones",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T02",
+        "description":  "Fracturas que afectan múltiples regiones",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T03",
+        "description":  "Luxaciones que afectan múltiples regiones",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T04",
+        "description":  "Aplastamientos que afectan múltiples regiones",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T05",
+        "description":  "Amputaciones traumáticas que afectan múltiples regiones",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T06",
+        "description":  "Otros traumatismos de múltiples regiones",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T07",
+        "description":  "Traumatismos múltiples no especificados",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T08",
+        "description":  "Fractura de columna vertebral no especificada",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T09",
+        "description":  "Otros traumatismos de columna vertebral y tronco",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T10",
+        "description":  "Fractura de miembro superior no especificado",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T11",
+        "description":  "Otros traumatismos de miembro superior",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T12",
+        "description":  "Fractura de miembro inferior no especificado",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T13",
+        "description":  "Otros traumatismos de miembro inferior",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T14",
+        "description":  "Traumatismo de región no especificada",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T15",
+        "description":  "Cuerpo extraño en el ojo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T16",
+        "description":  "Cuerpo extraño en el oído",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T17",
+        "description":  "Cuerpo extraño en vías respiratorias",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T18",
+        "description":  "Cuerpo extraño en tubo digestivo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T19",
+        "description":  "Cuerpo extraño en vías genitourinarias",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T20",
+        "description":  "Quemadura de cabeza y cuello",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T21",
+        "description":  "Quemadura del tronco",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T22",
+        "description":  "Quemadura del hombro y miembro superior",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T23",
+        "description":  "Quemadura de la muñeca y mano",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T24",
+        "description":  "Quemadura de cadera y miembro inferior",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T25",
+        "description":  "Quemadura del tobillo y pie",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T26",
+        "description":  "Quemadura del ojo",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T27",
+        "description":  "Quemadura de vías respiratorias",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T28",
+        "description":  "Quemadura de otros órganos internos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T29",
+        "description":  "Quemaduras de múltiples regiones",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T30",
+        "description":  "Quemadura no especificada",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T31",
+        "description":  "Quemaduras clasificadas según extensión",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T32",
+        "description":  "Quemaduras clasificadas por porcentaje",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T33",
+        "description":  "Congelación superficial",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T34",
+        "description":  "Congelación con necrosis",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T35",
+        "description":  "Congelación de múltiples regiones",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T36",
+        "description":  "Envenenamiento por antibióticos sistémicos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T37",
+        "description":  "Envenenamiento por antiinfecciosos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T38",
+        "description":  "Envenenamiento por hormonas",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T39",
+        "description":  "Envenenamiento por analgésicos y antipiréticos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T40",
+        "description":  "Envenenamiento por narcóticos y psicodislépticos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T41",
+        "description":  "Envenenamiento por anestésicos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T42",
+        "description":  "Envenenamiento por antiepilépticos y sedantes",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T43",
+        "description":  "Envenenamiento por psicotrópicos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T44",
+        "description":  "Envenenamiento por fármacos autonómicos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T45",
+        "description":  "Envenenamiento por agentes hematológicos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T46",
+        "description":  "Envenenamiento por fármacos cardiovasculares",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T47",
+        "description":  "Envenenamiento por fármacos digestivos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T48",
+        "description":  "Envenenamiento por fármacos respiratorios",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T49",
+        "description":  "Envenenamiento por fármacos tópicos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T50",
+        "description":  "Envenenamiento por diuréticos y otras drogas",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T51",
+        "description":  "Efecto tóxico del alcohol",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T52",
+        "description":  "Efecto tóxico de solventes orgánicos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T53",
+        "description":  "Efecto tóxico de halógenos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T54",
+        "description":  "Efecto tóxico de corrosivos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T55",
+        "description":  "Efecto tóxico de detergentes y jabones",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T56",
+        "description":  "Efecto tóxico de metales",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T57",
+        "description":  "Efecto tóxico de otros compuestos inorgánicos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T58",
+        "description":  "Efecto tóxico del monóxido de carbono",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T59",
+        "description":  "Efecto tóxico de gases y vapores",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T60",
+        "description":  "Efecto tóxico de plaguicidas",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T61",
+        "description":  "Efecto tóxico de mariscos y pescados",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T62",
+        "description":  "Efecto tóxico de otros alimentos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T63",
+        "description":  "Efecto tóxico de mordeduras y picaduras",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T64",
+        "description":  "Efecto tóxico de aflatoxinas",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T65",
+        "description":  "Efecto tóxico de otras sustancias",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T66",
+        "description":  "Efecto de la radiación no especificado",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T67",
+        "description":  "Efecto del calor y la insolación",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T68",
+        "description":  "Hipotermia",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T69",
+        "description":  "Otros efectos de temperatura reducida",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T70",
+        "description":  "Efectos de la presión atmosférica",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T71",
+        "description":  "Asfixia",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T73",
+        "description":  "Efectos de la privación",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T74",
+        "description":  "Maltrato (síndrome del niño maltratado)",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T75",
+        "description":  "Efectos de otras causas externas",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T78",
+        "description":  "Efectos adversos no clasificados en otro sitio",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T79",
+        "description":  "Complicaciones traumáticas tempranas",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T80",
+        "description":  "Complicaciones de infusión y transfusión",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T81",
+        "description":  "Complicaciones de procedimientos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T82",
+        "description":  "Complicaciones de dispositivos protésicos cardíacos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T83",
+        "description":  "Complicaciones de dispositivos genitourinarios",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T84",
+        "description":  "Complicaciones de dispositivos ortopédicos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T85",
+        "description":  "Complicaciones de otros dispositivos implantados",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T86",
+        "description":  "Fracaso y rechazo de órganos trasplantados",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T87",
+        "description":  "Complicaciones de amputaciones",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T88",
+        "description":  "Otras complicaciones de la atención médica",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T90",
+        "description":  "Secuelas de traumatismos de la cabeza",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T91",
+        "description":  "Secuelas de traumatismos del cuello y tronco",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T92",
+        "description":  "Secuelas de traumatismos de miembro superior",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T93",
+        "description":  "Secuelas de traumatismos de miembro inferior",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T94",
+        "description":  "Secuelas de traumatismos de múltiples regiones",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T95",
+        "description":  "Secuelas de quemaduras",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T96",
+        "description":  "Secuelas de envenenamientos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T97",
+        "description":  "Secuelas de efectos tóxicos",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "T98",
+        "description":  "Secuelas de otras causas externas",
+        "category":  "Traumatismos y envenenamientos"
+    },
+    {
+        "code":  "Z00",
+        "description":  "Examen médico general (chequeo)",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z01",
+        "description":  "Otros exámenes médicos especiales",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z02",
+        "description":  "Examen para fines administrativos",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z03",
+        "description":  "Observación por sospecha de enfermedad",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z04",
+        "description":  "Examen con fines medicolegales",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z08",
+        "description":  "Examen de seguimiento postratamiento neoplasia",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z09",
+        "description":  "Examen de seguimiento postratamiento otras condiciones",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z10",
+        "description":  "Chequeo general de rutina",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z11",
+        "description":  "Tamizaje de enfermedades infecciosas",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z12",
+        "description":  "Tamizaje de neoplasias",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z13",
+        "description":  "Tamizaje de otras enfermedades",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z20",
+        "description":  "Contacto con y exposición a enfermedades transmisibles",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z21",
+        "description":  "Infección por VIH asintomática",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z22",
+        "description":  "Portador de enfermedad infecciosa",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z23",
+        "description":  "Vacunación contra enfermedades bacterianas",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z24",
+        "description":  "Vacunación contra enfermedades virales",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z25",
+        "description":  "Vacunación contra otras enfermedades virales",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z26",
+        "description":  "Vacunación contra otras enfermedades infecciosas",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z27",
+        "description":  "Vacunación combinada",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z28",
+        "description":  "Vacunación no realizada",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z29",
+        "description":  "Otras medidas profilácticas",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z30",
+        "description":  "Anticoncepción y manejo anticonceptivo",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z31",
+        "description":  "Manejo de fertilidad",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z32",
+        "description":  "Embarazo no confirmado o confirmado",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z33",
+        "description":  "Estado de embarazo incidental",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z34",
+        "description":  "Supervisión de embarazo normal",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z35",
+        "description":  "Supervisión de embarazo de alto riesgo",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z36",
+        "description":  "Tamizaje prenatal",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z37",
+        "description":  "Resultado del parto",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z38",
+        "description":  "Recién nacido vivo",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z39",
+        "description":  "Atención postparto",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z40",
+        "description":  "Cirugía profiláctica",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z41",
+        "description":  "Procedimientos sin fines terapéuticos",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z42",
+        "description":  "Cuidado de seguimiento por cirugía reconstructiva",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z43",
+        "description":  "Atención de ostomías",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z44",
+        "description":  "Colocación de prótesis externa",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z45",
+        "description":  "Ajuste de dispositivos implantados",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z46",
+        "description":  "Colocación de otros dispositivos",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z47",
+        "description":  "Cuidado de seguimiento por tratamiento ortopédico",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z48",
+        "description":  "Cuidado de seguimiento por cirugía",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z49",
+        "description":  "Cuidado relacionado con diálisis",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z50",
+        "description":  "Rehabilitación",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z51",
+        "description":  "Otros cuidados médicos (quimioterapia, radioterapia)",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z52",
+        "description":  "Donación de órganos y tejidos",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z53",
+        "description":  "Procedimiento no realizado por contraindicación",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z54",
+        "description":  "Convalecencia",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z55",
+        "description":  "Problemas relacionados con educación y alfabetización",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z56",
+        "description":  "Problemas relacionados con el desempleo",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z57",
+        "description":  "Exposición a riesgos laborales",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z58",
+        "description":  "Problemas relacionados con el entorno físico",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z59",
+        "description":  "Problemas relacionados con la vivienda",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z60",
+        "description":  "Problemas relacionados con el entorno social",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z61",
+        "description":  "Problemas relacionados con eventos traumáticos en la infancia",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z62",
+        "description":  "Problemas relacionados con la crianza",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z63",
+        "description":  "Problemas relacionados con el grupo de apoyo familiar",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z64",
+        "description":  "Problemas relacionados con conductas de riesgo",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z65",
+        "description":  "Problemas relacionados con otras circunstancias psicosociales",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z70",
+        "description":  "Consejería sobre actitud y conducta sexual",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z71",
+        "description":  "Consejería médica",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z72",
+        "description":  "Problemas relacionados con el estilo de vida",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z73",
+        "description":  "Problemas relacionados con el manejo de la vida",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z74",
+        "description":  "Problemas relacionados con dependencia de cuidador",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z75",
+        "description":  "Problemas relacionados con servicios médicos",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z76",
+        "description":  "Personas en contacto con servicios de salud",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z80",
+        "description":  "Antecedentes familiares de neoplasias",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z81",
+        "description":  "Antecedentes familiares de trastornos mentales",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z82",
+        "description":  "Antecedentes familiares de otras enfermedades",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z83",
+        "description":  "Antecedentes familiares de otros trastornos",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z85",
+        "description":  "Antecedentes personales de neoplasia",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z86",
+        "description":  "Antecedentes personales de otras enfermedades",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z87",
+        "description":  "Antecedentes personales de enfermedades del sistema",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z88",
+        "description":  "Alergia a medicamentos en la historia personal",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z89",
+        "description":  "Ausencia adquirida de un miembro",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z90",
+        "description":  "Ausencia adquirida de órganos",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z91",
+        "description":  "Factores de riesgo en la historia personal",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z92",
+        "description":  "Antecedentes personales de tratamiento médico",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z93",
+        "description":  "Condiciones relacionadas con ostomías",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z94",
+        "description":  "Trasplante de órganos y tejidos",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z95",
+        "description":  "Presencia de implantes cardíacos",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z96",
+        "description":  "Presencia de otros implantes",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z97",
+        "description":  "Presencia de otros dispositivos",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z98",
+        "description":  "Otras condiciones postquirúrgicas",
+        "category":  "Factores que influyen en el estado de salud"
+    },
+    {
+        "code":  "Z99",
+        "description":  "Dependencia de máquinas y dispositivos",
+        "category":  "Factores que influyen en el estado de salud"
+    }
+]

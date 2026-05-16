@@ -19,7 +19,8 @@ namespace MedPal.API.Repositories
         Task RestoreUserAsync(int userId);
         Task UpdateUserLastAccessAtAsync(int userId);
         Task<List<string>> GetUserRolesAsync(int userId);
-        Task<List<Clinic>> GetUserClinicsAsync(int userId);
+        Task<Clinic?> GetUserClinicAsync(int userId);
         Task<List<User>> GetAllUsersByAccountId(int accountId);
+        Task<List<User>> GetDoctorsByClinicAsync(int clinicId);
     }
 }

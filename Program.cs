@@ -155,6 +155,12 @@ builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 // Notification Message Repository (Phase 4)
 builder.Services.AddScoped<INotificationMessageRepository, NotificationMessageRepository>();
 
+// Patient Portal Auth
+builder.Services.AddScoped<IPatientAuthRepository, PatientAuthRepository>();
+
+// Vital Signs Repository (Signos Vitales for NOM-035 compliance)
+builder.Services.AddScoped<IVitalSignRepository, VitalSignRepository>();
+
 // Notification Services (Phase 3)
 // Using MockChannel for now (Strategy Pattern ready for WhatsApp/Email)
 builder.Services.AddSingleton<INotificationChannel, MockNotificationChannel>();
@@ -175,6 +181,7 @@ builder.Services.AddAuthorizationBuilder()
     // Patient Permissions
     .AddPolicy("Patients.ViewAll", policy => policy.Requirements.Add(new PermissionRequirement("Patients.ViewAll")))
     .AddPolicy("Patients.ViewOwn", policy => policy.Requirements.Add(new PermissionRequirement("Patients.ViewOwn")))
+    .AddPolicy("Patients.ViewAssigned", policy => policy.Requirements.Add(new PermissionRequirement("Patients.ViewAssigned")))
     .AddPolicy("Patients.Create", policy => policy.Requirements.Add(new PermissionRequirement("Patients.Create")))
     .AddPolicy("Patients.Update", policy => policy.Requirements.Add(new PermissionRequirement("Patients.Update")))
     .AddPolicy("Patients.Delete", policy => policy.Requirements.Add(new PermissionRequirement("Patients.Delete")))
@@ -190,6 +197,7 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("MedicalRecords.ViewAll", policy => policy.Requirements.Add(new PermissionRequirement("MedicalRecords.ViewAll")))
     .AddPolicy("MedicalRecords.ViewOwn", policy => policy.Requirements.Add(new PermissionRequirement("MedicalRecords.ViewOwn")))
     .AddPolicy("MedicalRecords.ViewAssigned", policy => policy.Requirements.Add(new PermissionRequirement("MedicalRecords.ViewAssigned")))
+    .AddPolicy("MedicalRecords.Read", policy => policy.Requirements.Add(new PermissionRequirement("MedicalRecords.Read")))
     .AddPolicy("MedicalRecords.Create", policy => policy.Requirements.Add(new PermissionRequirement("MedicalRecords.Create")))
     .AddPolicy("MedicalRecords.Update", policy => policy.Requirements.Add(new PermissionRequirement("MedicalRecords.Update")))
 
@@ -336,7 +344,7 @@ builder.Services.AddAuthorizationBuilder()
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("http://localhost:4200", "https://portal.clinicflow.com.mx")
+        builder => builder.WithOrigins("http://localhost:4200", "http://localhost:4201", "https://portal.clinicflow.com.mx")
                             .AllowAnyHeader()
                             .AllowAnyMethod()
                             .AllowCredentials());
@@ -360,6 +368,9 @@ using (var scope = app.Services.CreateScope())
     {
         await DummyDataSeeder.SeedDummyDataAsync(context);
     }
+
+    // Seed CIE-10 diagnostic codes catalog (always, only if empty)
+    await Cie10Seeder.SeedAsync(context);
 }
 
 // Configure the HTTP request pipeline.

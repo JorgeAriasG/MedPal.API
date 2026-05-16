@@ -42,7 +42,7 @@ namespace MedPal.API.Models
         // Navigations
         public virtual Account Account { get; set; }
 
-        public virtual ICollection<UserClinic> UserClinics { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<PatientClinic> PatientClinics { get; set; }
     }
 }

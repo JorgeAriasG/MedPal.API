@@ -71,6 +71,12 @@ namespace MedPal.API.Services
         Task<IEnumerable<PatientConsent>> GetConsentsByClinicAsync(int patientDetailsId, int requestingClinicId);
 
         /// <summary>
+        /// Checks if a patient has granted explicit consent to a specific doctor.
+        /// Used for intra-clinic cross-specialty access control (NOM-004).
+        /// </summary>
+        Task<bool> IsConsentForDoctorValidAsync(int patientDetailsId, int targetDoctorId);
+
+        /// <summary>
         /// Checks if a specific consent record is expired based on ExpiryDate.
         /// </summary>
         /// <param name="consent">The consent record to check</param>

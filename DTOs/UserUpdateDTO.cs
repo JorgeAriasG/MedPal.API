@@ -30,7 +30,7 @@ namespace MedPal.API.DTOs
         public bool HasAcceptedPrivacyTerms { get; set; }
 
         /// <summary>Id de la clínica principal (opcional, Fase 1)</summary>
-        public int? PrincipalClinicId { get; set; }
+        public int ClinicId { get; set; }
         
     }
 }

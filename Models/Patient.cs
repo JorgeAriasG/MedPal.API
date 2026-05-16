@@ -15,6 +15,7 @@ namespace MedPal.API.Models
             PatientsInsurance = new HashSet<PatientInsurance>();
             Invoices = new HashSet<Invoice>();
             EmergencyContacts = new HashSet<EmergencyContact>();
+            PatientClinics = new HashSet<PatientClinic>();
         }
 
         [Key]
@@ -35,6 +36,10 @@ namespace MedPal.API.Models
         [Required]
         public string Email { get; set; }
 
+        // CURP (Clave Única de Registro de Población) - México patient identifier
+        [StringLength(18)]
+        public string? Curp { get; set; }
+
         // REMOVIDO EN PHASE 3: EmergencyContact string
         // Se reemplaza con relación 1:Many a EmergencyContact model para más flexibilidad
 
@@ -42,10 +47,6 @@ namespace MedPal.API.Models
         public DateTime CreatedAt { get; set; }
         [Required]
         public DateTime? UpdatedAt { get; set; }
-        
-        // Multi-tenancy (Fase 1): Patient obtiene AccountId vía Clinic
-        // Relación indirecta: Patient → Clinic → Account
-        public int ClinicId { get; set; }
         
         // Multi-tenancy denormalized para queries rápidas
         [ForeignKey("Account")]
@@ -69,7 +70,6 @@ namespace MedPal.API.Models
 
         // Navigation Properties
         public virtual Account Account { get; set; }
-        public virtual Clinic Clinic { get; set; }
         public virtual User User { get; set; }
         public virtual PatientDetails PatientDetails { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
@@ -81,5 +81,10 @@ namespace MedPal.API.Models
         /// Contactos de emergencia del paciente (puede tener múltiples)
         /// </summary>
         public virtual ICollection<EmergencyContact> EmergencyContacts { get; set; }
+
+        /// <summary>
+        /// Clínicas a las que pertenece el paciente (relación M:N)
+        /// </summary>
+        public virtual ICollection<PatientClinic> PatientClinics { get; set; }
     }
 }

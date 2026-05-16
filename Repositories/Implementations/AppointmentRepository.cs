@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -15,15 +16,36 @@ namespace MedPal.API.Repositories
         {
         }
 
-        public async Task<IEnumerable<Appointment>> GetAllAppointmentsByIdAsync(int clinicId)
+        public async Task<IEnumerable<Appointment>> GetAllAppointmentsByIdAsync(int clinicId, int? userId = null, DateOnly? date = null)
         {
-            return await ApplyTenantFilter(_context.Appointments.Where(a => a.ClinicId == clinicId)).ToListAsync();
+            var query = _context.Appointments.Where(a => a.ClinicId == clinicId);
+
+            if (userId.HasValue)
+            {
+                query = query.Where(a => a.UserId == userId.Value);
+            }
+
+            if (date.HasValue)
+            {
+                query = query.Where(a => a.Date == date.Value);
+            }
+
+            return await ApplyTenantFilter(query).ToListAsync();
         }
 
         public async Task<Appointment> GetAppointmentByIdAsync(int id)
         {
             return await ApplyTenantFilter(_context.Appointments)
                 .FirstOrDefaultAsync(a => a.Id == id);
+        }
+
+        public async Task<IEnumerable<Appointment>> GetByPatientIdAsync(int patientId)
+        {
+            return await ApplyTenantFilter(_context.Appointments
+                .Where(a => a.PatientId == patientId))
+                .OrderByDescending(a => a.Date)
+                .ThenByDescending(a => a.Time)
+                .ToListAsync();
         }
 
         public async Task<Appointment> AddAppointmentAsync(Appointment appointment)

@@ -8,6 +8,7 @@ using MedPal.API.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using FluentValidation;
 using MedPal.API.Services;
+using System.Security.Claims;
 
 namespace MedPal.API.Controllers
 {
@@ -16,20 +17,42 @@ namespace MedPal.API.Controllers
     public class AppointmentsController : BaseController
     {
         private readonly IAppointmentService _appointmentService;
+        private readonly IAuthorizationService _authorizationService;
 
-        public AppointmentsController(IAppointmentService appointmentService)
+        public AppointmentsController(IAppointmentService appointmentService, IAuthorizationService authorizationService)
         {
             _appointmentService = appointmentService;
+            _authorizationService = authorizationService;
         }
 
-        // GET: api/appointments
+        // GET: api/appointments?clinicId={clinicId}&date={date}
         [HttpGet]
-        [Authorize(Policy = "Appointments.ViewAll")]
         [Authorize(Policy = "ViewAppointmentsPolicy")] // Fase 2: Multi-tenancy policy
-        public async Task<ActionResult<IEnumerable<AppointmentReadDTO>>> GetAllAppointmentsById(int clinicId)
+        public async Task<ActionResult<IEnumerable<AppointmentReadDTO>>> GetAllAppointmentsById(
+            [FromQuery] int clinicId,
+            [FromQuery] DateOnly? date = null)
         {
-            var appointmentReadDTOs = await _appointmentService.GetAllAppointmentsByIdAsync(clinicId);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            var hasViewAll = await _authorizationService.AuthorizeAsync(User, "Appointments.ViewAll");
+
+            int? userId = null;
+            if (!hasViewAll.Succeeded && userIdClaim != null && int.TryParse(userIdClaim.Value, out int uid))
+                userId = uid;
+
+            var appointmentReadDTOs = await _appointmentService.GetAllAppointmentsByIdAsync(clinicId, userId, date);
             return Ok(appointmentReadDTOs);
+        }
+
+        // GET: api/appointments/my
+        [HttpGet("my")]
+        public async Task<ActionResult<IEnumerable<AppointmentReadDTO>>> GetMyAppointments()
+        {
+            var patientIdClaim = User.FindFirst("patient_id");
+            if (patientIdClaim == null || !int.TryParse(patientIdClaim.Value, out int patientId))
+                return Unauthorized();
+
+            var appointments = await _appointmentService.GetAppointmentsByPatientIdAsync(patientId);
+            return Ok(appointments);
         }
 
         // GET: api/appointments/{id}
@@ -50,7 +73,6 @@ namespace MedPal.API.Controllers
         [HttpPost]
         [Authorize(Policy = "Appointments.Create")]
         [Authorize(Policy = "ManagePatientsPolicy")] // Fase 2: Multi-tenancy policy
-        [Authorize(Policy = "Appointments.Create")]
         public async Task<ActionResult<AppointmentReadDTO>> CreateAppointment(AppointmentWriteDTO appointmentWriteDto)
         {
             var appointmentReadDTO = await _appointmentService.CreateAppointmentAsync(appointmentWriteDto);
@@ -81,6 +103,25 @@ namespace MedPal.API.Controllers
             {
                 return NotFound();
             }
+
+            return NoContent();
+        }
+
+        // POST: api/appointments/{id}/cancel
+        [HttpPost("{id}/cancel")]
+        public async Task<IActionResult> CancelMyAppointment(int id)
+        {
+            var patientIdClaim = User.FindFirst("patient_id");
+            if (patientIdClaim == null || !int.TryParse(patientIdClaim.Value, out int patientId))
+                return Unauthorized();
+
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(id);
+            if (appointment == null)
+                return NotFound();
+
+            var success = await _appointmentService.DeleteAppointmentAsync(id);
+            if (!success)
+                return NotFound();
 
             return NoContent();
         }

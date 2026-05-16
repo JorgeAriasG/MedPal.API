@@ -34,7 +34,7 @@ namespace MedPal.API.Data
         public DbSet<Settings> Settings { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<Payment> Payments { get; set; }
-        public DbSet<UserClinic> UserClinics { get; set; }
+        public DbSet<PatientClinic> PatientClinics { get; set; }
         public DbSet<NotificationMessage> NotificationMessages { get; set; }
 
         // Authorization entities
@@ -51,6 +51,18 @@ namespace MedPal.API.Data
         // Phase 3: Consent and Audit (Consentimiento y Auditoría)
         public DbSet<PatientConsent> PatientConsents { get; set; }
         public DbSet<MedicalRecordAccessLog> MedicalRecordAccessLogs { get; set; }
+
+        // Patient Portal Auth
+        public DbSet<PatientAuth> PatientAuths { get; set; }
+
+        // Vital Signs (Signos Vitales) for NOM-035 compliance
+        public DbSet<VitalSign> VitalSigns { get; set; }
+
+        // CIE-10 Diagnostic Codes Catalog
+        public DbSet<Cie10Code> Cie10Codes { get; set; }
+
+        // Waitlist for landing page early access
+        public DbSet<WaitlistEntry> WaitlistEntries { get; set; }
 
         private readonly EncryptionProvider? _encryptionProvider;
         private readonly IServiceProvider? _serviceProvider;
@@ -118,21 +130,21 @@ namespace MedPal.API.Data
                 d => d.ToDateTime(TimeOnly.MinValue),
                 dt => DateOnly.FromDateTime(dt));
 
-            // Configure foreign keys for UserClinic
-            modelBuilder.Entity<UserClinic>()
-                .HasKey(uc => new { uc.UserId, uc.ClinicId });
+            // Configure foreign keys for PatientClinic
+            modelBuilder.Entity<PatientClinic>()
+                .HasKey(pc => new { pc.PatientId, pc.ClinicId });
 
-            modelBuilder.Entity<UserClinic>()
-                .HasOne(uc => uc.User)
-                .WithMany(u => u.UserClinics)
-                .HasForeignKey(uc => uc.UserId)
-                .OnDelete(DeleteBehavior.Restrict); // Prevent cascading delete
+            modelBuilder.Entity<PatientClinic>()
+                .HasOne(pc => pc.Patient)
+                .WithMany(p => p.PatientClinics)
+                .HasForeignKey(pc => pc.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<UserClinic>()
-                .HasOne(uc => uc.Clinic)
-                .WithMany(c => c.UserClinics)
-                .HasForeignKey(uc => uc.ClinicId)
-                .OnDelete(DeleteBehavior.Restrict); // Prevent cascading delete
+            modelBuilder.Entity<PatientClinic>()
+                .HasOne(pc => pc.Clinic)
+                .WithMany(c => c.PatientClinics)
+                .HasForeignKey(pc => pc.ClinicId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Configure foreign keys for Invoice
             modelBuilder.Entity<Invoice>()
@@ -153,9 +165,6 @@ namespace MedPal.API.Data
                 .WithMany(i => i.Payments)
                 .HasForeignKey(p => p.InvoiceId)
                 .OnDelete(DeleteBehavior.Restrict); // Prevent cascading delete
-
-            modelBuilder.Entity<Patient>()
-                .HasOne(p => p.Clinic);
 
             modelBuilder.Entity<Clinic>()
                 .Property(c => c.Open)
@@ -404,6 +413,11 @@ namespace MedPal.API.Data
                     .HasForeignKey(e => e.ApprovedByUserId)
                     .OnDelete(DeleteBehavior.NoAction);
 
+                entity.HasOne(e => e.TargetDoctor)
+                    .WithMany()
+                    .HasForeignKey(e => e.TargetDoctorId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
                 // Composite unique index: Only one active consent per clinic pair per patient
                 entity.HasIndex(e => new { e.PatientDetailsId, e.RequestingClinicId, e.OwnerClinicId, e.IsDeleted })
                     .HasName("IX_PatientConsent_Unique");
@@ -500,8 +514,21 @@ namespace MedPal.API.Data
             modelBuilder.Entity<Settings>().HasQueryFilter(s => !s.IsDeleted);
             modelBuilder.Entity<PrescriptionItem>().HasQueryFilter(pri => !pri.IsDeleted);
             modelBuilder.Entity<UserRole>().HasQueryFilter(ur => !ur.IsDeleted);
-            modelBuilder.Entity<UserClinic>().HasQueryFilter(uc => !uc.IsDeleted);
+            modelBuilder.Entity<PatientClinic>().HasQueryFilter(pc => !pc.IsDeleted);
             modelBuilder.Entity<PatientConsent>().HasQueryFilter(pc => !pc.IsDeleted);
+            // PatientAuth Configuration
+            modelBuilder.Entity<PatientAuth>(entity =>
+            {
+                entity.HasIndex(e => e.Email).IsUnique();
+
+                entity.HasOne(e => e.Patient)
+                    .WithMany()
+                    .HasForeignKey(e => e.PatientId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<VitalSign>().HasQueryFilter(vs => !vs.IsDeleted);
+
             // NOTE: MedicalRecordAccessLog does NOT have soft delete filter (immutable audit trail per NOM-004)
 
             // // Fase 2: Query Filters para Multi-tenancy (Control de Acceso)

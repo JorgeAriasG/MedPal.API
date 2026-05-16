@@ -28,9 +28,9 @@ namespace MedPal.API.Services.Implementations
             _validator = validator;
         }
 
-        public async Task<IEnumerable<AppointmentReadDTO>> GetAllAppointmentsByIdAsync(int clinicId)
+        public async Task<IEnumerable<AppointmentReadDTO>> GetAllAppointmentsByIdAsync(int clinicId, int? userId = null, DateOnly? date = null)
         {
-            var appointments = await _appointmentRepository.GetAllAppointmentsByIdAsync(clinicId);
+            var appointments = await _appointmentRepository.GetAllAppointmentsByIdAsync(clinicId, userId, date);
             return _mapper.Map<IEnumerable<AppointmentReadDTO>>(appointments);
         }
 
@@ -40,6 +40,12 @@ namespace MedPal.API.Services.Implementations
             if (appointment == null) return null;
 
             return _mapper.Map<AppointmentReadDTO>(appointment);
+        }
+
+        public async Task<IEnumerable<AppointmentReadDTO>> GetAppointmentsByPatientIdAsync(int patientId)
+        {
+            var appointments = await _appointmentRepository.GetByPatientIdAsync(patientId);
+            return _mapper.Map<IEnumerable<AppointmentReadDTO>>(appointments);
         }
 
         public async Task<AppointmentReadDTO> CreateAppointmentAsync(AppointmentWriteDTO request)
@@ -119,13 +125,19 @@ namespace MedPal.API.Services.Implementations
                 Address = "Sin configurar",
                 Phone = request.PatientPhone ?? "",
                 Email = $"pendiente_{Guid.NewGuid():N}@clinicflow.temp", // Email temporal único
-                ClinicId = request.ClinicId ?? 0,
                 AccountId = null, // Se asignará vía tenant context si aplica
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
 
-            return await _patientRepository.AddPatientAsync(ghostPatient);
+            var createdPatient = await _patientRepository.AddPatientAsync(ghostPatient);
+
+            if (request.ClinicId.HasValue)
+            {
+                await _patientRepository.AddPatientClinicsAsync(createdPatient.Id, new List<int> { request.ClinicId.Value });
+            }
+
+            return createdPatient;
         }
     }
 }

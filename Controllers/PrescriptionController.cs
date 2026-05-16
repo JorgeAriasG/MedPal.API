@@ -18,19 +18,22 @@ namespace MedPal.API.Controllers
     {
         private readonly IPrescriptionRepository _prescriptionRepository;
         private readonly IQrCodeService _qrCodeService;
-        private readonly IUserRepository _userRepository; // To verify doctor
-        private readonly IPatientRepository _patientRepository; // To verify patient
+        private readonly IUserRepository _userRepository;
+        private readonly IPatientRepository _patientRepository;
+        private readonly IClinicRepository _clinicRepository;
 
         public PrescriptionController(
             IPrescriptionRepository prescriptionRepository,
             IQrCodeService qrCodeService,
             IUserRepository userRepository,
-            IPatientRepository patientRepository)
+            IPatientRepository patientRepository,
+            IClinicRepository clinicRepository)
         {
             _prescriptionRepository = prescriptionRepository;
             _qrCodeService = qrCodeService;
             _userRepository = userRepository;
             _patientRepository = patientRepository;
+            _clinicRepository = clinicRepository;
         }
 
         // POST: api/Prescription
@@ -130,6 +133,18 @@ namespace MedPal.API.Controllers
             return MapToReadDTO(prescription);
         }
 
+        // GET: api/Prescription/my
+        [HttpGet("my")]
+        public async Task<ActionResult<IEnumerable<PrescriptionReadDTO>>> GetMyPrescriptions()
+        {
+            var patientIdClaim = User.FindFirst("patient_id");
+            if (patientIdClaim == null || !int.TryParse(patientIdClaim.Value, out int patientId))
+                return Unauthorized();
+
+            var prescriptions = await _prescriptionRepository.GetByPatientIdAsync(patientId);
+            return Ok(prescriptions.Select(MapToReadDTO));
+        }
+
         // GET: api/Prescription/patient/{patientId}
         [HttpGet("patient/{patientId}")]
         [Authorize(Policy = "MedicalRecords.ViewAssigned")]
@@ -161,7 +176,10 @@ namespace MedPal.API.Controllers
             {
                 IsValid = isValid,
                 Status = prescription.Status.ToString(),
-                DoctorName = prescription.Doctor?.Name ?? "Unknown",
+                DoctorName = prescription.Doctor?.Name ?? "Médico No Identificado",
+                DoctorSpecialty = prescription.Doctor?.Specialty ?? "Medicina General",
+                DoctorLicense = prescription.Doctor?.ProfessionalLicenseNumber ?? "N/A",
+                PatientName = $"{prescription.Patient?.Name} {prescription.Patient?.Lastname}",
                 IssuedAt = prescription.IssuedAt,
                 ExpiresAt = prescription.ExpiresAt,
                 Items = prescription.Items.Select(i => new PrescriptionItemDTO

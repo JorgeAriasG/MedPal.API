@@ -18,17 +18,20 @@ namespace MedPal.API.Controllers
         private readonly IMapper _mapper;
         private readonly IAuthorizationService _authorizationService;
         private readonly IUserService _userService;
+        private readonly IPatientConsentService _consentService;
 
         public MedicalHistoryController(
             IMedicalHistoryRepository medicalHistoryRepository,
             IMapper mapper,
             IAuthorizationService authorizationService,
-            IUserService userService)
+            IUserService userService,
+            IPatientConsentService consentService)
         {
             _medicalHistoryRepository = medicalHistoryRepository;
             _mapper = mapper;
             _authorizationService = authorizationService;
             _userService = userService;
+            _consentService = consentService;
         }
 
         // GET: api/medicalhistory
@@ -180,9 +183,13 @@ namespace MedPal.API.Controllers
                     continue;
                 }
 
-                // TODO: En el futuro verificaremos PatientConsent activo para acceso entre especialidades.
-                // Por ahora, cumpliendo con la regla del usuario: "Solo con consentimiento explicito".
-                // Como no hay consentimiento cargado aún para esta sesión, no se muestran especialidades ajenas.
+                // Verificar consentimiento del paciente para acceso entre especialidades
+                var hasConsent = await _consentService.IsConsentForDoctorValidAsync(patientId, currentUserId);
+                if (hasConsent)
+                {
+                    filteredHistories.Add(history);
+                    continue;
+                }
             }
 
             var medicalHistoryReadDTOs = _mapper.Map<IEnumerable<MedicalHistoryReadDTO>>(filteredHistories);

@@ -47,11 +47,10 @@ namespace MedPal.API.Models
         public int? AccountId { get; set; }
 
         // Multi-tenancy: Principal clinic (Fase 1)
-        public int? PrincipalClinicId { get; set; }
+        public int ClinicId { get; set; }
 
         // Navigations
         public virtual Account Account { get; set; }
-        public virtual ICollection<UserClinic> UserClinics { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
         public virtual Settings Settings { get; set; }
 

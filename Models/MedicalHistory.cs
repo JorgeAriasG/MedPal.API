@@ -56,6 +56,9 @@ namespace MedPal.API.Models
         public int? UpdatedByUserId { get; set; }
         public DateTime? LastModifiedAt { get; set; }
 
+        // CIE-10 diagnostic codes (JSON array: ["I10", "E11.9", "J45.0"])
+        public string? Cie10Codes { get; set; }
+
         // Indicador de confidencialidad (para cumplir LSSI-PC)
         public bool IsConfidential { get; set; } = true;
 

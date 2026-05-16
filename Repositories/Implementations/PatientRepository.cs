@@ -17,12 +17,17 @@ namespace MedPal.API.Repositories.Implementations
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Patient>> GetAllPatientsAsync(int clinicId, string? search = null, string? sortBy = "name", bool descending = false)
+        public async Task<IEnumerable<Patient>> GetAllPatientsAsync(int clinicId, int? userId = null, string? search = null, string? sortBy = "name", bool descending = false)
         {
             IQueryable<Patient> query = _context.Patients
-                .Where(p => p.ClinicId == clinicId);
+                .Where(p => p.PatientClinics.Any(pc => pc.ClinicId == clinicId));
 
-            // Searching
+            if (userId.HasValue)
+            {
+                query = query.Where(p => p.PatientDetails.MedicalHistories
+                    .Any(mh => mh.HealthcareProfessionalId == userId.Value));
+            }
+
             if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.ToLower();
@@ -32,14 +37,12 @@ namespace MedPal.API.Repositories.Implementations
                     p.Phone.Contains(search));
             }
 
-            // Sorting
             switch (sortBy?.ToLower())
             {
                 case "lastname":
                     query = descending ? query.OrderByDescending(p => p.Lastname) : query.OrderBy(p => p.Lastname);
                     break;
                 case "createdat":
-                    // Assuming you have a CreatedAt field, if not, use Id as proxy for now
                     query = descending ? query.OrderByDescending(p => p.Id) : query.OrderBy(p => p.Id);
                     break;
                 case "name":
@@ -57,7 +60,6 @@ namespace MedPal.API.Repositories.Implementations
                 .FirstOrDefaultAsync(p => p.Id == id);
             if (patient == null)
             {
-                // Handle the case where the patient is not found
                 throw new KeyNotFoundException($"Patient with Id {id} not found.");
             }
             return patient;
@@ -65,7 +67,6 @@ namespace MedPal.API.Repositories.Implementations
 
         public async Task<Patient> AddPatientAsync(Patient patient)
         {
-            // Inicializar detalles del paciente para evitar 404 en el frontend
             patient.PatientDetails = new PatientDetails
             {
                 CreatedAt = DateTime.UtcNow,
@@ -119,6 +120,51 @@ namespace MedPal.API.Repositories.Implementations
                 .Where(a => !a.IsDeleted)
                 .Select(a => a.AllergyName.ToLower())
                 .ToList();
+        }
+
+        public async Task AddPatientClinicsAsync(int patientId, List<int> clinicIds)
+        {
+            var entries = clinicIds.Select(c => new PatientClinic
+            {
+                PatientId = patientId,
+                ClinicId = c,
+                CreatedAt = DateTime.UtcNow
+            });
+            await _context.PatientClinics.AddRangeAsync(entries);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SyncPatientClinicsAsync(int patientId, List<int> newClinicIds)
+        {
+            var existing = await _context.PatientClinics
+                .Where(pc => pc.PatientId == patientId && !pc.IsDeleted)
+                .ToListAsync();
+
+            var toDelete = existing.Where(pc => !newClinicIds.Contains(pc.ClinicId));
+            foreach (var pc in toDelete)
+            {
+                pc.IsDeleted = true;
+                pc.DeletedAt = DateTime.UtcNow;
+            }
+
+            var existingIds = existing.Select(pc => pc.ClinicId).ToHashSet();
+            var toAdd = newClinicIds.Where(id => !existingIds.Contains(id))
+                .Select(c => new PatientClinic
+                {
+                    PatientId = patientId,
+                    ClinicId = c,
+                    CreatedAt = DateTime.UtcNow
+                });
+
+            await _context.PatientClinics.AddRangeAsync(toAdd);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> UserBelongsToClinicAsync(int userId, int clinicId)
+        {
+            var user = await _context.Users.AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == userId && u.ClinicId == clinicId && !u.IsDeleted);
+            return user != null;
         }
     }
 }

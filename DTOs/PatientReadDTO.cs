@@ -1,4 +1,4 @@
-using MedPal.API.Models;
+using System.Collections.Generic;
 
 namespace MedPal.API.DTOs
 {
@@ -14,7 +14,8 @@ namespace MedPal.API.DTOs
         public DateTime Dob { get; set; }
         public string Gender { get; set; }
         public string EmergencyContact { get; set; }
+        public string? Curp { get; set; }
         public ClinicReadDTO Clinic { get; set; }
-        // Add other necessary properties
+        public List<ClinicReadDTO> Clinics { get; set; } = new();
     }
 }

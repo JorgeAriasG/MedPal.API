@@ -26,7 +26,6 @@ namespace MedPal.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "Patients.ViewAll")]
         [Authorize(Policy = "ViewPatientsPolicy")] // Fase 2: Multi-tenancy policy
         public async Task<ActionResult<IEnumerable<PatientReadDTO>>> GetAllPatients(
             [FromQuery] int clinicId, 
@@ -34,7 +33,21 @@ namespace MedPal.API.Controllers
             [FromQuery] string? sortBy = "name", 
             [FromQuery] bool descending = false)
         {
-            var patients = await _patientRepository.GetAllPatientsAsync(clinicId, search, sortBy, descending);
+            var hasViewAll = await _authorizationService.AuthorizeAsync(User, "Patients.ViewAll");
+            var hasViewAssigned = await _authorizationService.AuthorizeAsync(User, "Patients.ViewAssigned");
+            if (!hasViewAll.Succeeded && !hasViewAssigned.Succeeded)
+                return Forbid();
+
+            int? userId = null;
+            if (!hasViewAll.Succeeded && hasViewAssigned.Succeeded)
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int uid))
+                    return Unauthorized();
+                userId = uid;
+            }
+
+            var patients = await _patientRepository.GetAllPatientsAsync(clinicId, userId, search, sortBy, descending);
             var patientReadDTOs = _mapper.Map<IEnumerable<PatientReadDTO>>(patients);
             return Ok(patientReadDTOs);
         }
@@ -71,6 +84,13 @@ namespace MedPal.API.Controllers
         [Authorize(Policy = "Patients.Create")]
         public async Task<ActionResult> AddPatient(PatientWriteDTO patientWriteDto)
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                return Unauthorized();
+
+            if (!await _patientRepository.UserBelongsToClinicAsync(userId, patientWriteDto.ClinicIds.FirstOrDefault()))
+                return Forbid();
+
             var patient = _mapper.Map<Patient>(patientWriteDto);
             patient.Dob.ToLocalTime();
             var accountIdClaim = User.FindFirst("account_id");
@@ -80,6 +100,7 @@ namespace MedPal.API.Controllers
             }
             patient.AccountId = accountId;
             var createdPatient = await _patientRepository.AddPatientAsync(patient);
+            await _patientRepository.AddPatientClinicsAsync(createdPatient.Id, patientWriteDto.ClinicIds);
             var patientReadDTO = _mapper.Map<PatientReadDTO>(createdPatient);
             return CreatedAtAction(nameof(GetPatientById), new { id = patientReadDTO.Id }, patientReadDTO);
         }
@@ -88,8 +109,20 @@ namespace MedPal.API.Controllers
         [Authorize(Policy = "Patients.Update")]
         public async Task<ActionResult> UpdatePatient(int id, PatientWriteDTO patientWriteDto)
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                return Unauthorized();
+
+            if (patientWriteDto.ClinicIds != null && patientWriteDto.ClinicIds.Count > 0
+                && !await _patientRepository.UserBelongsToClinicAsync(userId, patientWriteDto.ClinicIds.FirstOrDefault()))
+                return Forbid();
+
             var patient = _mapper.Map<Patient>(patientWriteDto);
             await _patientRepository.UpdatePatientAsync(id, patient);
+            if (patientWriteDto.ClinicIds != null && patientWriteDto.ClinicIds.Count > 0)
+            {
+                await _patientRepository.SyncPatientClinicsAsync(id, patientWriteDto.ClinicIds);
+            }
             return NoContent();
         }
 
@@ -99,6 +132,18 @@ namespace MedPal.API.Controllers
         {
             await _patientRepository.DeletePatientAsync(id);
             return NoContent();
+        }
+
+        [HttpGet("me")]
+        public async Task<ActionResult<PatientReadDTO>> GetMyProfile()
+        {
+            var patientIdClaim = User.FindFirst("patient_id");
+            if (patientIdClaim == null || !int.TryParse(patientIdClaim.Value, out int patientId))
+                return Unauthorized();
+
+            var patient = await _patientRepository.GetPatientByIdAsync(patientId);
+            var patientReadDTO = _mapper.Map<PatientReadDTO>(patient);
+            return Ok(patientReadDTO);
         }
 
         [HttpGet("check-email")]

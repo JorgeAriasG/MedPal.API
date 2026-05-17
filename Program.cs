@@ -344,7 +344,7 @@ builder.Services.AddAuthorizationBuilder()
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("http://localhost:4200", "http://localhost:4201", "https://app.clinicflow.com.mx")
+        builder => builder.WithOrigins("http://localhost:4200", "http://localhost:4201", "http://localhost:4321", "https://clinicflow.com.mx", "https://app.clinicflow.com.mx", "https://api.clinicflow.com.mx")
                             .AllowAnyHeader()
                             .AllowAnyMethod()
                             .AllowCredentials());

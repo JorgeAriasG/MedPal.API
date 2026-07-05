@@ -87,18 +87,12 @@ namespace MedPal.API.Repositories.Implementations
             return user != null;
         }
 
-        public async Task<IEnumerable<Clinic>> GetAllClinicsAsync(int userId)
+        public async Task<IEnumerable<Clinic>> GetAllClinicsAsync(int accountId)
         {
-            var user = await _context.Users.AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted);
-
-            if (user == null)
-                return Enumerable.Empty<Clinic>();
-
-            var clinic = await _context.Clinics
-                .FirstOrDefaultAsync(c => c.Id == user.ClinicId && !c.IsDeleted);
-
-            return clinic != null ? new[] { clinic } : Enumerable.Empty<Clinic>();
+            return await _context.Clinics
+                .AsNoTracking()
+                .Where(c => c.AccountId == accountId && !c.IsDeleted)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Clinic>> GetAllClinicsAsync()

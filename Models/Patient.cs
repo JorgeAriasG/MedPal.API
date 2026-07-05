@@ -43,6 +43,9 @@ namespace MedPal.API.Models
         // REMOVIDO EN PHASE 3: EmergencyContact string
         // Se reemplaza con relación 1:Many a EmergencyContact model para más flexibilidad
 
+        public decimal? Weight { get; set; }
+        public decimal? Height { get; set; }
+
         [Required]
         public DateTime CreatedAt { get; set; }
         [Required]

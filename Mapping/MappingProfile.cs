@@ -12,7 +12,8 @@ namespace MedPal.API.Mapping
         public MappingProfile()
         {
             CreateMap<Patient, PatientReadDTO>()
-                .ForMember(dest => dest.EmergencyContact, opt => opt.Ignore());
+                .ForMember(dest => dest.EmergencyContact, opt => opt.Ignore())
+                .ForMember(dest => dest.PatientDetailsId, opt => opt.MapFrom(src => src.PatientDetails != null ? src.PatientDetails.Id : (int?)null));
             CreateMap<Patient, PatientWriteDTO>()
                 .ForMember(dest => dest.EmergencyContact, opt => opt.Ignore());
             CreateMap<PatientWriteDTO, Patient>(MemberList.Source)
@@ -28,7 +29,9 @@ namespace MedPal.API.Mapping
             CreateMap<ClinicWriteDTO, Clinic>(MemberList.Source);
             CreateMap<PatientDetails, PatientDetailsReadDTO>().ReverseMap();
             CreateMap<PatientDetailsWriteDTO, PatientDetails>(MemberList.Source);
-            CreateMap<MedicalHistory, MedicalHistoryReadDTO>().ReverseMap();
+            CreateMap<MedicalHistory, MedicalHistoryReadDTO>()
+                .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.HealthcareProfessional != null ? src.HealthcareProfessional.Name : null));
+            CreateMap<MedicalHistoryReadDTO, MedicalHistory>();
             CreateMap<MedicalHistoryWriteDTO, MedicalHistory>(MemberList.Source);
             CreateMap<Allergy, AllergyReadDTO>().ReverseMap();
             CreateMap<AllergyWriteDTO, Allergy>(MemberList.Source);
@@ -109,6 +112,40 @@ namespace MedPal.API.Mapping
 
             // Waitlist mappings
             CreateMap<WaitlistRegisterDTO, WaitlistEntry>();
+
+            // Nutrition Module mappings
+            CreateMap<FoodItem, FoodItemReadDTO>().ReverseMap();
+            CreateMap<FoodItemWriteDTO, FoodItem>(MemberList.Source);
+
+            CreateMap<BodyComposition, BodyCompositionReadDTO>().ReverseMap();
+            CreateMap<BodyCompositionWriteDTO, BodyComposition>(MemberList.Source);
+
+            CreateMap<AnthropometryRecord, AnthropometryReadDTO>().ReverseMap();
+            CreateMap<AnthropometryWriteDTO, AnthropometryRecord>(MemberList.Source);
+
+            CreateMap<DietPlan, DietPlanReadDTO>()
+                .ForMember(dest => dest.Meals, opt => opt.MapFrom(src => src.Meals.OrderBy(m => m.MealOrder)));
+            CreateMap<DietPlanWriteDTO, DietPlan>(MemberList.Source)
+                .ForMember(dest => dest.Meals, opt => opt.Ignore());
+            CreateMap<DietPlanMeal, DietPlanMealDTO>()
+                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
+            CreateMap<DietPlanMealWriteDTO, DietPlanMeal>(MemberList.Source);
+            CreateMap<DietPlanMealItem, DietPlanMealItemDTO>()
+                .ForMember(dest => dest.FoodItemName, opt => opt.MapFrom(src => src.FoodItem != null ? src.FoodItem.Name : src.CustomFoodName));
+            CreateMap<DietPlanMealItemWriteDTO, DietPlanMealItem>(MemberList.Source);
+
+            CreateMap<NutritionProgress, NutritionProgressReadDTO>().ReverseMap();
+            CreateMap<NutritionProgressWriteDTO, NutritionProgress>(MemberList.Source);
+
+            CreateMap<Supplement, SupplementReadDTO>().ReverseMap();
+            CreateMap<SupplementWriteDTO, Supplement>(MemberList.Source);
+
+            // Subscription mappings
+            CreateMap<SubscriptionPlan, SubscriptionPlanReadDTO>();
+            CreateMap<Subscription, SubscriptionReadDTO>()
+                .ForMember(dest => dest.Plan, opt => opt.MapFrom(src => src.SubscriptionPlan))
+                .ForMember(dest => dest.CurrentTeamMembers, opt => opt.Ignore())
+                .ForMember(dest => dest.CurrentClinics, opt => opt.Ignore());
         }
     }
 }

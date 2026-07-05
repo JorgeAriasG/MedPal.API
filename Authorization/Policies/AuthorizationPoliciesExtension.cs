@@ -43,13 +43,12 @@ public static class AuthorizationPoliciesExtension
                     if (roleClaim == null)
                         return false;
 
-                    // SuperAdmin, AccountAdmin, ClinicAdmin, Doctor y HealthProfessional pueden ver pacientes
+                    // SuperAdmin, AccountAdmin, ClinicAdmin y HealthProfessional pueden ver pacientes
                     return roleClaim.Value switch
                     {
                         "SuperAdmin" => true,
                         "AccountAdmin" => true,
                         "ClinicAdmin" => true,
-                        "Doctor" => true,
                         "HealthProfessional" => true,
                         _ => false
                     };
@@ -66,13 +65,13 @@ public static class AuthorizationPoliciesExtension
                     if (roleClaim == null)
                         return false;
 
-                    // SuperAdmin, AccountAdmin, ClinicAdmin, Doctor y Receptionist pueden ver citas
+                    // SuperAdmin, AccountAdmin, ClinicAdmin, HealthProfessional y Receptionist pueden ver citas
                     return roleClaim.Value switch
                     {
                         "SuperAdmin" => true,
                         "AccountAdmin" => true,
                         "ClinicAdmin" => true,
-                        "Doctor" => true,
+                        "HealthProfessional" => true,
                         "Receptionist" => true,
                         _ => false
                     };
@@ -110,13 +109,13 @@ public static class AuthorizationPoliciesExtension
                     if (roleClaim == null)
                         return false;
 
-                    // SuperAdmin, AccountAdmin, ClinicAdmin y Doctor pueden gestionar pacientes
+                    // SuperAdmin, AccountAdmin, ClinicAdmin y HealthProfessional pueden gestionar pacientes
                     return roleClaim.Value switch
                     {
                         "SuperAdmin" => true,
                         "AccountAdmin" => true,
                         "ClinicAdmin" => true,
-                        "Doctor" => true,
+                        "HealthProfessional" => true,
                         _ => false
                     };
                 });

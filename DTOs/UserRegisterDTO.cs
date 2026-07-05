@@ -39,5 +39,9 @@ namespace MedPal.API.DTOs
         /// <summary>Aceptación de términos de privacidad (requerido)</summary>
         [Required(ErrorMessage = "Debe aceptar los términos de privacidad")]
         public bool AcceptPrivacyTerms { get; set; }
+
+        /// <summary>Plan de suscripción seleccionado (SOLO/CONSULTORIO/CLINICA). Default: SOLO</summary>
+        [StringLength(20, ErrorMessage = "El plan no puede exceder 20 caracteres")]
+        public string? PlanName { get; set; }
     }
 }

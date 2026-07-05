@@ -25,16 +25,11 @@ namespace MedPal.API.Enums
         ClinicAdmin = 3,
 
         /// <summary>
-        /// Médico o profesional de salud.
-        /// Acceso a registros médicos de su clínica y con consentimiento de otras.
+        /// Profesional de salud (médicos, nutricionistas, terapeutas, etc.).
+        /// Rol clínico único consolidado. El acceso a datos se filtra por asignación (MedicalHistory.HealthcareProfessionalId)
+        /// y por especialidad (User.Specialty) según el módulo correspondiente.
         /// </summary>
-        Doctor = 4,
-
-        /// <summary>
-        /// Profesional de salud (nutricionista, terapeuta, etc.).
-        /// Acceso similar a Doctor pero para especialidades no médicas.
-        /// </summary>
-        HealthProfessional = 5,
+        HealthProfessional = 4,
 
         /// <summary>
         /// Recepcionista o personal administrativo.

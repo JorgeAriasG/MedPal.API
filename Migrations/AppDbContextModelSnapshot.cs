@@ -99,6 +99,136 @@ namespace MedPal.API.Migrations
                     b.ToTable("Allergies");
                 });
 
+            modelBuilder.Entity("MedPal.API.Models.AnthropometryRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("AbdominalSkinfold")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("Arm")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("AxillarySkinfold")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("BicepsSkinfold")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("Bmi")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("BodyFatPercentageEstimated")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Calf")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("CalfSkinfold")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("Chest")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Forearm")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("Height")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Hip")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifiedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("MidArmCircumference")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Neck")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("PatientDetailsId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("PectoralSkinfold")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<DateTime>("RecordedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("ShoulderBreadth")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("SubscapularSkinfold")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("SuprailiacSkinfold")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("Thigh")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("ThighSkinfold")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("TricepsSkinfold")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Waist")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("WaistHeightRatio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("WaistHipRatio")
+                        .HasColumnType("decimal(5,3)");
+
+                    b.Property<decimal?>("Weight")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Wrist")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientDetailsId", "RecordedAt");
+
+                    b.ToTable("AnthropometryRecords");
+                });
+
             modelBuilder.Entity("MedPal.API.Models.Appointment", b =>
                 {
                     b.Property<int>("Id")
@@ -485,6 +615,142 @@ namespace MedPal.API.Migrations
                     b.ToTable("UserRoles");
                 });
 
+            modelBuilder.Entity("MedPal.API.Models.BodyComposition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("Bmi")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal?>("Bmr")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<decimal?>("BodyFatMass")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("BodyFatPercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal?>("BodyWaterPercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal?>("BoneMass")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<bool>("BwImported")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("EcwTbwRatio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("ExtracellularWater")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Height")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<string>("InBodyRawData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InbodyResultId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("IntracellularWater")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifiedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MetabolicAge")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Minerals")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("MuscleMass")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("PatientDetailsId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("PhaseAngle")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("ProteinMass")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<DateTime>("RecordedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("SegmentalLeanLeftArm")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("SegmentalLeanLeftLeg")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("SegmentalLeanRightArm")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("SegmentalLeanRightLeg")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("SegmentalLeanTrunk")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Source")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("TotalBodyWater")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("VisceralFat")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("WaistHipRatio")
+                        .HasColumnType("decimal(5,3)");
+
+                    b.Property<decimal?>("Weight")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientDetailsId", "RecordedAt");
+
+                    b.ToTable("BodyCompositions");
+                });
+
             modelBuilder.Entity("MedPal.API.Models.Cie10Code", b =>
                 {
                     b.Property<int>("Id")
@@ -566,6 +832,238 @@ namespace MedPal.API.Migrations
                     b.ToTable("Clinics");
                 });
 
+            modelBuilder.Entity("MedPal.API.Models.DietPlan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("CarbsG")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("DailyCalories")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("FatG")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<decimal?>("FiberG")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifiedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Objective")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("PatientDetailsId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("ProteinG")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<string>("Specialty")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("WaterMl")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("PatientDetailsId", "Status");
+
+                    b.ToTable("DietPlans");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.DietPlanMeal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DietPlanId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Instructions")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifiedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MealName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("MealOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TimeOfDay")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DietPlanId", "MealOrder");
+
+                    b.ToTable("DietPlanMeals");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.DietPlanMealItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("Calories")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal?>("Carbs")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CustomFoodName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DietPlanMealId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Fat")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int?>("FoodItemId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifiedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<decimal?>("Protein")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DietPlanMealId");
+
+                    b.HasIndex("FoodItemId");
+
+                    b.ToTable("DietPlanMealItems");
+                });
+
             modelBuilder.Entity("MedPal.API.Models.EmergencyContact", b =>
                 {
                     b.Property<int>("Id")
@@ -628,6 +1126,130 @@ namespace MedPal.API.Migrations
                     b.HasIndex("PatientId");
 
                     b.ToTable("EmergencyContacts");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.FoodItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Allergens")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Brand")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal?>("Calcium")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("Calories")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("Carbs")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal?>("Cholesterol")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Fat")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal?>("Fiber")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal?>("Iron")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSystemItem")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifiedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal?>("Potassium")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("Protein")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal?>("SaturatedFat")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("ServingSize")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("ServingUnit")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("Sodium")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("Subcategory")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal?>("Sugar")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal?>("TransFat")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("VitaminA")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal?>("VitaminC")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Category");
+
+                    b.HasIndex("Name");
+
+                    b.ToTable("FoodItems");
                 });
 
             modelBuilder.Entity("MedPal.API.Models.InsuranceProvider", b =>
@@ -957,6 +1579,108 @@ namespace MedPal.API.Migrations
                     b.ToTable("NotificationMessages");
                 });
 
+            modelBuilder.Entity("MedPal.API.Models.NutritionProgress", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("Adherence")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("BodyFatPercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal?>("CaloriesConsumed")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<decimal?>("CarbsConsumed")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DietPlanId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ExerciseMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("FatConsumed")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifiedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("MuscleMass")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Observations")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int>("PatientDetailsId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Photos")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<decimal?>("ProteinConsumed")
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<DateTime>("RecordedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("SkeletalMuscleMass")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Waist")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("WaistCircumference")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("WaterGlasses")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Weight")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientDetailsId", "RecordedAt");
+
+                    b.ToTable("NutritionProgresses");
+                });
+
             modelBuilder.Entity("MedPal.API.Models.Patient", b =>
                 {
                     b.Property<int>("Id")
@@ -999,6 +1723,9 @@ namespace MedPal.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal?>("Height")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<bool>("IsAnonymized")
                         .HasColumnType("bit");
 
@@ -1039,6 +1766,9 @@ namespace MedPal.API.Migrations
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("Weight")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -1346,6 +2076,54 @@ namespace MedPal.API.Migrations
                     b.ToTable("Payments");
                 });
 
+            modelBuilder.Entity("MedPal.API.Models.PendingRegistration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RegistrationData")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("StripeCustomerId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("StripeSessionId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PendingRegistrations");
+                });
+
             modelBuilder.Entity("MedPal.API.Models.Prescription", b =>
                 {
                     b.Property<int>("Id")
@@ -1595,6 +2373,232 @@ namespace MedPal.API.Migrations
                     b.ToTable("Settings");
                 });
 
+            modelBuilder.Entity("MedPal.API.Models.Subscription", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CurrentPeriodEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CurrentPeriodStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaxActiveCalendars")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxClinics")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxTeamMembers")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("StripeCustomerId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("StripeSubscriptionId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("SubscriptionPlanId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("TrialEndsAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("SubscriptionPlanId");
+
+                    b.ToTable("Subscriptions");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.SubscriptionPlan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaxActiveCalendars")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxClinics")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxTeamMembers")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("StripePriceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("TrialDays")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("SubscriptionPlans");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.Supplement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Brand")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Dosage")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Duration")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Form")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Frequency")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Indication")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifiedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("PatientDetailsId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("PrescribedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("PrescribedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Timing")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Unit")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientDetailsId", "IsActive");
+
+                    b.ToTable("Supplements");
+                });
+
             modelBuilder.Entity("MedPal.API.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -1776,6 +2780,17 @@ namespace MedPal.API.Migrations
                     b.Navigation("PatientDetails");
                 });
 
+            modelBuilder.Entity("MedPal.API.Models.AnthropometryRecord", b =>
+                {
+                    b.HasOne("MedPal.API.Models.PatientDetails", "PatientDetails")
+                        .WithMany()
+                        .HasForeignKey("PatientDetailsId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("PatientDetails");
+                });
+
             modelBuilder.Entity("MedPal.API.Models.Appointment", b =>
                 {
                     b.HasOne("MedPal.API.Models.Clinic", "Clinic")
@@ -1920,6 +2935,17 @@ namespace MedPal.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MedPal.API.Models.BodyComposition", b =>
+                {
+                    b.HasOne("MedPal.API.Models.PatientDetails", "PatientDetails")
+                        .WithMany()
+                        .HasForeignKey("PatientDetailsId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("PatientDetails");
+                });
+
             modelBuilder.Entity("MedPal.API.Models.Clinic", b =>
                 {
                     b.HasOne("MedPal.API.Models.Account", "Account")
@@ -1928,6 +2954,53 @@ namespace MedPal.API.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.DietPlan", b =>
+                {
+                    b.HasOne("MedPal.API.Models.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MedPal.API.Models.PatientDetails", "PatientDetails")
+                        .WithMany()
+                        .HasForeignKey("PatientDetailsId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("PatientDetails");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.DietPlanMeal", b =>
+                {
+                    b.HasOne("MedPal.API.Models.DietPlan", "DietPlan")
+                        .WithMany("Meals")
+                        .HasForeignKey("DietPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DietPlan");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.DietPlanMealItem", b =>
+                {
+                    b.HasOne("MedPal.API.Models.DietPlanMeal", "DietPlanMeal")
+                        .WithMany("Items")
+                        .HasForeignKey("DietPlanMealId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MedPal.API.Models.FoodItem", "FoodItem")
+                        .WithMany()
+                        .HasForeignKey("FoodItemId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("DietPlanMeal");
+
+                    b.Navigation("FoodItem");
                 });
 
             modelBuilder.Entity("MedPal.API.Models.EmergencyContact", b =>
@@ -2047,6 +3120,17 @@ namespace MedPal.API.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.NutritionProgress", b =>
+                {
+                    b.HasOne("MedPal.API.Models.PatientDetails", "PatientDetails")
+                        .WithMany()
+                        .HasForeignKey("PatientDetailsId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("PatientDetails");
                 });
 
             modelBuilder.Entity("MedPal.API.Models.Patient", b =>
@@ -2247,6 +3331,36 @@ namespace MedPal.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MedPal.API.Models.Subscription", b =>
+                {
+                    b.HasOne("MedPal.API.Models.Account", "Account")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MedPal.API.Models.SubscriptionPlan", "SubscriptionPlan")
+                        .WithMany()
+                        .HasForeignKey("SubscriptionPlanId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("SubscriptionPlan");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.Supplement", b =>
+                {
+                    b.HasOne("MedPal.API.Models.PatientDetails", "PatientDetails")
+                        .WithMany()
+                        .HasForeignKey("PatientDetailsId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("PatientDetails");
+                });
+
             modelBuilder.Entity("MedPal.API.Models.User", b =>
                 {
                     b.HasOne("MedPal.API.Models.Account", "Account")
@@ -2274,6 +3388,8 @@ namespace MedPal.API.Migrations
 
                     b.Navigation("Patients");
 
+                    b.Navigation("Subscriptions");
+
                     b.Navigation("Users");
                 });
 
@@ -2299,6 +3415,16 @@ namespace MedPal.API.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("PatientClinics");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.DietPlan", b =>
+                {
+                    b.Navigation("Meals");
+                });
+
+            modelBuilder.Entity("MedPal.API.Models.DietPlanMeal", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("MedPal.API.Models.InsuranceProvider", b =>

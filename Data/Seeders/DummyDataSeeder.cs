@@ -28,7 +28,7 @@ namespace MedPal.API.Data.Seeders
             context.Clinics.AddRange(clinicA, clinicB);
             await context.SaveChangesAsync();
 
-            var doctorRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Doctor");
+            var healthProfessionalRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "HealthProfessional");
             var accountAdminRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "AccountAdmin");
             var clinicAdminRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "ClinicAdmin");
             var nurseRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Nurse");
@@ -64,9 +64,9 @@ namespace MedPal.API.Data.Seeders
                 context.Users.Add(user);
                 await context.SaveChangesAsync();
 
-                if (doctorRole != null)
+                if (healthProfessionalRole != null)
                 {
-                    context.UserRoles.Add(new UserRole { UserId = user.Id, RoleId = doctorRole.Id, ClinicId = clinicA.Id, AssignedAt = DateTime.UtcNow });
+                    context.UserRoles.Add(new UserRole { UserId = user.Id, RoleId = healthProfessionalRole.Id, ClinicId = clinicA.Id, AssignedAt = DateTime.UtcNow });
                     await context.SaveChangesAsync();
                 }
                 doctorUsers.Add(user);
@@ -113,18 +113,25 @@ namespace MedPal.API.Data.Seeders
 
             var random = new Random();
             var patients = new List<Patient>();
+            Random _random = new Random();
+            string[] FirstNames = { "Ana", "Maria", "Carlos", "Pedro", "Luis" };
+            string[] LastNames = { "Samos", "Garcia", "Perez", "Rodriguez", "Lopez" };
             for (int i = 1; i <= 50; i++)
             {
+                string rndName = $"{FirstNames[_random.Next(FirstNames.Length)]}";
+                string rndLastName = $"{LastNames[_random.Next(LastNames.Length)]}";
                 var patient = new Patient
                 {
-                    Name = $"Paciente QA {i}",
-                    Email = $"paciente{i}@medpal.com",
+                    Name = rndName,
+                    Email = $"{rndName.ToLower()}.{rndLastName.ToLower()}@clinicflow.com.mx",
                     Dob = new DateTime(random.Next(1950, 2010), random.Next(1, 12), random.Next(1, 28)),
                     Phone = $"555-000{i:D2}",
                     Address = $"Avenida Pruebas {100 + i}",
                     Gender = i % 2 == 0 ? "M" : "F",
+                    Weight = i % 2 == 0 ? 80.0m : 70.0m,
+                    Height = i % 2 == 0 ? 1.75m : 1.65m,
                     Middlename = "Test",
-                    Lastname = "QA",
+                    Lastname = rndLastName,
                     IsDeleted = false,
                     CreatedAt = DateTime.UtcNow,
                     AccountId = account.Id,
@@ -138,6 +145,29 @@ namespace MedPal.API.Data.Seeders
                 patients.Add(patient);
             }
             context.Patients.AddRange(patients);
+            await context.SaveChangesAsync();
+
+            var anthropometryRecords = patients.Select(p => new AnthropometryRecord
+            {
+                PatientDetailsId = p.PatientDetails.Id,
+                RecordedAt = DateTime.UtcNow,
+                Weight = p.Gender == "M" ? 80.0m : 70.0m,
+                Height = p.Gender == "M" ? 1.75m : 1.65m,
+                Bmi = Math.Round((p.Gender == "M" ? 80.0m : 70.0m) / ((p.Gender == "M" ? 1.75m : 1.65m) * (p.Gender == "M" ? 1.75m : 1.65m)), 1),
+                Waist = 92.0m,
+                Hip = 106.0m,
+                WaistHipRatio = 0.87m,
+                Wrist = 16.0m,
+                Thigh = 58.0m,
+                Calf = 36.0m,
+                TricepsSkinfold = 22.0m,
+                BicepsSkinfold = 18.0m,
+                SubscapularSkinfold = 25.0m,
+                SuprailiacSkinfold = 28.0m,
+                Notes = "Antropometr\u00eda inicial",
+                CreatedAt = DateTime.UtcNow
+            }).ToList();
+            context.AnthropometryRecords.AddRange(anthropometryRecords);
             await context.SaveChangesAsync();
 
             var patientClinics = patients.Select(p => new PatientClinic { PatientId = p.Id, ClinicId = clinicA.Id, CreatedAt = DateTime.UtcNow }).ToList();
@@ -170,12 +200,27 @@ namespace MedPal.API.Data.Seeders
                     UpdatedAt = today
                 });
 
-                var day1 = random.Next(0, 23);
-                var day2 = random.Next(23, 46);
+                var pastDay = random.Next(0, 30);
+                var futureDay = random.Next(1, 46);
                 var hour1 = hours[random.Next(hours.Length)];
                 var min1 = minutes[random.Next(minutes.Length)];
                 var hour2 = hours[random.Next(hours.Length)];
                 var min2 = minutes[random.Next(minutes.Length)];
+
+                var statusRoll = random.Next(100);
+                AppointmentStatus pastStatus;
+                var pastDuration = 30;
+                if (statusRoll < 60)
+                {
+                    pastStatus = AppointmentStatus.Completed;
+                    pastDuration = random.Next(15, 61);
+                }
+                else if (statusRoll < 80)
+                    pastStatus = AppointmentStatus.Cancelled;
+                else if (statusRoll < 95)
+                    pastStatus = AppointmentStatus.NoShow;
+                else
+                    pastStatus = AppointmentStatus.Rescheduled;
 
                 context.Appointments.AddRange(
                     new Appointment
@@ -183,9 +228,10 @@ namespace MedPal.API.Data.Seeders
                         PatientId = patient.Id,
                         ClinicId = clinicA.Id,
                         UserId = assignedDoctor.Id,
-                        Date = DateOnly.FromDateTime(today.AddDays(day1)),
+                        Date = DateOnly.FromDateTime(today.AddDays(-pastDay)),
                         Time = new TimeOnly(hour1, min1),
-                        Status = AppointmentStatus.Scheduled,
+                        Status = pastStatus,
+                        DurationMinutes = pastDuration,
                         Notes = $"Consulta de rutina #{++apptCounter}",
                         CreatedAt = today,
                         UpdatedAt = today
@@ -195,7 +241,7 @@ namespace MedPal.API.Data.Seeders
                         PatientId = patient.Id,
                         ClinicId = clinicA.Id,
                         UserId = assignedDoctor.Id,
-                        Date = DateOnly.FromDateTime(today.AddDays(day2)),
+                        Date = DateOnly.FromDateTime(today.AddDays(futureDay)),
                         Time = new TimeOnly(hour2, min2),
                         Status = AppointmentStatus.Scheduled,
                         Notes = $"Consulta de seguimiento #{++apptCounter}",

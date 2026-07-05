@@ -59,6 +59,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddControllers()
 .AddJsonOptions(options =>
 {
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
     options.JsonSerializerOptions.Converters.Add(new MedPal.API.Serialization.TimeOnlyJsonConverter());
     options.JsonSerializerOptions.Converters.Add(new MedPal.API.Serialization.DateOnlyJsonConverter());
 });
@@ -161,6 +162,24 @@ builder.Services.AddScoped<IPatientAuthRepository, PatientAuthRepository>();
 // Vital Signs Repository (Signos Vitales for NOM-035 compliance)
 builder.Services.AddScoped<IVitalSignRepository, VitalSignRepository>();
 
+// Nutrition Module repositories
+builder.Services.AddScoped<IFoodItemRepository, FoodItemRepository>();
+builder.Services.AddScoped<IBodyCompositionRepository, BodyCompositionRepository>();
+builder.Services.AddScoped<IAnthropometryRepository, AnthropometryRepository>();
+builder.Services.AddScoped<IDietPlanRepository, DietPlanRepository>();
+builder.Services.AddScoped<INutritionProgressRepository, NutritionProgressRepository>();
+builder.Services.AddScoped<ISupplementRepository, SupplementRepository>();
+
+// Nutrition Service
+builder.Services.AddScoped<INutritionService, NutritionService>();
+
+// Subscription services
+builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddScoped<IStripeService, StripeService>();
+builder.Services.AddScoped<IPendingRegistrationRepository, PendingRegistrationRepository>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+
 // Notification Services (Phase 3)
 // Using MockChannel for now (Strategy Pattern ready for WhatsApp/Email)
 builder.Services.AddSingleton<INotificationChannel, MockNotificationChannel>();
@@ -249,7 +268,6 @@ builder.Services.AddAuthorizationBuilder()
                 "SuperAdmin" => true,
                 "AccountAdmin" => true,
                 "ClinicAdmin" => true,
-                "Doctor" => true,
                 "HealthProfessional" => true,
                 _ => false
             };
@@ -265,7 +283,7 @@ builder.Services.AddAuthorizationBuilder()
                 "SuperAdmin" => true,
                 "AccountAdmin" => true,
                 "ClinicAdmin" => true,
-                "Doctor" => true,
+                "HealthProfessional" => true,
                 "Receptionist" => true,
                 _ => false
             };
@@ -295,7 +313,7 @@ builder.Services.AddAuthorizationBuilder()
                 "SuperAdmin" => true,
                 "AccountAdmin" => true,
                 "ClinicAdmin" => true,
-                "Doctor" => true,
+                "HealthProfessional" => true,
                 _ => false
             };
         });
@@ -371,6 +389,15 @@ using (var scope = app.Services.CreateScope())
 
     // Seed CIE-10 diagnostic codes catalog (always, only if empty)
     await Cie10Seeder.SeedAsync(context);
+
+    // Seed Food Catalog (always, only if empty)
+    await FoodCatalogSeeder.SeedAsync(context);
+
+    // Seed Nutrition Data (always, only if empty)
+    await NutritionDataSeeder.SeedAsync(context);
+
+    // Seed Subscription Plans (always, only if empty)
+    await SubscriptionSeeder.SeedAsync(context);
 }
 
 // Configure the HTTP request pipeline.

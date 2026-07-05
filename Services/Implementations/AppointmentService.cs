@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation;
 using MedPal.API.DTOs;
+using MedPal.API.Enums;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
 
@@ -11,6 +13,16 @@ namespace MedPal.API.Services.Implementations
 {
     public class AppointmentService : IAppointmentService
     {
+        private static readonly Dictionary<AppointmentStatus, AppointmentStatus[]> AllowedTransitions = new()
+        {
+            { AppointmentStatus.Scheduled, new[] { AppointmentStatus.InProgress, AppointmentStatus.Cancelled, AppointmentStatus.Rescheduled, AppointmentStatus.NoShow } },
+            { AppointmentStatus.InProgress, new[] { AppointmentStatus.Completed } },
+            { AppointmentStatus.Completed, Array.Empty<AppointmentStatus>() },
+            { AppointmentStatus.Cancelled, new[] { AppointmentStatus.Rescheduled } },
+            { AppointmentStatus.NoShow, new[] { AppointmentStatus.Rescheduled } },
+            { AppointmentStatus.Rescheduled, new[] { AppointmentStatus.InProgress, AppointmentStatus.Cancelled } },
+        };
+
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IPatientRepository _patientRepository;
         private readonly IMapper _mapper;
@@ -26,6 +38,14 @@ namespace MedPal.API.Services.Implementations
             _patientRepository = patientRepository;
             _mapper = mapper;
             _validator = validator;
+        }
+
+        private static void EnsureValidTransition(AppointmentStatus from, AppointmentStatus to)
+        {
+            if (!AllowedTransitions.TryGetValue(from, out var allowed))
+                throw new InvalidOperationException($"Estado origen '{from}' no es válido.");
+            if (!allowed.Contains(to))
+                throw new InvalidOperationException($"No se puede cambiar de '{from}' a '{to}'.");
         }
 
         public async Task<IEnumerable<AppointmentReadDTO>> GetAllAppointmentsByIdAsync(int clinicId, int? userId = null, DateOnly? date = null)
@@ -92,14 +112,90 @@ namespace MedPal.API.Services.Implementations
             return _mapper.Map<AppointmentReadDTO>(appointment);
         }
 
+        public async Task<AppointmentReadDTO> StartConsultationAsync(int id)
+        {
+            var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
+            if (appointment == null) return null;
+
+            EnsureValidTransition(appointment.Status, AppointmentStatus.InProgress);
+            appointment.Status = AppointmentStatus.InProgress;
+            appointment.UpdatedAt = DateTime.UtcNow;
+            _appointmentRepository.UpdateAppointment(appointment);
+            await _appointmentRepository.CompleteAsync();
+
+            return _mapper.Map<AppointmentReadDTO>(appointment);
+        }
+
+        public async Task<AppointmentReadDTO> CompleteConsultationAsync(int id)
+        {
+            var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
+            if (appointment == null) return null;
+
+            EnsureValidTransition(appointment.Status, AppointmentStatus.Completed);
+            appointment.Status = AppointmentStatus.Completed;
+            appointment.UpdatedAt = DateTime.UtcNow;
+            _appointmentRepository.UpdateAppointment(appointment);
+            await _appointmentRepository.CompleteAsync();
+
+            return _mapper.Map<AppointmentReadDTO>(appointment);
+        }
+
+        public async Task<AppointmentReadDTO> CancelAppointmentAsync(int id)
+        {
+            var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
+            if (appointment == null) return null;
+
+            EnsureValidTransition(appointment.Status, AppointmentStatus.Cancelled);
+            appointment.Status = AppointmentStatus.Cancelled;
+            appointment.UpdatedAt = DateTime.UtcNow;
+            _appointmentRepository.UpdateAppointment(appointment);
+            await _appointmentRepository.CompleteAsync();
+
+            return _mapper.Map<AppointmentReadDTO>(appointment);
+        }
+
+        public async Task<AppointmentReadDTO> MarkNoShowAsync(int id)
+        {
+            var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
+            if (appointment == null) return null;
+
+            EnsureValidTransition(appointment.Status, AppointmentStatus.NoShow);
+            appointment.Status = AppointmentStatus.NoShow;
+            appointment.UpdatedAt = DateTime.UtcNow;
+            _appointmentRepository.UpdateAppointment(appointment);
+            await _appointmentRepository.CompleteAsync();
+
+            return _mapper.Map<AppointmentReadDTO>(appointment);
+        }
+
+        public async Task<AppointmentReadDTO> RescheduleAppointmentAsync(int id, AppointmentWriteDTO request)
+        {
+            var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
+            if (appointment == null) return null;
+
+            EnsureValidTransition(appointment.Status, AppointmentStatus.Rescheduled);
+            appointment.Status = AppointmentStatus.Rescheduled;
+            appointment.Date = request.Date;
+            appointment.Time = request.Time;
+            appointment.UpdatedAt = DateTime.UtcNow;
+            _appointmentRepository.UpdateAppointment(appointment);
+            await _appointmentRepository.CompleteAsync();
+
+            return _mapper.Map<AppointmentReadDTO>(appointment);
+        }
+
         public async Task<bool> DeleteAppointmentAsync(int id)
         {
             var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
             if (appointment == null) return false;
 
-            _appointmentRepository.RemoveAppointment(appointment);
+            appointment.IsDeleted = true;
+            appointment.DeletedAt = DateTime.UtcNow;
+            appointment.Status = AppointmentStatus.Cancelled;
+            appointment.UpdatedAt = DateTime.UtcNow;
+            _appointmentRepository.UpdateAppointment(appointment);
             await _appointmentRepository.CompleteAsync();
-            
+
             return true;
         }
 

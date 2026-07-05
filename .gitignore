@@ -28,3 +28,8 @@ bld/
 
 # OS/Mac
 .DS_Store
+
+# Secrets / Local config
+appsettings.*.local.json
+appsettings.Local.json
+.env

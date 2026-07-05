@@ -57,7 +57,7 @@ namespace MedPal.API.Controllers
 
         // GET: api/appointments/{id}
         [HttpGet("{id}")]
-        [Authorize(Policy = "Appointments.ViewAll")]
+        [Authorize(Policy = "Appointments.ViewOwn")]
         [Authorize(Policy = "ViewAppointmentsPolicy")] // Fase 2: Multi-tenancy policy
         public async Task<ActionResult<AppointmentReadDTO>> GetAppointmentById(int id)
         {
@@ -107,6 +107,26 @@ namespace MedPal.API.Controllers
             return NoContent();
         }
 
+        // POST: api/appointments/{id}/start
+        [HttpPost("{id}/start")]
+        [Authorize(Policy = "Appointments.Update")]
+        public async Task<IActionResult> StartConsultation(int id)
+        {
+            var result = await _appointmentService.StartConsultationAsync(id);
+            if (result == null) return NotFound();
+            return Ok(result);
+        }
+
+        // POST: api/appointments/{id}/complete
+        [HttpPost("{id}/complete")]
+        [Authorize(Policy = "Appointments.Update")]
+        public async Task<IActionResult> CompleteConsultation(int id)
+        {
+            var result = await _appointmentService.CompleteConsultationAsync(id);
+            if (result == null) return NotFound();
+            return Ok(result);
+        }
+
         // POST: api/appointments/{id}/cancel
         [HttpPost("{id}/cancel")]
         public async Task<IActionResult> CancelMyAppointment(int id)
@@ -119,11 +139,31 @@ namespace MedPal.API.Controllers
             if (appointment == null)
                 return NotFound();
 
-            var success = await _appointmentService.DeleteAppointmentAsync(id);
-            if (!success)
+            var result = await _appointmentService.CancelAppointmentAsync(id);
+            if (result == null)
                 return NotFound();
 
-            return NoContent();
+            return Ok(result);
+        }
+
+        // POST: api/appointments/{id}/noshow
+        [HttpPost("{id}/noshow")]
+        [Authorize(Policy = "Appointments.Update")]
+        public async Task<IActionResult> MarkNoShow(int id)
+        {
+            var result = await _appointmentService.MarkNoShowAsync(id);
+            if (result == null) return NotFound();
+            return Ok(result);
+        }
+
+        // PUT: api/appointments/{id}/reschedule
+        [HttpPut("{id}/reschedule")]
+        [Authorize(Policy = "Appointments.Update")]
+        public async Task<IActionResult> RescheduleAppointment(int id, AppointmentWriteDTO request)
+        {
+            var result = await _appointmentService.RescheduleAppointmentAsync(id, request);
+            if (result == null) return NotFound();
+            return Ok(result);
         }
     }
 }

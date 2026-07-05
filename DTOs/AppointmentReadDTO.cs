@@ -3,6 +3,7 @@ namespace MedPal.API.DTOs
     public class AppointmentReadDTO
     {
         public int Id { get; set; }
+        public int PatientId { get; set; }
         public PatientWriteDTO Patient { get; set; }
         public int UserId { get; set; }
         public int? ClinicId { get; set; }
@@ -10,5 +11,6 @@ namespace MedPal.API.DTOs
         public string Notes { get; set; }
         public DateOnly Date { get; set; }
         public TimeOnly Time { get; set; }
+        public int DurationMinutes { get; set; }
     }
 }

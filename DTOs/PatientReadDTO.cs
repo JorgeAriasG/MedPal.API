@@ -5,6 +5,7 @@ namespace MedPal.API.DTOs
     public class PatientReadDTO
     {
         public int Id { get; set; }
+        public int? PatientDetailsId { get; set; }
         public string Name { get; set; }
         public string Middlename { get; set; }
         public string Lastname { get; set; }
@@ -15,6 +16,8 @@ namespace MedPal.API.DTOs
         public string Gender { get; set; }
         public string EmergencyContact { get; set; }
         public string? Curp { get; set; }
+        public decimal? Weight { get; set; }
+        public decimal? Height { get; set; }
         public ClinicReadDTO Clinic { get; set; }
         public List<ClinicReadDTO> Clinics { get; set; } = new();
     }

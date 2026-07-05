@@ -64,6 +64,21 @@ namespace MedPal.API.Data
         // Waitlist for landing page early access
         public DbSet<WaitlistEntry> WaitlistEntries { get; set; }
 
+        // Subscription entities
+        public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<PendingRegistration> PendingRegistrations { get; set; }
+
+        // Nutrition Module (Specialty: Nutrición)
+        public DbSet<FoodItem> FoodItems { get; set; }
+        public DbSet<BodyComposition> BodyCompositions { get; set; }
+        public DbSet<AnthropometryRecord> AnthropometryRecords { get; set; }
+        public DbSet<DietPlan> DietPlans { get; set; }
+        public DbSet<DietPlanMeal> DietPlanMeals { get; set; }
+        public DbSet<DietPlanMealItem> DietPlanMealItems { get; set; }
+        public DbSet<NutritionProgress> NutritionProgresses { get; set; }
+        public DbSet<Supplement> Supplements { get; set; }
+
         private readonly EncryptionProvider? _encryptionProvider;
         private readonly IServiceProvider? _serviceProvider;
         private ITenantContextService? _tenantContext;
@@ -528,6 +543,203 @@ namespace MedPal.API.Data
             });
 
             modelBuilder.Entity<VitalSign>().HasQueryFilter(vs => !vs.IsDeleted);
+
+            // ========== NUTRITION MODULE CONFIGURATION ==========
+
+            // FoodItem Configuration
+            modelBuilder.Entity<FoodItem>(entity =>
+            {
+                entity.HasIndex(e => e.Name);
+                entity.HasIndex(e => e.Category);
+
+                entity.Property(e => e.ServingSize).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Calories).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Protein).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Carbs).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Fat).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Fiber).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Sodium).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Sugar).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.SaturatedFat).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.TransFat).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Cholesterol).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Potassium).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.VitaminA).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.VitaminC).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Calcium).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Iron).HasColumnType("decimal(10,2)");
+            });
+
+            // BodyComposition Configuration
+            modelBuilder.Entity<BodyComposition>(entity =>
+            {
+                entity.HasOne(e => e.PatientDetails)
+                    .WithMany()
+                    .HasForeignKey(e => e.PatientDetailsId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.Weight).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.Height).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.Bmi).HasColumnType("decimal(5,2)");
+                entity.Property(e => e.BodyFatPercentage).HasColumnType("decimal(5,2)");
+                entity.Property(e => e.MuscleMass).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.BoneMass).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.BodyWaterPercentage).HasColumnType("decimal(5,2)");
+                entity.Property(e => e.Bmr).HasColumnType("decimal(8,2)");
+                entity.Property(e => e.ProteinMass).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.WaistHipRatio).HasColumnType("decimal(5,3)");
+
+                entity.HasIndex(e => new { e.PatientDetailsId, e.RecordedAt });
+            });
+
+            // AnthropometryRecord Configuration
+            modelBuilder.Entity<AnthropometryRecord>(entity =>
+            {
+                entity.HasOne(e => e.PatientDetails)
+                    .WithMany()
+                    .HasForeignKey(e => e.PatientDetailsId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.Waist).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.Hip).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.WaistHipRatio).HasColumnType("decimal(5,3)");
+                entity.Property(e => e.Neck).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.ShoulderBreadth).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.Chest).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.Arm).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.Forearm).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.Wrist).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.Thigh).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.Calf).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.TricepsSkinfold).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.BicepsSkinfold).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.SubscapularSkinfold).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.SuprailiacSkinfold).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.CalfSkinfold).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.ThighSkinfold).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.AbdominalSkinfold).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.PectoralSkinfold).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.AxillarySkinfold).HasColumnType("decimal(6,2)");
+
+                entity.HasIndex(e => new { e.PatientDetailsId, e.RecordedAt });
+            });
+
+            // DietPlan Configuration
+            modelBuilder.Entity<DietPlan>(entity =>
+            {
+                entity.HasOne(e => e.PatientDetails)
+                    .WithMany()
+                    .HasForeignKey(e => e.PatientDetailsId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.CreatedByUser)
+                    .WithMany()
+                    .HasForeignKey(e => e.CreatedByUserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.DailyCalories).HasColumnType("decimal(8,2)");
+                entity.Property(e => e.ProteinG).HasColumnType("decimal(8,2)");
+                entity.Property(e => e.CarbsG).HasColumnType("decimal(8,2)");
+                entity.Property(e => e.FatG).HasColumnType("decimal(8,2)");
+                entity.Property(e => e.StartDate).HasConversion(dateOnlyConverter);
+                entity.Property(e => e.EndDate).HasConversion(dateOnlyConverter);
+
+                entity.HasIndex(e => new { e.PatientDetailsId, e.Status });
+            });
+
+            // DietPlanMeal Configuration
+            modelBuilder.Entity<DietPlanMeal>(entity =>
+            {
+                entity.HasOne(e => e.DietPlan)
+                    .WithMany(p => p.Meals)
+                    .HasForeignKey(e => e.DietPlanId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => new { e.DietPlanId, e.MealOrder });
+            });
+
+            // DietPlanMealItem Configuration
+            modelBuilder.Entity<DietPlanMealItem>(entity =>
+            {
+                entity.HasOne(e => e.DietPlanMeal)
+                    .WithMany(m => m.Items)
+                    .HasForeignKey(e => e.DietPlanMealId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.FoodItem)
+                    .WithMany()
+                    .HasForeignKey(e => e.FoodItemId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                entity.Property(e => e.Quantity).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Calories).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Protein).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Carbs).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Fat).HasColumnType("decimal(10,2)");
+            });
+
+            // NutritionProgress Configuration
+            modelBuilder.Entity<NutritionProgress>(entity =>
+            {
+                entity.HasOne(e => e.PatientDetails)
+                    .WithMany()
+                    .HasForeignKey(e => e.PatientDetailsId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.Weight).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.BodyFatPercentage).HasColumnType("decimal(5,2)");
+                entity.Property(e => e.MuscleMass).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.Waist).HasColumnType("decimal(6,2)");
+                entity.Property(e => e.CaloriesConsumed).HasColumnType("decimal(8,2)");
+                entity.Property(e => e.ProteinConsumed).HasColumnType("decimal(8,2)");
+                entity.Property(e => e.CarbsConsumed).HasColumnType("decimal(8,2)");
+                entity.Property(e => e.FatConsumed).HasColumnType("decimal(8,2)");
+
+                entity.HasIndex(e => new { e.PatientDetailsId, e.RecordedAt });
+            });
+
+            // Supplement Configuration
+            modelBuilder.Entity<Supplement>(entity =>
+            {
+                entity.HasOne(e => e.PatientDetails)
+                    .WithMany()
+                    .HasForeignKey(e => e.PatientDetailsId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.StartDate).HasConversion(dateOnlyConverter);
+                entity.Property(e => e.EndDate).HasConversion(dateOnlyConverter);
+
+                entity.HasIndex(e => new { e.PatientDetailsId, e.IsActive });
+            });
+
+            // Soft delete query filters for Nutrition entities
+            modelBuilder.Entity<FoodItem>().HasQueryFilter(fi => !fi.IsDeleted);
+            modelBuilder.Entity<BodyComposition>().HasQueryFilter(bc => !bc.IsDeleted);
+            modelBuilder.Entity<AnthropometryRecord>().HasQueryFilter(ar => !ar.IsDeleted);
+            modelBuilder.Entity<DietPlan>().HasQueryFilter(dp => !dp.IsDeleted);
+            modelBuilder.Entity<DietPlanMeal>().HasQueryFilter(dpm => !dpm.IsDeleted);
+            modelBuilder.Entity<DietPlanMealItem>().HasQueryFilter(dpmi => !dpmi.IsDeleted);
+            modelBuilder.Entity<NutritionProgress>().HasQueryFilter(np => !np.IsDeleted);
+            modelBuilder.Entity<Supplement>().HasQueryFilter(s => !s.IsDeleted);
+
+            // Subscription configurations
+            modelBuilder.Entity<Subscription>()
+                .HasOne(s => s.Account)
+                .WithMany(a => a.Subscriptions)
+                .HasForeignKey(s => s.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Subscription>()
+                .HasOne(s => s.SubscriptionPlan)
+                .WithMany()
+                .HasForeignKey(s => s.SubscriptionPlanId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<SubscriptionPlan>(entity =>
+            {
+                entity.Property(p => p.Price).HasPrecision(18, 2);
+                entity.HasIndex(p => p.Name).IsUnique();
+            });
 
             // NOTE: MedicalRecordAccessLog does NOT have soft delete filter (immutable audit trail per NOM-004)
 

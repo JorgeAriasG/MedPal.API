@@ -17,6 +17,7 @@ namespace MedPal.API.Repositories.Implementations
             return await ApplyTenantFilter(_context.PatientDetails
                 .Include(pd => pd.Patient)
                 .Include(pd => pd.MedicalHistories)
+                    .ThenInclude(mh => mh.HealthcareProfessional)
                 .Include(pd => pd.Allergies))
                 .ToListAsync();
         }
@@ -26,6 +27,7 @@ namespace MedPal.API.Repositories.Implementations
             return await ApplyTenantFilter(_context.PatientDetails
                 .Include(pd => pd.Patient)
                 .Include(pd => pd.MedicalHistories)
+                    .ThenInclude(mh => mh.HealthcareProfessional)
                 .Include(pd => pd.Allergies))
                 .FirstOrDefaultAsync(pd => pd.Id == id);
         }
@@ -35,6 +37,7 @@ namespace MedPal.API.Repositories.Implementations
             return await ApplyTenantFilter(_context.PatientDetails
                 .Include(pd => pd.Patient)
                 .Include(pd => pd.MedicalHistories)
+                    .ThenInclude(mh => mh.HealthcareProfessional)
                 .Include(pd => pd.Allergies))
                 .FirstOrDefaultAsync(pd => pd.PatientId == patientId);
         }

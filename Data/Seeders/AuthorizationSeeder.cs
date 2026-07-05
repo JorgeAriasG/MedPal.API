@@ -58,15 +58,6 @@ namespace MedPal.API.Data.Seeders
                 // Clinical roles
                 new Role
                 {
-                    Name = "Doctor",
-                    Description = "Medical doctor with access to patient records and appointments",
-                    IsSystemRole = true,
-                    IsActive = true,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                },
-                new Role
-                {
                     Name = "Nurse",
                     Description = "Nurse with limited access to patient information",
                     IsSystemRole = true,
@@ -182,14 +173,13 @@ namespace MedPal.API.Data.Seeders
             var superAdmin = await context.Roles.FirstOrDefaultAsync(r => r.Name == "SuperAdmin");
             var accountAdmin = await context.Roles.FirstOrDefaultAsync(r => r.Name == "AccountAdmin");
             var clinicAdmin = await context.Roles.FirstOrDefaultAsync(r => r.Name == "ClinicAdmin");
-            var doctor = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Doctor");
             var nurse = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Nurse");
             var receptionist = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Receptionist");
             var healthProfessional = await context.Roles.FirstOrDefaultAsync(r => r.Name == "HealthProfessional");
             var patient = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Patient");
 
             if (superAdmin == null || accountAdmin == null || clinicAdmin == null || 
-                doctor == null || nurse == null || receptionist == null || healthProfessional == null || patient == null)
+                nurse == null || receptionist == null || healthProfessional == null || patient == null)
                 return;
 
             var allPermissions = await context.Permissions.ToListAsync();
@@ -236,27 +226,16 @@ namespace MedPal.API.Data.Seeders
                 }
             }
 
-            // Admin: All permissions
-            // Doctor: Patient and medical record management, appointments
-            var doctorPermissions = new[]
+            // HealthProfessional: consolidated clinical role (replaces Doctor)
+            // All clinical staff (doctors, nutritionists, etc.) use this role.
+            // ViewAll permissions removed — data access is filtered by assignment (MedicalHistory.HealthcareProfessionalId).
+            var healthProfessionalPermissions = new[]
             {
                 "Patients.ViewAssigned", "Patients.Create", "Patients.Update",
-                "Appointments.ViewAll", "Appointments.Create", "Appointments.Update", "Appointments.Cancel",
+                "Appointments.ViewOwn", "Appointments.Create", "Appointments.Update", "Appointments.Cancel",
                 "MedicalRecords.ViewAssigned", "MedicalRecords.Read", "MedicalRecords.Create", "MedicalRecords.Update",
                 "Billing.View",
                 "Reports.View",
-                "Clinics.View",
-                "Roles.View"
-            };
-            await AssignPermissionsToRole(context, doctor.Id, doctorPermissions);
-
-            // HealthProfessional: Similar to Doctor, access to patient and medical records
-            var healthProfessionalPermissions = new[]
-            {
-                "Patients.ViewAll", "Patients.Update",
-                "Appointments.ViewAll", "Appointments.Create", "Appointments.Update",
-                "MedicalRecords.ViewAssigned", "MedicalRecords.Create",
-                "Billing.View",
                 "Clinics.View",
                 "Roles.View"
             };

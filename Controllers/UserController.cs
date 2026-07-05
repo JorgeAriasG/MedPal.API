@@ -8,6 +8,7 @@ using MedPal.API.Enums;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
 using MedPal.API.Repositories.Authorization;
+using MedPal.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Extensions;
@@ -25,6 +26,9 @@ namespace MedPal.API.Controllers
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
         private readonly IUserService _userService;
+        private readonly ISubscriptionService _subscriptionService;
+        private readonly IStripeService _stripeService;
+        private readonly IRegistrationService _registrationService;
 
         public UserController(
             IUserRepository userRepository,
@@ -33,7 +37,10 @@ namespace MedPal.API.Controllers
             IAccountRepository accountRepository,
             IMapper mapper,
             ITokenService tokenService,
-            IUserService userService)
+            IUserService userService,
+            ISubscriptionService subscriptionService,
+            IStripeService stripeService,
+            IRegistrationService registrationService)
         {
             _userRepository = userRepository;
             _clinicRepository = clinicRepository;
@@ -42,6 +49,9 @@ namespace MedPal.API.Controllers
             _mapper = mapper;
             _tokenService = tokenService;
             _userService = userService;
+            _subscriptionService = subscriptionService;
+            _stripeService = stripeService;
+            _registrationService = registrationService;
         }
 
         [HttpGet]
@@ -108,6 +118,12 @@ namespace MedPal.API.Controllers
                 return Unauthorized("Usuario no tiene AccountId asignado");
             }
 
+            if (!await _subscriptionService.CanAddUserAsync(accountId))
+            {
+                var message = await _subscriptionService.GetLimitExceededMessageAsync(accountId, "user");
+                return BadRequest(new { message });
+            }
+
             var user = _mapper.Map<User>(userWriteDto);
             user.AccountId = accountId;
             var createdUser = await _userRepository.AddUserAsync(user);
@@ -146,7 +162,7 @@ namespace MedPal.API.Controllers
             var token = _tokenService.GenerateToken(user);
             var userReadDTO = _mapper.Map<UserReadDTO>(user);
             userReadDTO.Token = token;
-            userReadDTO.Role = user.UserRoles?.FirstOrDefault()?.Role?.Name ?? "Doctor";
+            userReadDTO.Role = user.UserRoles?.FirstOrDefault()?.Role?.Name ?? "HealthProfessional";
 
             return Ok(userReadDTO);
         }
@@ -188,6 +204,9 @@ namespace MedPal.API.Controllers
                 return BadRequest(new { message = "No se pudo crear la Account" });
             }
 
+            var planName = registerDto.PlanName ?? "SOLO";
+            await _subscriptionService.AssignPlanAsync(newAccount.Id, planName);
+
             var user = _mapper.Map<User>(registerDto);
             user.HasAcceptedPrivacyTerms = true;
             user.CreatedAt = DateTime.UtcNow;
@@ -222,19 +241,92 @@ namespace MedPal.API.Controllers
                 createdUser.Id, accountAdminRole.Id,
                 clinicId: null, expiresAt: null, assignedByUserId: null);
 
-            var clinicAdminRole = await _roleRepository.GetRoleByNameAsync("ClinicAdmin");
-            if (clinicAdminRole != null)
-            {
-                await _roleRepository.AssignRoleToUserAsync(
-                    createdUser.Id, clinicAdminRole.Id,
-                    clinicId: newClinic.Id, expiresAt: null, assignedByUserId: null);
-            }
-
             var token = _tokenService.GenerateToken(createdUser);
             var userReadDTO = _mapper.Map<UserReadDTO>(createdUser);
             userReadDTO.Token = token;
 
-            return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, userReadDTO);
+            // Create Stripe customer and checkout session
+            string? checkoutUrl = null;
+            string? sessionId = null;
+            try
+            {
+                var plan = await _subscriptionService.GetCurrentSubscriptionAsync(newAccount.Id);
+                if (plan?.Plan?.StripePriceId != null)
+                {
+                    var stripeCustomerId = await _stripeService.CreateCustomerAsync(
+                        createdUser.Email, createdUser.Name);
+
+                    // Update subscription with Stripe customer id
+                    var repo = HttpContext.RequestServices.GetService(typeof(ISubscriptionRepository))
+                        as ISubscriptionRepository;
+                    var activeSub = await repo.GetActiveByAccountIdAsync(newAccount.Id);
+                    if (activeSub != null)
+                    {
+                        activeSub.StripeCustomerId = stripeCustomerId;
+                        await repo.UpdateAsync(activeSub);
+                    }
+
+                    var checkoutResult = await _stripeService.CreateCheckoutSessionAsync(
+                        stripeCustomerId,
+                        plan.Plan.StripePriceId,
+                        plan.Plan.TrialDays,
+                        "http://localhost:4200/checkout/success?session_id={CHECKOUT_SESSION_ID}",
+                        "http://localhost:4200/checkout/required",
+                        newAccount.Id);
+
+                    checkoutUrl = checkoutResult.CheckoutUrl;
+                    sessionId = checkoutResult.SessionId;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creating Stripe checkout: {ex.Message}");
+                // Non-blocking: user can complete payment later
+            }
+
+            return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, new
+            {
+                user = userReadDTO,
+                checkoutUrl,
+                sessionId,
+            });
+        }
+        [AllowAnonymous]
+        [HttpPost("initiate-registration")]
+        public async Task<ActionResult<InitiateRegistrationResponseDTO>> InitiateRegistration(
+            [FromBody] InitiateRegistrationRequestDTO request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                var result = await _registrationService.InitiateAsync(request);
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("complete-registration")]
+        public async Task<ActionResult<CompleteRegistrationResponseDTO>> CompleteRegistration(
+            [FromBody] CompleteRegistrationRequestDTO request)
+        {
+            if (string.IsNullOrEmpty(request.SessionId))
+                return BadRequest(new { message = "SessionId es requerido" });
+
+            try
+            {
+                var result = await _registrationService.CompleteAsync(request.SessionId);
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPut]

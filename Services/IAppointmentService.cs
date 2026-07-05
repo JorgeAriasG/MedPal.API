@@ -13,5 +13,10 @@ namespace MedPal.API.Services
         Task<AppointmentReadDTO> UpdateAppointmentAsync(int id, AppointmentWriteDTO request);
         Task<bool> DeleteAppointmentAsync(int id);
         Task<IEnumerable<AppointmentReadDTO>> GetAppointmentsByPatientIdAsync(int patientId);
+        Task<AppointmentReadDTO> StartConsultationAsync(int id);
+        Task<AppointmentReadDTO> CompleteConsultationAsync(int id);
+        Task<AppointmentReadDTO> CancelAppointmentAsync(int id);
+        Task<AppointmentReadDTO> MarkNoShowAsync(int id);
+        Task<AppointmentReadDTO> RescheduleAppointmentAsync(int id, AppointmentWriteDTO request);
     }
 }

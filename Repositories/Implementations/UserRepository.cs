@@ -200,7 +200,7 @@ namespace MedPal.API.Repositories.Implementations
         {
             return await _context.Users
                 .Where(u => !u.IsDeleted && u.ClinicId == clinicId)
-                .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "Doctor" && !ur.IsDeleted))
+                .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "HealthProfessional" && !ur.IsDeleted))
                 .ToListAsync();
         }
     }

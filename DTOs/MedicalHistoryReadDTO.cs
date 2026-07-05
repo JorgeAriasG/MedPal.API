@@ -8,6 +8,7 @@ namespace MedPal.API.DTOs
         public DateTime DiagnosisDate { get; set; }
         public string ClinicalNotes { get; set; }
         public int? HealthcareProfessionalId { get; set; }
+        public string DoctorName { get; set; }
         public DateTime? FollowUpDate { get; set; }
         public string SpecialtyData { get; set; }
         public string? Cie10Codes { get; set; }

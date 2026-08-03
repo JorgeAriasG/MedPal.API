@@ -33,7 +33,7 @@ namespace MedPal.API.Data.Seeders
                     MaxClinics = 1,
                     MaxActiveCalendars = 1,
                     TrialDays = 30,
-                    StripePriceId = "price_1TmEdwCdrBEjQEKTLhMAXTJF",
+                    StripePriceId = "price_1U0TzNCssaSAK7S4u7swZfFi",
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
@@ -47,7 +47,7 @@ namespace MedPal.API.Data.Seeders
                     MaxClinics = 1,
                     MaxActiveCalendars = 4,
                     TrialDays = 0,
-                    StripePriceId = "price_1TmEeECdrBEjQEKTCYEDov6j",
+                    StripePriceId = "price_1U0TzsCssaSAK7S4bkc4XHvd",
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
@@ -61,7 +61,7 @@ namespace MedPal.API.Data.Seeders
                     MaxClinics = 3,
                     MaxActiveCalendars = 10,
                     TrialDays = 0,
-                    StripePriceId = "price_1TmEePCdrBEjQEKTgrEjJqsV",
+                    StripePriceId = "price_1U0U0gCssaSAK7S4Th0P7SC7",
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow

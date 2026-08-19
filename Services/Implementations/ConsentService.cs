@@ -269,12 +269,25 @@ namespace MedPal.API.Services.Implementations
         {
             try
             {
+                // Doctor-level consent (TargetDoctorId matches)
                 var consent = await _context.PatientConsents
                     .FirstOrDefaultAsync(pc =>
                         pc.PatientDetailsId == patientDetailsId &&
                         pc.TargetDoctorId == targetDoctorId &&
                         pc.IsApproved &&
                         !pc.IsDeleted);
+
+                // Clinic-level consent (TargetDoctorId == null) also covers any doctor of the requesting clinic
+                if (consent == null && _tenantContext.CurrentClinicId.HasValue)
+                {
+                    consent = await _context.PatientConsents
+                        .FirstOrDefaultAsync(pc =>
+                            pc.PatientDetailsId == patientDetailsId &&
+                            pc.TargetDoctorId == null &&
+                            pc.RequestingClinicId == _tenantContext.CurrentClinicId.Value &&
+                            pc.IsApproved &&
+                            !pc.IsDeleted);
+                }
 
                 if (consent == null)
                     return false;

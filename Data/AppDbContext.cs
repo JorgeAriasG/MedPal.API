@@ -23,6 +23,7 @@ namespace MedPal.API.Data
         public DbSet<Patient> Patients { get; set; }
         public DbSet<PatientDetails> PatientDetails { get; set; }
         public DbSet<MedicalHistory> MedicalHistories { get; set; }
+        public DbSet<ClinicalAttachment> ClinicalAttachments { get; set; }
         public DbSet<Allergy> Allergies { get; set; }
         public DbSet<InsuranceProvider> InsuranceProviders { get; set; }
         public DbSet<PatientInsurance> PatientInsurances { get; set; }
@@ -35,6 +36,7 @@ namespace MedPal.API.Data
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<PatientClinic> PatientClinics { get; set; }
+        public DbSet<PatientAccount> PatientAccounts { get; set; }
         public DbSet<NotificationMessage> NotificationMessages { get; set; }
 
         // Authorization entities
@@ -159,6 +161,22 @@ namespace MedPal.API.Data
                 .HasOne(pc => pc.Clinic)
                 .WithMany(c => c.PatientClinics)
                 .HasForeignKey(pc => pc.ClinicId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure foreign keys for PatientAccount (patient membership in an account)
+            modelBuilder.Entity<PatientAccount>()
+                .HasKey(pa => new { pa.PatientId, pa.AccountId });
+
+            modelBuilder.Entity<PatientAccount>()
+                .HasOne(pa => pa.Patient)
+                .WithMany(p => p.PatientAccounts)
+                .HasForeignKey(pa => pa.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PatientAccount>()
+                .HasOne(pa => pa.Account)
+                .WithMany(a => a.PatientAccounts)
+                .HasForeignKey(pa => pa.AccountId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Configure foreign keys for Invoice
@@ -509,6 +527,22 @@ namespace MedPal.API.Data
                 .HasForeignKey(mh => mh.OwnerClinicId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            // ClinicalAttachment Configuration
+            modelBuilder.Entity<ClinicalAttachment>(entity =>
+            {
+                entity.HasOne(a => a.MedicalHistory)
+                    .WithMany()
+                    .HasForeignKey(a => a.MedicalHistoryId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(a => a.OwnerClinic)
+                    .WithMany()
+                    .HasForeignKey(a => a.OwnerClinicId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasIndex(a => new { a.MedicalHistoryId, a.IsDeleted });
+            });
+
             // Add query filters for soft delete pattern
             // Automatically filter out deleted records from all queries
             modelBuilder.Entity<Patient>().HasQueryFilter(p => !p.IsDeleted);
@@ -530,6 +564,7 @@ namespace MedPal.API.Data
             modelBuilder.Entity<PrescriptionItem>().HasQueryFilter(pri => !pri.IsDeleted);
             modelBuilder.Entity<UserRole>().HasQueryFilter(ur => !ur.IsDeleted);
             modelBuilder.Entity<PatientClinic>().HasQueryFilter(pc => !pc.IsDeleted);
+            modelBuilder.Entity<PatientAccount>().HasQueryFilter(pa => !pa.IsDeleted);
             modelBuilder.Entity<PatientConsent>().HasQueryFilter(pc => !pc.IsDeleted);
             // PatientAuth Configuration
             modelBuilder.Entity<PatientAuth>(entity =>
@@ -543,6 +578,7 @@ namespace MedPal.API.Data
             });
 
             modelBuilder.Entity<VitalSign>().HasQueryFilter(vs => !vs.IsDeleted);
+            modelBuilder.Entity<ClinicalAttachment>().HasQueryFilter(ca => !ca.IsDeleted);
 
             // ========== NUTRITION MODULE CONFIGURATION ==========
 

@@ -64,6 +64,29 @@ namespace MedPal.API.Models
         public DateTime? SentAt { get; set; }
 
         /// <summary>
+        /// ID del proveedor externo (ej: WAMID de WhatsApp)
+        /// </summary>
+        [StringLength(255)]
+        public string? ProviderMessageId { get; set; }
+
+        /// <summary>
+        /// Estado de entrega (sent, delivered, read, failed)
+        /// </summary>
+        [StringLength(50)]
+        public string? DeliveryStatus { get; set; }
+
+        /// <summary>
+        /// Detalle del error si falló el envío
+        /// </summary>
+        public string? ErrorDetail { get; set; }
+
+        /// <summary>
+        /// Cita asociada al recordatorio (opcional)
+        /// </summary>
+        [ForeignKey("Appointment")]
+        public int? AppointmentId { get; set; }
+
+        /// <summary>
         /// Si la notificación fue leída/visto por el usuario
         /// </summary>
         public bool IsRead { get; set; } = false;
@@ -94,6 +117,11 @@ namespace MedPal.API.Models
         /// Navegación al usuario que recibe la notificación
         /// </summary>
         public virtual User User { get; set; }
+
+        /// <summary>
+        /// Cita asociada al recordatorio (opcional)
+        /// </summary>
+        public virtual Appointment? Appointment { get; set; }
     }
 
     /// <summary>

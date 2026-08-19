@@ -19,8 +19,8 @@ namespace MedPal.API.Validation
                 .WithMessage("El peso debe estar entre 0 y 500 kg");
 
             RuleFor(x => x.Height)
-                .InclusiveBetween(0m, 3m).When(x => x.Height.HasValue)
-                .WithMessage("La altura debe estar entre 0 y 3 m");
+                .InclusiveBetween(0m, 300m).When(x => x.Height.HasValue)
+                .WithMessage("La altura debe estar entre 0 y 300 cm");
 
             RuleFor(x => x.Waist)
                 .InclusiveBetween(0m, 300m).When(x => x.Waist.HasValue)

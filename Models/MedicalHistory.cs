@@ -59,6 +59,9 @@ namespace MedPal.API.Models
         // CIE-10 diagnostic codes (JSON array: ["I10", "E11.9", "J45.0"])
         public string? Cie10Codes { get; set; }
 
+        // Tratamientos/procedimientos compartidos (JSON array: [{ "name": "...", "description": "..." }])
+        public string? Treatments { get; set; }
+
         // Indicador de confidencialidad (para cumplir LSSI-PC)
         public bool IsConfidential { get; set; } = true;
 

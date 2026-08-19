@@ -12,6 +12,7 @@ namespace MedPal.API.DTOs
         public DateTime? FollowUpDate { get; set; }
         public string SpecialtyData { get; set; }
         public string? Cie10Codes { get; set; }
+        public string? Treatments { get; set; }
         public int? PrescriptionId { get; set; }
         // No expongas CreatedAt/UpdatedAt/LastModifiedBy a menos que sea admin
     }

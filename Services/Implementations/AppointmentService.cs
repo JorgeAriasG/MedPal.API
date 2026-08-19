@@ -78,6 +78,21 @@ namespace MedPal.API.Services.Implementations
                 request.PatientId = ghostPatient.Id;
             }
 
+            // Verificación cross-account: si el paciente pertenece a otro account,
+            // el account destino debe tener una membresía verificada por el paciente.
+            if (request.PatientId.HasValue && request.ClinicId.HasValue)
+            {
+                var candidate = await _patientRepository.GetPatientByIdAsync(request.PatientId.Value);
+                var clinicAccountId = await _patientRepository.GetClinicAccountIdAsync(request.ClinicId.Value);
+                if (candidate != null && candidate.AccountId.HasValue && clinicAccountId.HasValue &&
+                    candidate.AccountId.Value != clinicAccountId.Value)
+                {
+                    var verified = await _patientRepository.HasVerifiedMembershipAsync(candidate.Id, clinicAccountId.Value);
+                    if (!verified)
+                        throw new InvalidOperationException("El paciente aún no ha verificado su vínculo con esta cuenta.");
+                }
+            }
+
             await _validator.ValidateAndThrowAsync(request);
 
             var appointment = _mapper.Map<Appointment>(request);
@@ -211,6 +226,10 @@ namespace MedPal.API.Services.Implementations
             var firstName = nameParts[0];
             var lastName = nameParts.Length > 1 ? nameParts[1] : "Sin apellido";
 
+            var clinicAccountId = request.ClinicId.HasValue
+                ? await _patientRepository.GetClinicAccountIdAsync(request.ClinicId.Value)
+                : null;
+
             var ghostPatient = new Patient
             {
                 Name = firstName,
@@ -221,7 +240,7 @@ namespace MedPal.API.Services.Implementations
                 Address = "Sin configurar",
                 Phone = request.PatientPhone ?? "",
                 Email = $"pendiente_{Guid.NewGuid():N}@clinicflow.temp", // Email temporal único
-                AccountId = null, // Se asignará vía tenant context si aplica
+                AccountId = clinicAccountId,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -231,6 +250,14 @@ namespace MedPal.API.Services.Implementations
             if (request.ClinicId.HasValue)
             {
                 await _patientRepository.AddPatientClinicsAsync(createdPatient.Id, new List<int> { request.ClinicId.Value });
+
+                if (clinicAccountId.HasValue)
+                {
+                    // El staff crea el paciente en su propia cuenta (primary).
+                    await _patientRepository.CreatePatientAccountAsync(
+                        createdPatient.Id, clinicAccountId.Value,
+                        isPrimary: true, isVerifiedByPatient: true, consentToShareProfile: true);
+                }
             }
 
             return createdPatient;

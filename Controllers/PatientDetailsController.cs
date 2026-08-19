@@ -1,4 +1,5 @@
 using AutoMapper;
+using MedPal.API.Authorization;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
@@ -14,11 +15,20 @@ namespace MedPal.API.Controllers
     {
         private readonly IPatientDetailsRepository _patientDetailsRepository;
         private readonly IMapper _mapper;
+        private readonly IAuthorizationService _authorizationService;
 
-        public PatientDetailsController(IPatientDetailsRepository patientDetailsRepository, IMapper mapper)
+        public PatientDetailsController(IPatientDetailsRepository patientDetailsRepository, IMapper mapper, IAuthorizationService authorizationService)
         {
             _patientDetailsRepository = patientDetailsRepository;
             _mapper = mapper;
+            _authorizationService = authorizationService;
+        }
+
+        private async Task<bool> CanAccessPatientAsync(int patientId)
+        {
+            var result = await _authorizationService.AuthorizeAsync(
+                User, null, new[] { new PatientAccessRequirement(patientId) });
+            return result.Succeeded;
         }
 
         // GET: api/patientdetails
@@ -35,7 +45,7 @@ namespace MedPal.API.Controllers
         public async Task<ActionResult<PatientDetailsReadDTO>> GetPatientDetailsById(int id)
         {
             var patientDetails = await _patientDetailsRepository.GetPatientDetailsByIdAsync(id);
-            if (patientDetails == null)
+            if (patientDetails == null || !await CanAccessPatientAsync(patientDetails.PatientId))
             {
                 return NotFound();
             }
@@ -47,12 +57,15 @@ namespace MedPal.API.Controllers
         [HttpGet("patient/{patientId}")]
         public async Task<ActionResult<PatientDetailsReadDTO>> GetPatientDetailsByPatientId(int patientId)
         {
+            if (!await CanAccessPatientAsync(patientId))
+            {
+                return NotFound($"Patient Details not found for Patient ID {patientId}");
+            }
+
             var patientDetails = await _patientDetailsRepository.GetPatientDetailsByPatientIdAsync(patientId);
 
             if (patientDetails == null)
             {
-                // If details don't exist yet for this patient, we might want to return 404
-                // or create it? standard REST suggests 404 if the resource (details) is not found.
                 return NotFound($"Patient Details not found for Patient ID {patientId}");
             }
 
@@ -60,10 +73,34 @@ namespace MedPal.API.Controllers
             return Ok(patientDetailsReadDTO);
         }
 
+        // GET: api/patientdetails/patient/{patientId}/summary
+        [HttpGet("patient/{patientId}/summary")]
+        public async Task<ActionResult<PatientDetailsSummaryReadDTO>> GetPatientDetailsSummaryByPatientId(int patientId)
+        {
+            if (!await CanAccessPatientAsync(patientId))
+            {
+                return NotFound($"Patient Details not found for Patient ID {patientId}");
+            }
+
+            var summary = await _patientDetailsRepository.GetPatientSummaryByPatientIdAsync(patientId);
+
+            if (summary == null)
+            {
+                return NotFound($"Patient Details not found for Patient ID {patientId}");
+            }
+
+            return Ok(summary);
+        }
+
         // POST: api/patientdetails
         [HttpPost]
         public async Task<ActionResult<PatientDetailsReadDTO>> CreatePatientDetails(PatientDetailsWriteDTO patientDetailsWriteDto)
         {
+            if (patientDetailsWriteDto.PatientId is not int patientId || !await CanAccessPatientAsync(patientId))
+            {
+                return Forbid();
+            }
+
             var patientDetails = _mapper.Map<PatientDetails>(patientDetailsWriteDto);
             await _patientDetailsRepository.AddPatientDetailsAsync(patientDetails);
             await _patientDetailsRepository.CompleteAsync();
@@ -77,7 +114,7 @@ namespace MedPal.API.Controllers
         public async Task<IActionResult> UpdatePatientDetails(int id, PatientDetailsWriteDTO patientDetailsWriteDTO)
         {
             var patientDetails = await _patientDetailsRepository.GetPatientDetailsByIdAsync(id);
-            if (patientDetails == null)
+            if (patientDetails == null || !await CanAccessPatientAsync(patientDetails.PatientId))
             {
                 return NotFound();
             }
@@ -94,7 +131,7 @@ namespace MedPal.API.Controllers
         public async Task<IActionResult> DeletePatientDetails(int id)
         {
             var patientDetails = await _patientDetailsRepository.GetPatientDetailsByIdAsync(id);
-            if (patientDetails == null)
+            if (patientDetails == null || !await CanAccessPatientAsync(patientDetails.PatientId))
             {
                 return NotFound();
             }

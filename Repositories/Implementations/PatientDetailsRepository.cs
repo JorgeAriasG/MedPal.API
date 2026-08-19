@@ -1,4 +1,5 @@
 using MedPal.API.Data;
+using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Services;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +13,26 @@ namespace MedPal.API.Repositories.Implementations
         {
         }
 
+        // PatientDetails has no AccountId column; tenancy must be resolved through Patient.
+        private IQueryable<PatientDetails> ApplyAccountFilter(IQueryable<PatientDetails> query)
+        {
+            if (_tenantContext.IsSuperAdmin || !_tenantContext.CurrentAccountId.HasValue)
+                return query;
+
+            var accountId = _tenantContext.CurrentAccountId.Value;
+            var clinicId = _tenantContext.CurrentClinicId;
+
+            return query.Where(pd =>
+                pd.Patient.AccountId == accountId ||
+                (pd.Patient.AccountId == null && clinicId.HasValue &&
+                 pd.Patient.PatientClinics.Any(pc => pc.ClinicId == clinicId.Value && !pc.IsDeleted)));
+        }
+
         public async Task<IEnumerable<PatientDetails>> GetAllPatientDetailsAsync()
         {
-            return await ApplyTenantFilter(_context.PatientDetails
+            return await ApplyAccountFilter(_context.PatientDetails
+                .AsNoTracking()
+                .AsSplitQuery()
                 .Include(pd => pd.Patient)
                 .Include(pd => pd.MedicalHistories)
                     .ThenInclude(mh => mh.HealthcareProfessional)
@@ -24,7 +42,9 @@ namespace MedPal.API.Repositories.Implementations
 
         public async Task<PatientDetails> GetPatientDetailsByIdAsync(int id)
         {
-            return await ApplyTenantFilter(_context.PatientDetails
+            return await ApplyAccountFilter(_context.PatientDetails
+                .AsNoTracking()
+                .AsSplitQuery()
                 .Include(pd => pd.Patient)
                 .Include(pd => pd.MedicalHistories)
                     .ThenInclude(mh => mh.HealthcareProfessional)
@@ -34,12 +54,40 @@ namespace MedPal.API.Repositories.Implementations
 
         public async Task<PatientDetails> GetPatientDetailsByPatientIdAsync(int patientId)
         {
-            return await ApplyTenantFilter(_context.PatientDetails
+            return await ApplyAccountFilter(_context.PatientDetails
+                .AsNoTracking()
+                .AsSplitQuery()
                 .Include(pd => pd.Patient)
                 .Include(pd => pd.MedicalHistories)
                     .ThenInclude(mh => mh.HealthcareProfessional)
                 .Include(pd => pd.Allergies))
                 .FirstOrDefaultAsync(pd => pd.PatientId == patientId);
+        }
+
+        public async Task<PatientDetailsSummaryReadDTO> GetPatientSummaryByPatientIdAsync(int patientId)
+        {
+            return await ApplyAccountFilter(_context.PatientDetails)
+                .AsNoTracking()
+                .Where(pd => pd.PatientId == patientId)
+                .Select(pd => new PatientDetailsSummaryReadDTO
+                {
+                    Id = pd.Id,
+                    PatientId = pd.PatientId,
+                    AntecedentsData = pd.AntecedentsData,
+                    Patient = new PatientSummaryReadDTO
+                    {
+                        Id = pd.Patient.Id,
+                        Name = pd.Patient.Name,
+                        Middlename = pd.Patient.Middlename,
+                        Lastname = pd.Patient.Lastname,
+                        Email = pd.Patient.Email,
+                        Phone = pd.Patient.Phone,
+                        Gender = pd.Patient.Gender,
+                        Weight = pd.Patient.Weight,
+                        Height = pd.Patient.Height
+                    }
+                })
+                .FirstOrDefaultAsync();
         }
 
         public async Task<PatientDetails> AddPatientDetailsAsync(PatientDetails patientDetails)

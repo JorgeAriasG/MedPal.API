@@ -1,4 +1,5 @@
 using AutoMapper;
+using MedPal.API.Authorization;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
@@ -13,12 +14,35 @@ namespace MedPal.API.Controllers
     public class VitalSignController : ControllerBase
     {
         private readonly IVitalSignRepository _vitalSignRepository;
+        private readonly IPatientDetailsRepository _patientDetailsRepository;
         private readonly IMapper _mapper;
+        private readonly IAuthorizationService _authorizationService;
 
-        public VitalSignController(IVitalSignRepository vitalSignRepository, IMapper mapper)
+        public VitalSignController(
+            IVitalSignRepository vitalSignRepository,
+            IPatientDetailsRepository patientDetailsRepository,
+            IMapper mapper,
+            IAuthorizationService authorizationService)
         {
             _vitalSignRepository = vitalSignRepository;
+            _patientDetailsRepository = patientDetailsRepository;
             _mapper = mapper;
+            _authorizationService = authorizationService;
+        }
+
+        private async Task<bool> CanAccessPatientAsync(int patientId)
+        {
+            var result = await _authorizationService.AuthorizeAsync(
+                User, null, new[] { new PatientAccessRequirement(patientId) });
+            return result.Succeeded;
+        }
+
+        private async Task<bool> CanAccessPatientDetailsAsync(int patientDetailsId)
+        {
+            var details = await _patientDetailsRepository.GetPatientDetailsByIdAsync(patientDetailsId);
+            if (details == null)
+                return false;
+            return await CanAccessPatientAsync(details.PatientId);
         }
 
         // GET: api/vitalsign
@@ -35,7 +59,7 @@ namespace MedPal.API.Controllers
         public async Task<ActionResult<VitalSignReadDTO>> GetVitalSignById(int id)
         {
             var vitalSign = await _vitalSignRepository.GetVitalSignByIdAsync(id);
-            if (vitalSign == null)
+            if (vitalSign == null || !await CanAccessPatientDetailsAsync(vitalSign.PatientDetailsId))
             {
                 return NotFound();
             }
@@ -47,6 +71,11 @@ namespace MedPal.API.Controllers
         [HttpGet("patientdetails/{patientDetailsId}")]
         public async Task<ActionResult<IEnumerable<VitalSignReadDTO>>> GetVitalSignsByPatientDetailsId(int patientDetailsId)
         {
+            if (!await CanAccessPatientDetailsAsync(patientDetailsId))
+            {
+                return NotFound();
+            }
+
             var vitalSigns = await _vitalSignRepository.GetVitalSignsByPatientDetailsIdAsync(patientDetailsId);
             var dtos = _mapper.Map<IEnumerable<VitalSignReadDTO>>(vitalSigns);
             return Ok(dtos);
@@ -59,6 +88,11 @@ namespace MedPal.API.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+
+            if (!await CanAccessPatientDetailsAsync(writeDTO.PatientDetailsId))
+            {
+                return Forbid();
             }
 
             var vitalSign = _mapper.Map<VitalSign>(writeDTO);
@@ -89,7 +123,7 @@ namespace MedPal.API.Controllers
             }
 
             var vitalSign = await _vitalSignRepository.GetVitalSignByIdAsync(id);
-            if (vitalSign == null)
+            if (vitalSign == null || !await CanAccessPatientDetailsAsync(vitalSign.PatientDetailsId))
             {
                 return NotFound();
             }
@@ -115,7 +149,7 @@ namespace MedPal.API.Controllers
         public async Task<IActionResult> DeleteVitalSign(int id)
         {
             var vitalSign = await _vitalSignRepository.GetVitalSignByIdAsync(id);
-            if (vitalSign == null)
+            if (vitalSign == null || !await CanAccessPatientDetailsAsync(vitalSign.PatientDetailsId))
             {
                 return NotFound();
             }

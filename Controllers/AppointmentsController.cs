@@ -43,6 +43,16 @@ namespace MedPal.API.Controllers
             return Ok(appointmentReadDTOs);
         }
 
+        // GET: api/appointments/patient/{patientId}
+        [HttpGet("patient/{patientId}")]
+        [Authorize(Policy = "Appointments.ViewOwn")]
+        [Authorize(Policy = "ViewAppointmentsPolicy")] // Fase 2: Multi-tenancy policy
+        public async Task<ActionResult<IEnumerable<AppointmentReadDTO>>> GetAppointmentsByPatient(int patientId)
+        {
+            var appointments = await _appointmentService.GetAppointmentsByPatientIdAsync(patientId);
+            return Ok(appointments);
+        }
+
         // GET: api/appointments/my
         [HttpGet("my")]
         public async Task<ActionResult<IEnumerable<AppointmentReadDTO>>> GetMyAppointments()
@@ -164,6 +174,17 @@ namespace MedPal.API.Controllers
             var result = await _appointmentService.RescheduleAppointmentAsync(id, request);
             if (result == null) return NotFound();
             return Ok(result);
+        }
+
+        // POST: api/appointments/{id}/reminder
+        [HttpPost("{id}/reminder")]
+        [Authorize(Policy = "Appointments.Update")]
+        public async Task<IActionResult> SendReminder(int id, [FromServices] IAppointmentReminderService reminderService)
+        {
+            var sent = await reminderService.SendReminderForAppointmentAsync(id);
+            if (!sent)
+                return BadRequest(new { message = "No se pudo enviar el recordatorio (cita no encontrada, sin consentimiento, ya enviado o sin teléfono)" });
+            return Ok(new { message = "Recordatorio enviado exitosamente" });
         }
     }
 }

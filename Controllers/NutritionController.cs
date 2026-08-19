@@ -241,8 +241,9 @@ namespace MedPal.API.Controllers
 
             if (entity.Weight.HasValue && entity.Height.HasValue && entity.Height.Value > 0)
             {
-                entity.Bmi = Math.Round(entity.Weight.Value / (entity.Height.Value * entity.Height.Value), 1);
-                entity.WaistHeightRatio = Math.Round(entity.Waist.GetValueOrDefault() / (entity.Height.Value * 100m), 2);
+                var heightM = entity.Height.Value / 100m;
+                entity.Bmi = Math.Round(entity.Weight.Value / (heightM * heightM), 1);
+                entity.WaistHeightRatio = Math.Round(entity.Waist.GetValueOrDefault() / entity.Height.Value, 2);
             }
 
             if (entity.Waist.HasValue && entity.Hip.HasValue && entity.Hip.Value > 0)
@@ -270,8 +271,9 @@ namespace MedPal.API.Controllers
 
             if (entity.Weight.HasValue && entity.Height.HasValue && entity.Height.Value > 0)
             {
-                entity.Bmi = Math.Round(entity.Weight.Value / (entity.Height.Value * entity.Height.Value), 1);
-                entity.WaistHeightRatio = Math.Round(entity.Waist.GetValueOrDefault() / (entity.Height.Value * 100m), 2);
+                var heightM = entity.Height.Value / 100m;
+                entity.Bmi = Math.Round(entity.Weight.Value / (heightM * heightM), 1);
+                entity.WaistHeightRatio = Math.Round(entity.Waist.GetValueOrDefault() / entity.Height.Value, 2);
             }
 
             if (entity.Waist.HasValue && entity.Hip.HasValue && entity.Hip.Value > 0)

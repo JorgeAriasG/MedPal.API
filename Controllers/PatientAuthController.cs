@@ -39,6 +39,12 @@ namespace MedPal.API.Controllers
             if (await _patientAuthRepository.EmailExistsAsync(dto.Email))
                 return BadRequest(new { message = "El email ya está registrado" });
 
+            int? primaryAccountId = null;
+            if (dto.ClinicIds != null && dto.ClinicIds.Count > 0)
+            {
+                primaryAccountId = await _patientRepository.GetClinicAccountIdAsync(dto.ClinicIds[0]);
+            }
+
             var patient = new Patient
             {
                 Name = dto.Name,
@@ -49,7 +55,7 @@ namespace MedPal.API.Controllers
                 Address = dto.Address ?? "Sin configurar",
                 Dob = dto.Dob ?? DateTime.UtcNow.AddYears(-30),
                 Gender = dto.Gender ?? "No especificado",
-                AccountId = null,
+                AccountId = primaryAccountId,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -59,6 +65,14 @@ namespace MedPal.API.Controllers
             if (dto.ClinicIds != null && dto.ClinicIds.Count > 0)
             {
                 await _patientRepository.AddPatientClinicsAsync(createdPatient.Id, dto.ClinicIds);
+
+                if (primaryAccountId.HasValue)
+                {
+                    // Self-registration implies patient verification and profile-sharing consent.
+                    await _patientRepository.CreatePatientAccountAsync(
+                        createdPatient.Id, primaryAccountId.Value,
+                        isPrimary: true, isVerifiedByPatient: true, consentToShareProfile: true);
+                }
             }
 
             var patientAuth = new PatientAuth

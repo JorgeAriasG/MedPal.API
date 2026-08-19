@@ -6,6 +6,7 @@ using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using MedPal.API.Authorization;
 using MedPal.API.Services;
 
 namespace MedPal.API.Controllers
@@ -46,6 +47,7 @@ namespace MedPal.API.Controllers
 
         // GET: api/medicalhistory/{id}
         [HttpGet("{id}")]
+        [Authorize(Policy = "MedicalRecords.Read")]
         public async Task<ActionResult<MedicalHistoryReadDTO>> GetMedicalHistoryById(int id)
         {
             var medicalHistory = await _medicalHistoryRepository.GetMedicalHistoryByIdAsync(id);
@@ -55,10 +57,11 @@ namespace MedPal.API.Controllers
             }
 
             // NOM-004 Authorization Check
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, medicalHistory, "MedicalRecords.Read");
+            var authorizationResult = await _authorizationService.AuthorizeAsync(
+                User, null, new[] { new MedicalRecordAccessRequirement(id) });
             if (!authorizationResult.Succeeded)
             {
-                return Forbid();
+                return NotFound();
             }
 
             var medicalHistoryReadDTO = _mapper.Map<MedicalHistoryReadDTO>(medicalHistory);
@@ -100,6 +103,7 @@ namespace MedPal.API.Controllers
 
         // PUT: api/medicalhistory/{id}
         [HttpPut("{id}")]
+        [Authorize(Policy = "MedicalRecords.Update")]
         public async Task<IActionResult> UpdateMedicalHistory(int id, MedicalHistoryWriteDTO medicalHistoryWriteDto)
         {
             var medicalHistory = await _medicalHistoryRepository.GetMedicalHistoryByIdAsync(id);
@@ -108,8 +112,9 @@ namespace MedPal.API.Controllers
                 return NotFound();
             }
 
-            // NOM-004 Authorization Check
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, medicalHistory, "MedicalRecords.Update");
+            // NOM-004 Authorization Check (write flows: creator/admin only, no patient self access)
+            var authorizationResult = await _authorizationService.AuthorizeAsync(
+                User, null, new[] { new MedicalRecordAccessRequirement(id, allowSelfAccess: false) });
             if (!authorizationResult.Succeeded)
             {
                 return Forbid();
@@ -147,53 +152,77 @@ namespace MedPal.API.Controllers
             return NoContent();
         }
 
-        // GET: api/medicalhistory/patient/{patientId}
-        [HttpGet("patient/{patientId}")]
-        public async Task<ActionResult<IEnumerable<MedicalHistoryReadDTO>>> GetMedicalHistoriesByPatientId(int patientId)
+        // GET: api/medicalhistory/patient/{patientDetailsId}
+        [HttpGet("patient/{patientDetailsId}")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<MedicalHistoryReadDTO>>> GetMedicalHistoriesByPatientId(int patientDetailsId)
         {
-            var histories = await _medicalHistoryRepository.GetMedicalHistoriesByPatientIdAsync(patientId);
-            
-            // Logica NOM-004: Solo ver su propia especialidad a menos que haya consentimiento
-            var userSpecialty = _userService.Specialty;
-            var userRole = _userService.Role;
+            var histories = await _medicalHistoryRepository.GetMedicalHistoriesByPatientIdAsync(patientDetailsId);
+
             int.TryParse(_userService.UserId, out int currentUserId);
+            int? portalPatientId = null;
+            if (int.TryParse(User.FindFirst("patient_id")?.Value, out int pid))
+            {
+                portalPatientId = pid;
+            }
 
             var filteredHistories = new List<MedicalHistory>();
 
             foreach (var history in histories)
             {
-                // Permitir si es la misma especialidad
-                if (history.SpecialtyType == userSpecialty)
+                if (await CanViewRecordAsync(history, currentUserId, portalPatientId))
                 {
                     filteredHistories.Add(history);
-                    continue;
-                }
-
-                // Permitir si es el autor del registro
-                if (history.CreatedByUserId == currentUserId || history.HealthcareProfessionalId == currentUserId)
-                {
-                    filteredHistories.Add(history);
-                    continue;
-                }
-
-                // Permitir si es Admin (gestion)
-                if (userRole == "Admin" || userRole == "AccountAdmin")
-                {
-                    filteredHistories.Add(history);
-                    continue;
-                }
-
-                // Verificar consentimiento del paciente para acceso entre especialidades
-                var hasConsent = await _consentService.IsConsentForDoctorValidAsync(patientId, currentUserId);
-                if (hasConsent)
-                {
-                    filteredHistories.Add(history);
-                    continue;
                 }
             }
 
             var medicalHistoryReadDTOs = _mapper.Map<IEnumerable<MedicalHistoryReadDTO>>(filteredHistories);
             return Ok(medicalHistoryReadDTOs);
+        }
+
+        // GET: api/medicalhistory/patient/{patientDetailsId}/recent
+        [HttpGet("patient/{patientDetailsId}/recent")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<MedicalHistorySummaryReadDTO>>> GetRecentMedicalHistoriesByPatientDetailsId(int patientDetailsId, int take = 10)
+        {
+            if (take <= 0 || take > 50) take = 10;
+
+            var histories = await _medicalHistoryRepository.GetRecentHistoriesByPatientDetailsIdAsync(patientDetailsId, take);
+
+            int.TryParse(_userService.UserId, out int currentUserId);
+
+            var filteredHistories = new List<MedicalHistorySummaryReadDTO>();
+
+            foreach (var history in histories)
+            {
+                // Creator, admin (MedicalRecords.ViewAll) or consent-based access
+                if (history.HealthcareProfessionalId == currentUserId ||
+                    (await _authorizationService.AuthorizeAsync(User, "MedicalRecords.ViewAll")).Succeeded ||
+                    await _consentService.IsConsentForDoctorValidAsync(patientDetailsId, currentUserId))
+                {
+                    filteredHistories.Add(history);
+                }
+            }
+
+            return Ok(filteredHistories);
+        }
+
+        private async Task<bool> CanViewRecordAsync(MedicalHistory history, int currentUserId, int? portalPatientId)
+        {
+            // Author of the record
+            if (history.HealthcareProfessionalId == currentUserId || history.CreatedByUserId == currentUserId)
+                return true;
+
+            // Admin / supervision
+            if ((await _authorizationService.AuthorizeAsync(User, "MedicalRecords.ViewAll")).Succeeded)
+                return true;
+
+            // The patient viewing their own medical history
+            if (portalPatientId.HasValue && history.PatientDetails?.Patient?.Id == portalPatientId.Value)
+                return true;
+
+            // Consent-based access (doctor or clinic-level)
+            return await _consentService.IsConsentForDoctorValidAsync(history.PatientDetailsId, currentUserId);
         }
     }
 }

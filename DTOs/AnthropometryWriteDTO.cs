@@ -14,7 +14,7 @@ namespace MedPal.API.DTOs
         [Range(0, 500)]
         public decimal? Weight { get; set; }
 
-        [Range(0, 3)]
+        [Range(0, 300)]
         public decimal? Height { get; set; }
 
         public decimal? Bmi { get; set; }

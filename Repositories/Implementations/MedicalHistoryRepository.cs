@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Data;
 using MedPal.API.Services;
@@ -17,7 +18,7 @@ namespace MedPal.API.Repositories
 
         public async Task<IEnumerable<MedicalHistory>> GetAllMedicalHistoriesAsync()
         {
-            return await ApplyTenantFilter(_context.MedicalHistories).ToListAsync();
+            return await ApplyTenantFilter(_context.MedicalHistories).AsNoTracking().ToListAsync();
         }
 
         public async Task<MedicalHistory> GetMedicalHistoryByIdAsync(int id)
@@ -29,8 +30,29 @@ namespace MedPal.API.Repositories
         public async Task<IEnumerable<MedicalHistory>> GetMedicalHistoriesByPatientIdAsync(int patientId)
         {
             return await ApplyTenantFilter(_context.MedicalHistories)
+                .AsNoTracking()
+                .Include(mh => mh.PatientDetails)
+                    .ThenInclude(pd => pd.Patient)
                 .Where(mh => mh.PatientDetailsId == patientId)
                 .OrderByDescending(mh => mh.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<MedicalHistorySummaryReadDTO>> GetRecentHistoriesByPatientDetailsIdAsync(int patientDetailsId, int take)
+        {
+            return await ApplyTenantFilter(_context.MedicalHistories)
+                .Where(mh => mh.PatientDetailsId == patientDetailsId)
+                .OrderByDescending(mh => mh.CreatedAt)
+                .Take(take)
+                .Select(mh => new MedicalHistorySummaryReadDTO
+                {
+                    Id = mh.Id,
+                    SpecialtyType = mh.SpecialtyType,
+                    Diagnosis = mh.Diagnosis,
+                    ClinicalNotes = mh.ClinicalNotes,
+                    HealthcareProfessionalId = mh.HealthcareProfessionalId,
+                    CreatedAt = mh.CreatedAt
+                })
                 .ToListAsync();
         }
 

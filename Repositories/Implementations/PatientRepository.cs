@@ -22,12 +22,6 @@ namespace MedPal.API.Repositories.Implementations
             IQueryable<Patient> query = _context.Patients
                 .Where(p => p.PatientClinics.Any(pc => pc.ClinicId == clinicId));
 
-            if (userId.HasValue)
-            {
-                query = query.Where(p => p.PatientDetails.MedicalHistories
-                    .Any(mh => mh.HealthcareProfessionalId == userId.Value));
-            }
-
             if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.ToLower();
@@ -54,15 +48,14 @@ namespace MedPal.API.Repositories.Implementations
             return await query.ToListAsync();
         }
 
-        public async Task<Patient> GetPatientByIdAsync(int id)
+        public async Task<Patient?> GetPatientByIdAsync(int id)
         {
-            var patient = await ApplyTenantFilter(_context.Patients)
+            // No tenant filter here: access is decided by the PatientAccessHandler.
+            return await _context.Patients
+                .AsNoTracking()
+                .Include(p => p.PatientClinics)
+                .Include(p => p.PatientAccounts)
                 .FirstOrDefaultAsync(p => p.Id == id);
-            if (patient == null)
-            {
-                throw new KeyNotFoundException($"Patient with Id {id} not found.");
-            }
-            return patient;
         }
 
         public async Task<Patient> AddPatientAsync(Patient patient)
@@ -131,7 +124,7 @@ namespace MedPal.API.Repositories.Implementations
                 CreatedAt = DateTime.UtcNow
             });
             await _context.PatientClinics.AddRangeAsync(entries);
-            await _context.SaveChangesAsync();
+            await SyncPatientAccountsAsync(patientId, clinicIds);
         }
 
         public async Task SyncPatientClinicsAsync(int patientId, List<int> newClinicIds)
@@ -157,6 +150,46 @@ namespace MedPal.API.Repositories.Implementations
                 });
 
             await _context.PatientClinics.AddRangeAsync(toAdd);
+            await SyncPatientAccountsAsync(patientId, newClinicIds);
+        }
+
+        // Ensures every account owning one of the patient's clinics has a PatientAccount membership.
+        private async Task SyncPatientAccountsAsync(int patientId, List<int> clinicIds)
+        {
+            var accountIds = await _context.Clinics
+                .Where(c => clinicIds.Contains(c.Id) && c.AccountId.HasValue)
+                .Select(c => c.AccountId!.Value)
+                .Distinct()
+                .ToListAsync();
+
+            if (accountIds.Count == 0)
+            {
+                await _context.SaveChangesAsync();
+                return;
+            }
+
+            var patientAccountId = await _context.Patients
+                .Where(p => p.Id == patientId)
+                .Select(p => p.AccountId)
+                .FirstOrDefaultAsync();
+
+            foreach (var accountId in accountIds)
+            {
+                var exists = await _context.PatientAccounts
+                    .FirstOrDefaultAsync(pa => pa.PatientId == patientId && pa.AccountId == accountId);
+
+                if (exists == null)
+                {
+                    _context.PatientAccounts.Add(new PatientAccount
+                    {
+                        PatientId = patientId,
+                        AccountId = accountId,
+                        IsPrimaryAccount = patientAccountId == accountId,
+                        CreatedAt = DateTime.UtcNow
+                    });
+                }
+            }
+
             await _context.SaveChangesAsync();
         }
 
@@ -165,6 +198,53 @@ namespace MedPal.API.Repositories.Implementations
             var user = await _context.Users.AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == userId && u.ClinicId == clinicId && !u.IsDeleted);
             return user != null;
+        }
+
+        public async Task<int?> GetClinicAccountIdAsync(int clinicId)
+        {
+            return await _context.Clinics.AsNoTracking()
+                .Where(c => c.Id == clinicId && c.AccountId.HasValue)
+                .Select(c => c.AccountId!.Value)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task CreatePatientAccountAsync(int patientId, int accountId, bool isPrimary, bool isVerifiedByPatient, bool? consentToShareProfile)
+        {
+            var existing = await _context.PatientAccounts
+                .FirstOrDefaultAsync(pa => pa.PatientId == patientId && pa.AccountId == accountId);
+
+            if (existing != null)
+            {
+                existing.IsVerifiedByPatient = isVerifiedByPatient;
+                existing.ConsentToShareProfile = consentToShareProfile;
+                if (isPrimary)
+                    existing.IsPrimaryAccount = true;
+                _context.PatientAccounts.Update(existing);
+            }
+            else
+            {
+                _context.PatientAccounts.Add(new PatientAccount
+                {
+                    PatientId = patientId,
+                    AccountId = accountId,
+                    IsPrimaryAccount = isPrimary,
+                    IsVerifiedByPatient = isVerifiedByPatient,
+                    ConsentToShareProfile = consentToShareProfile,
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> HasVerifiedMembershipAsync(int patientId, int accountId)
+        {
+            return await _context.PatientAccounts.AsNoTracking()
+                .AnyAsync(pa =>
+                    pa.PatientId == patientId &&
+                    pa.AccountId == accountId &&
+                    pa.IsVerifiedByPatient &&
+                    !pa.IsDeleted);
         }
     }
 }

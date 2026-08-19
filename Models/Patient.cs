@@ -16,6 +16,7 @@ namespace MedPal.API.Models
             Invoices = new HashSet<Invoice>();
             EmergencyContacts = new HashSet<EmergencyContact>();
             PatientClinics = new HashSet<PatientClinic>();
+            PatientAccounts = new HashSet<PatientAccount>();
         }
 
         [Key]
@@ -71,6 +72,11 @@ namespace MedPal.API.Models
         public bool IsAnonymized { get; set; } = false;
         public bool IsMarketingBlocked { get; set; } = false;
 
+        /// <summary>
+        /// Consentimiento explícito del paciente para recibir recordatorios por WhatsApp
+        /// </summary>
+        public bool IsWhatsAppConsented { get; set; } = false;
+
         // Navigation Properties
         public virtual Account Account { get; set; }
         public virtual User User { get; set; }
@@ -89,5 +95,10 @@ namespace MedPal.API.Models
         /// Clínicas a las que pertenece el paciente (relación M:N)
         /// </summary>
         public virtual ICollection<PatientClinic> PatientClinics { get; set; }
+
+        /// <summary>
+        /// Accounts a los que está vinculado el paciente (relación M:N, multi-account)
+        /// </summary>
+        public virtual ICollection<PatientAccount> PatientAccounts { get; set; }
     }
 }

@@ -120,6 +120,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IClinicRepository, ClinicRepository>();
 builder.Services.AddScoped<IPatientDetailsRepository, PatientDetailsRepository>();
 builder.Services.AddScoped<IMedicalHistoryRepository, MedicalHistoryRepository>();
+builder.Services.AddScoped<IClinicalAttachmentRepository, ClinicalAttachmentRepository>();
+builder.Services.AddScoped<IAttachmentStorageService, AttachmentStorageService>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -180,10 +182,34 @@ builder.Services.AddScoped<IStripeService, StripeService>();
 builder.Services.AddScoped<IPendingRegistrationRepository, PendingRegistrationRepository>();
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 
-// Notification Services (Phase 3)
-// Using MockChannel for now (Strategy Pattern ready for WhatsApp/Email)
-builder.Services.AddSingleton<INotificationChannel, MockNotificationChannel>();
-// builder.Services.AddHostedService<AppointmentReminderJob>(); // TEMPORARY: Commented out due to schema issues
+// Notification Services (Phase 3 + WhatsApp)
+builder.Services.Configure<WhatsAppSettings>(builder.Configuration.GetSection("WhatsApp"));
+builder.Services.AddHttpClient("WhatsApp");
+
+// Register channels as themselves (not INotificationChannel)
+builder.Services.AddSingleton<MockNotificationChannel>();
+builder.Services.AddSingleton<WhatsAppCloudApiChannel>();
+
+// Dispatcher routes by NotificationType — single INotificationChannel entry point
+builder.Services.AddSingleton<INotificationChannel>(sp =>
+{
+    var channels = new List<INotificationChannel>
+    {
+        sp.GetRequiredService<MockNotificationChannel>()
+    };
+
+    if (builder.Configuration.GetValue<bool>("WhatsApp:Enabled"))
+    {
+        channels.Insert(0, sp.GetRequiredService<WhatsAppCloudApiChannel>());
+    }
+
+    var logger = sp.GetRequiredService<ILogger<NotificationDispatcher>>();
+    return new NotificationDispatcher(channels, logger);
+});
+
+// Appointment Reminder Service + Background Job
+builder.Services.AddScoped<IAppointmentReminderService, AppointmentReminderService>();
+builder.Services.AddHostedService<AppointmentReminderJob>();
 
 // Encryption Service (Phase 4)
 builder.Services.AddSingleton<EncryptionProvider>();
@@ -194,6 +220,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 // Register Authorization Handlers
 builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, MedicalRecordAccessHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, PatientAccessHandler>();
 
 // Configure Authorization Policies using modern builder pattern
 builder.Services.AddAuthorizationBuilder()
@@ -269,6 +296,8 @@ builder.Services.AddAuthorizationBuilder()
                 "AccountAdmin" => true,
                 "ClinicAdmin" => true,
                 "HealthProfessional" => true,
+                "Nurse" => true,
+                "Receptionist" => true,
                 _ => false
             };
         });
@@ -418,7 +447,6 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
 app.MapControllers();
 
 app.Run();

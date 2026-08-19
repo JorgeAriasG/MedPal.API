@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MedPal.API.Authorization;
 using MedPal.API.Models; // Ensure Models namespace is imported
 using MedPal.API.DTOs;
 using MedPal.API.Repositories;
@@ -21,19 +22,22 @@ namespace MedPal.API.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IPatientRepository _patientRepository;
         private readonly IClinicRepository _clinicRepository;
+        private readonly IAuthorizationService _authorizationService;
 
         public PrescriptionController(
             IPrescriptionRepository prescriptionRepository,
             IQrCodeService qrCodeService,
             IUserRepository userRepository,
             IPatientRepository patientRepository,
-            IClinicRepository clinicRepository)
+            IClinicRepository clinicRepository,
+            IAuthorizationService authorizationService)
         {
             _prescriptionRepository = prescriptionRepository;
             _qrCodeService = qrCodeService;
             _userRepository = userRepository;
             _patientRepository = patientRepository;
             _clinicRepository = clinicRepository;
+            _authorizationService = authorizationService;
         }
 
         // POST: api/Prescription
@@ -49,6 +53,12 @@ namespace MedPal.API.Controllers
 
             var patient = await _patientRepository.GetPatientByIdAsync(prescriptionDto.PatientId);
             if (patient == null)
+            {
+                return NotFound("Patient not found");
+            }
+
+            var patientAccess = await _authorizationService.AuthorizeAsync(User, null, new[] { new PatientAccessRequirement(patient.Id) });
+            if (!patientAccess.Succeeded)
             {
                 return NotFound("Patient not found");
             }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using MedPal.API.Authorization;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
@@ -38,16 +39,8 @@ namespace MedPal.API.Controllers
             if (!hasViewAll.Succeeded && !hasViewAssigned.Succeeded)
                 return Forbid();
 
-            int? userId = null;
-            if (!hasViewAll.Succeeded && hasViewAssigned.Succeeded)
-            {
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int uid))
-                    return Unauthorized();
-                userId = uid;
-            }
-
-            var patients = await _patientRepository.GetAllPatientsAsync(clinicId, userId, search, sortBy, descending);
+            // Staff of the account can see every patient that belongs to their clinics/account.
+            var patients = await _patientRepository.GetAllPatientsAsync(clinicId, null, search, sortBy, descending);
             var patientReadDTOs = _mapper.Map<IEnumerable<PatientReadDTO>>(patients);
             return Ok(patientReadDTOs);
         }
@@ -61,19 +54,11 @@ namespace MedPal.API.Controllers
                 return NotFound();
             }
 
-            // Authorization Check
-            var viewAll = await _authorizationService.AuthorizeAsync(User, "Patients.ViewAll");
-            if (!viewAll.Succeeded)
+            // Account-scoped access: staff of the account or the patient themselves.
+            var access = await _authorizationService.AuthorizeAsync(User, null, new[] { new PatientAccessRequirement(id) });
+            if (!access.Succeeded)
             {
-                // Check if it's the patient viewing their own record
-                var viewOwn = await _authorizationService.AuthorizeAsync(User, "Patients.ViewOwn");
-                if (!viewOwn.Succeeded) return Forbid();
-
-                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier); // Or "sub"
-                if (userIdClaim == null || patient.UserId != int.Parse(userIdClaim.Value))
-                {
-                    return Forbid();
-                }
+                return NotFound();
             }
 
             var patientReadDTO = _mapper.Map<PatientReadDTO>(patient);
@@ -99,6 +84,8 @@ namespace MedPal.API.Controllers
                 return Unauthorized("Usuario no tiene AccountId asignado");
             }
             patient.AccountId = accountId;
+            patient.CreatedByUserId = userId;
+            patient.CreatedAt = DateTime.UtcNow;
             var createdPatient = await _patientRepository.AddPatientAsync(patient);
             await _patientRepository.AddPatientClinicsAsync(createdPatient.Id, patientWriteDto.ClinicIds);
             var patientReadDTO = _mapper.Map<PatientReadDTO>(createdPatient);

@@ -36,6 +36,11 @@ namespace MedPal.API.Models
 		[Required]
 		public int DurationMinutes { get; set; } = 30;
 
+		/// <summary>
+		/// Fecha en que se envió el recordatorio (anti-duplicados)
+		/// </summary>
+		public DateTime? ReminderSentAt { get; set; }
+
 		[Required]
 		public DateTime CreatedAt { get; set; }
 

@@ -1,3 +1,4 @@
+using MedPal.API.DTOs;
 using MedPal.API.Models;
 
 namespace MedPal.API.Repositories
@@ -7,6 +8,7 @@ namespace MedPal.API.Repositories
         Task<IEnumerable<PatientDetails>> GetAllPatientDetailsAsync();
         Task<PatientDetails> GetPatientDetailsByIdAsync(int id);
         Task<PatientDetails> GetPatientDetailsByPatientIdAsync(int patientId);
+        Task<PatientDetailsSummaryReadDTO> GetPatientSummaryByPatientIdAsync(int patientId);
         Task<PatientDetails> AddPatientDetailsAsync(PatientDetails patientDetails);
         void UpdatePatientDetails(PatientDetails patientDetails);
         void RemovePatientDetails(PatientDetails patientDetails);

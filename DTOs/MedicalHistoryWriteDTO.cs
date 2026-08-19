@@ -26,6 +26,9 @@ namespace MedPal.API.DTOs
         // CIE-10 diagnostic codes as JSON string (e.g. ["I10","E11.9"])
         public string? Cie10Codes { get; set; }
 
+        // Tratamientos/procedimientos as JSON string (e.g. [{"name":"...","description":"..."}])
+        public string? Treatments { get; set; }
+
         // Relación opcional con una Prescription
         public int? PrescriptionId { get; set; }
 

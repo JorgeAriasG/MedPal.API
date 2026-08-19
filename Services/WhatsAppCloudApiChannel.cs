@@ -51,6 +51,10 @@ namespace MedPal.API.Services
 
             var url = $"{settings.GraphUrl}/{settings.ApiVersion}/{settings.PhoneNumberId}/messages";
 
+            var templateName = !string.IsNullOrEmpty(message.TemplateName)
+                ? message.TemplateName
+                : settings.TemplateName;
+
             var body = new
             {
                 messaging_product = "whatsapp",
@@ -58,7 +62,7 @@ namespace MedPal.API.Services
                 type = "template",
                 template = new
                 {
-                    name = settings.TemplateName,
+                    name = templateName,
                     language = new { code = settings.TemplateLanguage },
                     components = new object[]
                     {

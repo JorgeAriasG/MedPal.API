@@ -38,6 +38,7 @@ namespace MedPal.API.Data
         public DbSet<PatientClinic> PatientClinics { get; set; }
         public DbSet<PatientAccount> PatientAccounts { get; set; }
         public DbSet<NotificationMessage> NotificationMessages { get; set; }
+        public DbSet<WhatsAppInteraction> WhatsAppInteractions { get; set; }
 
         // Authorization entities
         public DbSet<Role> Roles { get; set; }
@@ -757,6 +758,31 @@ namespace MedPal.API.Data
             modelBuilder.Entity<DietPlanMealItem>().HasQueryFilter(dpmi => !dpmi.IsDeleted);
             modelBuilder.Entity<NutritionProgress>().HasQueryFilter(np => !np.IsDeleted);
             modelBuilder.Entity<Supplement>().HasQueryFilter(s => !s.IsDeleted);
+
+            // WhatsAppInteractions Configuration
+            modelBuilder.Entity<WhatsAppInteraction>(entity =>
+            {
+                entity.HasOne(e => e.Appointment)
+                    .WithMany()
+                    .HasForeignKey(e => e.AppointmentId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Patient)
+                    .WithMany()
+                    .HasForeignKey(e => e.PatientId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.NotificationMessage)
+                    .WithMany()
+                    .HasForeignKey(e => e.NotificationMessageId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasIndex(e => new { e.AppointmentId, e.ReceivedAt });
+                entity.HasIndex(e => new { e.PatientPhone, e.ReceivedAt });
+                entity.HasIndex(e => e.Wamid);
+            });
+
+            modelBuilder.Entity<WhatsAppInteraction>().HasQueryFilter(wi => !wi.IsDeleted);
 
             // Subscription configurations
             modelBuilder.Entity<Subscription>()

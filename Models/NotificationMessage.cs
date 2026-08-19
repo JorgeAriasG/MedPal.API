@@ -70,6 +70,12 @@ namespace MedPal.API.Models
         public string? ProviderMessageId { get; set; }
 
         /// <summary>
+        /// Nombre del template de WhatsApp a usar (ej: appointment_reminder, appointment_confirmation)
+        /// </summary>
+        [StringLength(100)]
+        public string? TemplateName { get; set; }
+
+        /// <summary>
         /// Estado de entrega (sent, delivered, read, failed)
         /// </summary>
         [StringLength(50)]

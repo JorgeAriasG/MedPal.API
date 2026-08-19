@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MedPal.API.Data;
+using MedPal.API.Enums;
 using MedPal.API.Models;
 using MedPal.API.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -21,15 +22,18 @@ namespace MedPal.API.Controllers
     {
         private readonly WhatsAppSettings _settings;
         private readonly AppDbContext _context;
+        private readonly IWhatsAppInteractionHandler _interactionHandler;
         private readonly ILogger<WhatsAppWebhookController> _logger;
 
         public WhatsAppWebhookController(
             IOptions<WhatsAppSettings> settings,
             AppDbContext context,
+            IWhatsAppInteractionHandler interactionHandler,
             ILogger<WhatsAppWebhookController> logger)
         {
             _settings = settings.Value;
             _context = context;
+            _interactionHandler = interactionHandler;
             _logger = logger;
         }
 
@@ -73,10 +77,17 @@ namespace MedPal.API.Controllers
                         {
                             foreach (var change in changes.EnumerateArray())
                             {
-                                if (change.TryGetProperty("value", out var value) &&
-                                    value.TryGetProperty("statuses", out var statuses))
+                                if (change.TryGetProperty("value", out var value))
                                 {
-                                    await ProcessStatusesAsync(statuses);
+                                    if (value.TryGetProperty("statuses", out var statuses))
+                                    {
+                                        await ProcessStatusesAsync(statuses);
+                                    }
+
+                                    if (value.TryGetProperty("messages", out var messages))
+                                    {
+                                        await ProcessMessagesAsync(messages, value);
+                                    }
                                 }
                             }
                         }
@@ -98,7 +109,6 @@ namespace MedPal.API.Controllers
             {
                 var wamid = status.TryGetProperty("id", out var idProp) ? idProp.GetString() : null;
                 var statusValue = status.TryGetProperty("status", out var statusProp) ? statusProp.GetString() : null;
-                var timestamp = status.TryGetProperty("timestamp", out var tsProp) ? tsProp.GetString() : null;
 
                 if (string.IsNullOrEmpty(wamid) || string.IsNullOrEmpty(statusValue))
                     continue;
@@ -125,6 +135,46 @@ namespace MedPal.API.Controllers
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        private async Task ProcessMessagesAsync(JsonElement messages, JsonElement value)
+        {
+            foreach (var message in messages.EnumerateArray())
+            {
+                var from = message.TryGetProperty("from", out var fromProp) ? fromProp.GetString() : null;
+                var msgId = message.TryGetProperty("id", out var idProp) ? idProp.GetString() : null;
+                var type = message.TryGetProperty("type", out var typeProp) ? typeProp.GetString() : null;
+
+                if (string.IsNullOrEmpty(from) || string.IsNullOrEmpty(msgId))
+                    continue;
+
+                if (type == "interactive" &&
+                    message.TryGetProperty("interactive", out var interactive) &&
+                    interactive.TryGetProperty("button", out var button))
+                {
+                    var buttonId = button.TryGetProperty("id", out var bidProp) ? bidProp.GetString() : null;
+                    var buttonText = button.TryGetProperty("text", out var btextProp) ? btextProp.GetString() : null;
+
+                    if (!string.IsNullOrEmpty(buttonId))
+                    {
+                        var contactPhone = string.Empty;
+                        if (value.TryGetProperty("contacts", out var contacts) &&
+                            contacts.GetArrayLength() > 0)
+                        {
+                            contactPhone = contacts[0].TryGetProperty("wa_id", out var waId)
+                                ? waId.GetString() ?? string.Empty
+                                : string.Empty;
+                        }
+
+                        _logger.LogInformation(
+                            "WhatsApp button response from {Phone}: button={ButtonId} text={ButtonText}",
+                            from, buttonId, buttonText);
+
+                        await _interactionHandler.HandleButtonResponseAsync(
+                            from, contactPhone, msgId, buttonId, buttonText ?? string.Empty);
+                    }
+                }
+            }
         }
 
         private bool VerifySignature(string body)

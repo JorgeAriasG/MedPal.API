@@ -209,6 +209,7 @@ builder.Services.AddSingleton<INotificationChannel>(sp =>
 
 // Appointment Reminder Service + Background Job
 builder.Services.AddScoped<IAppointmentReminderService, AppointmentReminderService>();
+builder.Services.AddScoped<IWhatsAppInteractionHandler, WhatsAppInteractionHandler>();
 builder.Services.AddHostedService<AppointmentReminderJob>();
 
 // Encryption Service (Phase 4)

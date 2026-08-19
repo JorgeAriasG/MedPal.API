@@ -15,7 +15,8 @@ namespace MedPal.API.Services.Implementations
     {
         private static readonly Dictionary<AppointmentStatus, AppointmentStatus[]> AllowedTransitions = new()
         {
-            { AppointmentStatus.Scheduled, new[] { AppointmentStatus.InProgress, AppointmentStatus.Cancelled, AppointmentStatus.Rescheduled, AppointmentStatus.NoShow } },
+            { AppointmentStatus.Scheduled, new[] { AppointmentStatus.InProgress, AppointmentStatus.Cancelled, AppointmentStatus.Rescheduled, AppointmentStatus.NoShow, AppointmentStatus.Confirmed } },
+            { AppointmentStatus.Confirmed, new[] { AppointmentStatus.InProgress, AppointmentStatus.Cancelled, AppointmentStatus.Rescheduled } },
             { AppointmentStatus.InProgress, new[] { AppointmentStatus.Completed } },
             { AppointmentStatus.Completed, Array.Empty<AppointmentStatus>() },
             { AppointmentStatus.Cancelled, new[] { AppointmentStatus.Rescheduled } },

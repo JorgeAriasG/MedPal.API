@@ -21,6 +21,9 @@ namespace MedPal.API.Enums
         NoShow = 4,
 
         /// <summary>Cita fue reagendada (la original está cerrada)</summary>
-        Rescheduled = 5
+        Rescheduled = 5,
+
+        /// <summary>Cita confirmada por el paciente</summary>
+        Confirmed = 6
     }
 }

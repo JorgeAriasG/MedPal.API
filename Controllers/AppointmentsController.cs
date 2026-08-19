@@ -83,7 +83,7 @@ namespace MedPal.API.Controllers
         // POST: api/appointments
         [HttpPost]
         [Authorize(Policy = "Appointments.Create")]
-        [Authorize(Policy = "ManagePatientsPolicy")] // Fase 2: Multi-tenancy policy
+        [Authorize(Policy = "ManagePatientsPolicy")]
         public async Task<ActionResult<AppointmentReadDTO>> CreateAppointment(AppointmentWriteDTO appointmentWriteDto)
         {
             var appointmentReadDTO = await _appointmentService.CreateAppointmentAsync(appointmentWriteDto);
@@ -181,6 +181,20 @@ namespace MedPal.API.Controllers
                 return NotFound();
 
             return Ok(result);
+        }
+
+        // POST: api/appointments/patient-book
+        [HttpPost("patient-book")]
+        public async Task<ActionResult<AppointmentReadDTO>> PatientBook(AppointmentWriteDTO request)
+        {
+            var patientIdClaim = User.FindFirst("patient_id");
+            if (patientIdClaim == null || !int.TryParse(patientIdClaim.Value, out int patientId))
+                return Unauthorized();
+
+            request.PatientId = patientId;
+
+            var result = await _appointmentService.CreateAppointmentAsync(request);
+            return CreatedAtAction(nameof(GetAppointmentById), new { id = result.Id }, result);
         }
 
         // POST: api/appointments/{id}/noshow

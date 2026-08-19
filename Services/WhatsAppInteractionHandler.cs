@@ -102,16 +102,16 @@ namespace MedPal.API.Services
                 UpdatedAt = DateTime.UtcNow
             };
 
-            switch (buttonId)
+            switch (buttonText.ToLower())
             {
-                case "confirm":
+                case "confirmar":
                     await HandleConfirmAsync(appointment, interaction);
                     break;
-                case "cancel":
+                case "cancelar":
                     await HandleCancelAsync(appointment, interaction);
                     break;
                 default:
-                    _logger.LogInformation("Unknown button {ButtonId} for Appointment {Id}", buttonId, appointment.Id);
+                    _logger.LogInformation("Unknown button text '{ButtonText}' for Appointment {Id}", buttonText, appointment.Id);
                     interaction.ActionTaken = "unknown";
                     break;
             }

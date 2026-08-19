@@ -13,7 +13,7 @@ namespace MedPal.API.Services
         public string ConfirmationTemplateName { get; set; } = "appointment_confirmation";
         public string CancelledTemplateName { get; set; } = "appointment_cancelled";
         public string TemplateLanguage { get; set; } = "es_MX";
-        public string RescheduleBaseUrl { get; set; } = "https://app.clinicflow.com.mx/reagendar";
+        public string RescheduleBaseUrl { get; set; } = "https://portal.clinicflow.com.mx/reschedule";
         public int ReminderHour { get; set; } = 18;
         public int ReminderWindowHoursAhead { get; set; } = 24;
         public int CheckIntervalMinutes { get; set; } = 30;

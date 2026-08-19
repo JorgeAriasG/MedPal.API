@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -55,6 +56,35 @@ namespace MedPal.API.Services
                 ? message.TemplateName
                 : settings.TemplateName;
 
+            var components = new List<object>
+            {
+                new
+                {
+                    type = "body",
+                    parameters = new object[]
+                    {
+                        new { type = "text", text = ExtractParameter(message.Body, 1) },
+                        new { type = "text", text = ExtractParameter(message.Body, 2) },
+                        new { type = "text", text = ExtractParameter(message.Body, 3) },
+                        new { type = "text", text = ExtractParameter(message.Body, 4) }
+                    }
+                }
+            };
+
+            if (!string.IsNullOrEmpty(settings.RescheduleBaseUrl) && message.AppointmentId.HasValue)
+            {
+                components.Add(new
+                {
+                    type = "button",
+                    sub_type = "url",
+                    index = 0,
+                    parameters = new object[]
+                    {
+                        new { type = "text", text = message.AppointmentId.Value.ToString() }
+                    }
+                });
+            }
+
             var body = new
             {
                 messaging_product = "whatsapp",
@@ -64,20 +94,7 @@ namespace MedPal.API.Services
                 {
                     name = templateName,
                     language = new { code = settings.TemplateLanguage },
-                    components = new object[]
-                    {
-                        new
-                        {
-                            type = "body",
-                            parameters = new object[]
-                            {
-                                new { type = "text", text = ExtractParameter(message.Body, 1) },
-                                new { type = "text", text = ExtractParameter(message.Body, 2) },
-                                new { type = "text", text = ExtractParameter(message.Body, 3) },
-                                new { type = "text", text = ExtractParameter(message.Body, 4) }
-                            }
-                        }
-                    }
+                    components = components.ToArray()
                 }
             };
 

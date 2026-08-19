@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using MedPal.API.DTOs;
+using MedPal.API.Enums;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -150,6 +151,32 @@ namespace MedPal.API.Controllers
                 return NotFound();
 
             var result = await _appointmentService.CancelAppointmentAsync(id);
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
+
+        // POST: api/appointments/{id}/patient-reschedule
+        [HttpPost("{id}/patient-reschedule")]
+        public async Task<IActionResult> PatientReschedule(int id, AppointmentWriteDTO request)
+        {
+            var patientIdClaim = User.FindFirst("patient_id");
+            if (patientIdClaim == null || !int.TryParse(patientIdClaim.Value, out int patientId))
+                return Unauthorized();
+
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(id);
+            if (appointment == null)
+                return NotFound();
+
+            if (appointment.PatientId != patientId)
+                return Forbid();
+
+            if (appointment.Status != AppointmentStatus.Scheduled.ToString() &&
+                appointment.Status != AppointmentStatus.Confirmed.ToString())
+                return BadRequest(new { message = "No se puede reagendar una cita en este estado" });
+
+            var result = await _appointmentService.RescheduleAppointmentAsync(id, request);
             if (result == null)
                 return NotFound();
 

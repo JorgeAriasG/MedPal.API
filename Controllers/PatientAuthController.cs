@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
+using MedPal.API.Utils;
 
 namespace MedPal.API.Controllers
 {
@@ -51,7 +52,7 @@ namespace MedPal.API.Controllers
                 Middlename = dto.Middlename ?? "",
                 Lastname = dto.Lastname,
                 Email = dto.Email,
-                Phone = dto.Phone ?? "",
+                Phone = PhoneNormalizer.Normalize(dto.Phone) ?? dto.Phone ?? "",
                 Address = dto.Address ?? "Sin configurar",
                 Dob = dto.Dob ?? DateTime.UtcNow.AddYears(-30),
                 Gender = dto.Gender ?? "No especificado",
@@ -116,7 +117,7 @@ namespace MedPal.API.Controllers
                 Middlename = dto.Middlename ?? "",
                 Lastname = dto.Lastname,
                 Email = dto.Email,
-                Phone = dto.Phone ?? "",
+                Phone = PhoneNormalizer.Normalize(dto.Phone) ?? dto.Phone ?? "",
                 Address = dto.Address ?? "Sin configurar",
                 Dob = dto.Dob ?? DateTime.UtcNow.AddYears(-30),
                 Gender = dto.Gender ?? "No especificado",

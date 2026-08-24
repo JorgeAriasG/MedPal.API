@@ -14,6 +14,7 @@ namespace MedPal.API.DTOs
         public string Gender { get; set; }
         public string EmergencyContact { get; set; }
         public string? Curp { get; set; }
+        public bool IsWhatsAppConsented { get; set; } = false;
         public List<int> ClinicIds { get; set; } = new();
     }
 }

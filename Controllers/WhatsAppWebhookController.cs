@@ -155,6 +155,13 @@ namespace MedPal.API.Controllers
                     var buttonId = button.TryGetProperty("id", out var bidProp) ? bidProp.GetString() : null;
                     var buttonText = button.TryGetProperty("text", out var btextProp) ? btextProp.GetString() : null;
 
+                    string? repliedToWamid = null;
+                    if (message.TryGetProperty("context", out var ctx) &&
+                        ctx.TryGetProperty("id", out var ctxId))
+                    {
+                        repliedToWamid = ctxId.GetString();
+                    }
+
                     if (!string.IsNullOrEmpty(buttonId))
                     {
                         var contactPhone = string.Empty;
@@ -167,11 +174,11 @@ namespace MedPal.API.Controllers
                         }
 
                         _logger.LogInformation(
-                            "WhatsApp button response from {Phone}: button={ButtonId} text={ButtonText}",
-                            from, buttonId, buttonText);
+                            "WhatsApp button response from {Phone}: button={ButtonId} text={ButtonText} contextWamid={ContextWamid}",
+                            from, buttonId, buttonText, repliedToWamid);
 
                         await _interactionHandler.HandleButtonResponseAsync(
-                            from, contactPhone, msgId, buttonId, buttonText ?? string.Empty);
+                            from, contactPhone, msgId, buttonId, buttonText ?? string.Empty, repliedToWamid);
                     }
                 }
             }

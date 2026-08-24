@@ -178,7 +178,7 @@ namespace MedPal.API.Services
 
             return new NotificationMessage
             {
-                Recipient = appointment.Patient?.Phone ?? string.Empty,
+                Recipient = PhoneNormalizer.Normalize(appointment.Patient?.Phone) ?? appointment.Patient?.Phone ?? string.Empty,
                 Subject = subject,
                 Type = NotificationType.WhatsApp,
                 Body = body,
@@ -201,7 +201,7 @@ namespace MedPal.API.Services
 
             return new NotificationMessage
             {
-                Recipient = appointment.Patient?.Phone ?? string.Empty,
+                Recipient = PhoneNormalizer.Normalize(appointment.Patient?.Phone) ?? appointment.Patient?.Phone ?? string.Empty,
                 Subject = subject,
                 Type = NotificationType.WhatsApp,
                 Body = body,

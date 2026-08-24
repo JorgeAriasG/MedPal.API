@@ -5,6 +5,15 @@ namespace MedPal.API.Utils
     public static partial class PhoneNormalizer
     {
         /// <summary>
+        /// Normaliza un teléfono mexicano a formato E.164 sin prefijo '+' (ej: 521234567890).
+        /// Usa ToE164 internamente y remueve el '+' para almacenamiento consistente en DB.
+        /// </summary>
+        public static string? Normalize(string? phone)
+        {
+            return ToE164(phone)?.TrimStart('+');
+        }
+
+        /// <summary>
         /// Normaliza un teléfono mexicano a formato E.164 (ej: +521234567890).
         /// Maneja: espacios, guiones, paréntesis, prefijos 00/044/0, y el quirk de Telcel.
         /// </summary>

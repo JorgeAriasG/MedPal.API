@@ -6,9 +6,11 @@
 - Token de acceso de larga duración (permanent token o system user token)
 - App Secret desde App Dashboard
 
-## 1. Crear Template de Recordatorio
+## 1. Crear Templates
 
 En **WhatsApp Manager** → **Message Templates** → **Create Template**:
+
+### Template 1: `appointment_reminder` (con botones)
 
 - **Name:** `appointment_reminder`
 - **Category:** Utility
@@ -17,9 +19,11 @@ En **WhatsApp Manager** → **Message Templates** → **Create Template**:
 ```
 Hola {{1}}, te recordamos que tienes una cita programada el {{2}} a las {{3}} en {{4}}.
 Por favor llega 15 minutos antes.
-Si necesitas cancelar o reagendar, contáctanos.
 ```
-- **Buttons:** Ninguno (solo body)
+- **Buttons (en este orden exacto):**
+  1. Quick Reply: "Confirmar"
+  2. Quick Reply: "Cancelar"
+  3. URL: "Reagendar" → `https://portal.clinicflow.com.mx/reschedule/{{1}}`
 
 Variables:
 | Position | Description | Example |
@@ -28,6 +32,30 @@ Variables:
 | `{{2}}` | Fecha (dd/MM/yyyy) | 20/01/2026 |
 | `{{3}}` | Hora (HH:mm) | 10:00 |
 | `{{4}}` | Nombre de la clínica | Clínica Centro |
+
+### Template 2: `appointment_confirmation` (sin botones)
+
+- **Name:** `appointment_confirmation`
+- **Category:** Utility
+- **Language:** Spanish (Mexico) — `es_MX`
+- **Body:**
+```
+Hola {{1}}, tu cita ha sido confirmada para el {{2}} a las {{3}} en {{4}}.
+Te esperamos.
+```
+- **Buttons:** Ninguno
+
+### Template 3: `appointment_cancelled` (sin botones)
+
+- **Name:** `appointment_cancelled`
+- **Category:** Utility
+- **Language:** Spanish (Mexico) — `es_MX`
+- **Body:**
+```
+Hola {{1}}, tu cita del {{2}} a las {{3}} en {{4}} ha sido cancelada.
+Si deseas reagendar, puedes hacerlo desde tu portal o contactarnos.
+```
+- **Buttons:** Ninguno
 
 ## 2. Obtener Credenciales
 
@@ -64,13 +92,25 @@ export WhatsApp__Enabled="true"
   "GraphUrl": "https://graph.facebook.com",
   "ApiVersion": "v21.0",
   "TemplateName": "appointment_reminder",
+  "ConfirmationTemplateName": "appointment_confirmation",
+  "CancelledTemplateName": "appointment_cancelled",
   "TemplateLanguage": "es_MX",
+  "RescheduleBaseUrl": "https://portal.clinicflow.com.mx/reschedule",
   "ReminderHour": 18,
   "ReminderWindowHoursAhead": 24,
   "CheckIntervalMinutes": 30,
   "HttpTimeoutSeconds": 30
 }
 ```
+
+### Botones (solo appointment_reminder)
+
+El template `appointment_reminder` incluye 3 botones:
+- **Quick Reply "Confirmar"** → paciente confirma la cita (status → Confirmed)
+- **Quick Reply "Cancelar"** → paciente cancela la cita (status → Cancelled)
+- **URL "Reagendar"** → abre el portal del paciente en la página de reagendación
+
+Los templates `appointment_confirmation` y `appointment_cancelled` solo tienen body (sin botones).
 
 ## 4. Números de Prueba
 

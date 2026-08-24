@@ -71,18 +71,39 @@ namespace MedPal.API.Services
                 }
             };
 
-            if (!string.IsNullOrEmpty(settings.RescheduleBaseUrl) && message.AppointmentId.HasValue)
+            var isReminderTemplate = templateName == settings.TemplateName;
+
+            if (isReminderTemplate && message.AppointmentId.HasValue)
             {
                 components.Add(new
                 {
                     type = "button",
-                    sub_type = "url",
+                    sub_type = "quick_reply",
                     index = 0,
-                    parameters = new object[]
-                    {
-                        new { type = "text", text = message.AppointmentId.Value.ToString() }
-                    }
+                    parameters = Array.Empty<object>()
                 });
+
+                components.Add(new
+                {
+                    type = "button",
+                    sub_type = "quick_reply",
+                    index = 1,
+                    parameters = Array.Empty<object>()
+                });
+
+                if (!string.IsNullOrEmpty(settings.RescheduleBaseUrl))
+                {
+                    components.Add(new
+                    {
+                        type = "button",
+                        sub_type = "url",
+                        index = 2,
+                        parameters = new object[]
+                        {
+                            new { type = "text", text = message.AppointmentId.Value.ToString() }
+                        }
+                    });
+                }
             }
 
             var body = new

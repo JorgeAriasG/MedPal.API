@@ -12,7 +12,7 @@ namespace MedPal.API.Services
 {
     public interface IWhatsAppInteractionHandler
     {
-        Task HandleButtonResponseAsync(string fromPhone, string contactPhone, string wamid, string buttonId, string buttonText);
+        Task HandleButtonResponseAsync(string fromPhone, string contactPhone, string wamid, string buttonId, string buttonText, string? repliedToWamid = null);
     }
 
     public class WhatsAppInteractionHandler : IWhatsAppInteractionHandler
@@ -35,33 +35,59 @@ namespace MedPal.API.Services
         }
 
         public async Task HandleButtonResponseAsync(
-            string fromPhone, string contactPhone, string wamid, string buttonId, string buttonText)
+            string fromPhone, string contactPhone, string wamid, string buttonId, string buttonText, string? repliedToWamid = null)
         {
             var phone = PhoneNormalizer.ToE164(fromPhone);
-            if (string.IsNullOrEmpty(phone))
+            var phoneCandidates = new List<string>();
+            if (!string.IsNullOrEmpty(phone))
             {
-                _logger.LogWarning("Cannot normalize phone {Phone} for button response", fromPhone);
+                phoneCandidates.Add(phone);
+                phoneCandidates.Add(phone.TrimStart('+'));
+                if (phone.Length >= 10)
+                    phoneCandidates.Add(phone[^10..]);
+            }
+            if (!string.IsNullOrEmpty(fromPhone))
+                phoneCandidates.Add(fromPhone);
+
+            NotificationMessage? notification = null;
+
+            if (!string.IsNullOrEmpty(repliedToWamid))
+            {
+                notification = await _context.NotificationMessages
+                    .FirstOrDefaultAsync(n => n.ProviderMessageId == repliedToWamid && n.AppointmentId != null);
+
+                if (notification == null)
+                {
+                    _logger.LogWarning("Button reply references unknown WAMID {Wamid}; falling back to phone match", repliedToWamid);
+                }
+            }
+
+            if (notification == null)
+            {
+                if (phoneCandidates.Count == 0)
+                {
+                    _logger.LogWarning("Cannot normalize phone {Phone} for button response", fromPhone);
+                    return;
+                }
+
+                notification = await _context.NotificationMessages
+                    .Where(n => n.AppointmentId != null && n.IsSent == true)
+                    .OrderByDescending(n => n.SentAt)
+                    .FirstOrDefaultAsync(n => phoneCandidates.Contains(n.Recipient));
+            }
+
+            if (notification?.AppointmentId == null)
+            {
+                _logger.LogWarning("No appointment notification found for phone {Phone} (wamid={Wamid})", fromPhone, repliedToWamid);
                 return;
             }
 
             var patient = await _context.Patients
-                .FirstOrDefaultAsync(p => p.Phone == phone || p.Phone == fromPhone);
+                .FirstOrDefaultAsync(p => phoneCandidates.Contains(p.Phone));
 
             if (patient == null)
             {
-                _logger.LogWarning("No patient found for phone {Phone}", fromPhone);
-                return;
-            }
-
-            var notification = await _context.NotificationMessages
-                .Where(n => n.AppointmentId != null && n.IsSent == true)
-                .OrderByDescending(n => n.SentAt)
-                .FirstOrDefaultAsync(n =>
-                    n.Recipient == phone || n.Recipient == fromPhone);
-
-            if (notification?.AppointmentId == null)
-            {
-                _logger.LogWarning("No appointment notification found for phone {Phone}", fromPhone);
+                _logger.LogWarning("No patient found for phone {Phone} (wamid={Wamid})", fromPhone, repliedToWamid);
                 return;
             }
 
@@ -79,7 +105,7 @@ namespace MedPal.API.Services
             var existing = await _context.WhatsAppInteractions
                 .FirstOrDefaultAsync(wi =>
                     wi.AppointmentId == appointment.Id &&
-                    wi.PatientPhone == phone &&
+                    phoneCandidates.Contains(wi.PatientPhone) &&
                     wi.Wamid == wamid);
 
             if (existing != null)
@@ -95,7 +121,7 @@ namespace MedPal.API.Services
                 NotificationMessageId = notification.Id,
                 ButtonId = buttonId,
                 ButtonText = buttonText,
-                PatientPhone = phone,
+                PatientPhone = PhoneNormalizer.Normalize(fromPhone) ?? fromPhone,
                 Wamid = wamid,
                 ReceivedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,

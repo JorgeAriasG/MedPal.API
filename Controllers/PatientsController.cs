@@ -5,6 +5,7 @@ using MedPal.API.Authorization;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
+using MedPal.API.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -77,6 +78,7 @@ namespace MedPal.API.Controllers
                 return Forbid();
 
             var patient = _mapper.Map<Patient>(patientWriteDto);
+            patient.Phone = PhoneNormalizer.Normalize(patientWriteDto.Phone) ?? patientWriteDto.Phone ?? "";
             patient.Dob.ToLocalTime();
             var accountIdClaim = User.FindFirst("account_id");
             if (!int.TryParse(accountIdClaim?.Value, out int accountId))
@@ -105,6 +107,7 @@ namespace MedPal.API.Controllers
                 return Forbid();
 
             var patient = _mapper.Map<Patient>(patientWriteDto);
+            patient.Phone = PhoneNormalizer.Normalize(patientWriteDto.Phone) ?? patientWriteDto.Phone ?? "";
             await _patientRepository.UpdatePatientAsync(id, patient);
             if (patientWriteDto.ClinicIds != null && patientWriteDto.ClinicIds.Count > 0)
             {

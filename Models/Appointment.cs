@@ -25,7 +25,7 @@ namespace MedPal.API.Models
 		[Required]
 		public AppointmentStatus Status { get; set; } = AppointmentStatus.Scheduled;
 
-		public string Notes { get; set; }
+		public string? Notes { get; set; }
 
 		[Required]
 		public DateOnly Date { get; set; }

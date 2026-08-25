@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -56,18 +57,13 @@ namespace MedPal.API.Services
                 ? message.TemplateName
                 : settings.TemplateName;
 
+            var bodyParams = ExtractAllParameters(message.Body);
             var components = new List<object>
             {
                 new
                 {
                     type = "body",
-                    parameters = new object[]
-                    {
-                        new { type = "text", text = ExtractParameter(message.Body, 1) },
-                        new { type = "text", text = ExtractParameter(message.Body, 2) },
-                        new { type = "text", text = ExtractParameter(message.Body, 3) },
-                        new { type = "text", text = ExtractParameter(message.Body, 4) }
-                    }
+                    parameters = bodyParams.Select(p => new { type = "text", text = p }).ToArray()
                 }
             };
 
@@ -181,6 +177,16 @@ namespace MedPal.API.Services
 
             var parts = body.Split(" | ", StringSplitOptions.RemoveEmptyEntries);
             return index <= parts.Length ? parts[index - 1].Trim() : string.Empty;
+        }
+
+        private static string[] ExtractAllParameters(string body)
+        {
+            if (string.IsNullOrEmpty(body))
+                return Array.Empty<string>();
+
+            return body.Split(" | ", StringSplitOptions.RemoveEmptyEntries)
+                       .Select(p => p.Trim())
+                       .ToArray();
         }
     }
 }

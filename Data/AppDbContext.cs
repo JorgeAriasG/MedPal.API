@@ -216,6 +216,10 @@ namespace MedPal.API.Data
                 .Property(a => a.Time)
                 .HasConversion(timeOnlyConverter);
 
+            modelBuilder.Entity<Appointment>()
+                .Property(a => a.Notes)
+                .HasDefaultValue("");
+
             modelBuilder.Entity<Invoice>()
                 .Property(i => i.TotalAmount)
                 .HasColumnType("decimal(18,2)");

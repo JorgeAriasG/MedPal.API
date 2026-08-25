@@ -186,18 +186,34 @@ namespace MedPal.API.Services.Implementations
 
         public async Task<AppointmentReadDTO> RescheduleAppointmentAsync(int id, AppointmentWriteDTO request)
         {
-            var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
-            if (appointment == null) return null;
+            var oldAppointment = await _appointmentRepository.GetAppointmentByIdAsync(id);
+            if (oldAppointment == null) return null;
 
-            EnsureValidTransition(appointment.Status, AppointmentStatus.Rescheduled);
-            appointment.Status = AppointmentStatus.Rescheduled;
-            appointment.Date = request.Date;
-            appointment.Time = request.Time;
-            appointment.UpdatedAt = DateTime.UtcNow;
-            _appointmentRepository.UpdateAppointment(appointment);
+            EnsureValidTransition(oldAppointment.Status, AppointmentStatus.Cancelled);
+
+            var newAppointment = new Appointment
+            {
+                PatientId = oldAppointment.PatientId,
+                UserId = oldAppointment.UserId,
+                ClinicId = oldAppointment.ClinicId,
+                Notes = oldAppointment.Notes,
+                DurationMinutes = oldAppointment.DurationMinutes,
+                Date = request.Date,
+                Time = request.Time,
+                Status = AppointmentStatus.Scheduled,
+                OriginalAppointmentId = oldAppointment.Id,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            oldAppointment.Status = AppointmentStatus.Cancelled;
+            oldAppointment.UpdatedAt = DateTime.UtcNow;
+
+            await _appointmentRepository.AddAppointmentAsync(newAppointment);
+            _appointmentRepository.UpdateAppointment(oldAppointment);
             await _appointmentRepository.CompleteAsync();
 
-            return _mapper.Map<AppointmentReadDTO>(appointment);
+            return _mapper.Map<AppointmentReadDTO>(newAppointment);
         }
 
         public async Task<bool> DeleteAppointmentAsync(int id)

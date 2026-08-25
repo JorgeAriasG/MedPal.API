@@ -10,6 +10,7 @@ namespace MedPal.API.Services
         public string AppSecret { get; set; } = string.Empty;
         public string WebhookVerifyToken { get; set; } = string.Empty;
         public string TemplateName { get; set; } = "appointment_reminder";
+        public string CreatedTemplateName { get; set; } = "appointment_created";
         public string ConfirmationTemplateName { get; set; } = "appointment_confirmation";
         public string CancelledTemplateName { get; set; } = "appointment_cancelled";
         public string TemplateLanguage { get; set; } = "es_MX";

@@ -220,11 +220,10 @@ namespace MedPal.API.Services
         private string BuildConfirmFollowUpBody(Appointment appointment)
         {
             var patientName = appointment.Patient?.Name ?? "Paciente";
-            var date = appointment.Date.ToString("dd/MM/yyyy");
             var time = appointment.Time.ToString("HH:mm");
-            var clinicName = appointment.Clinic?.Name ?? "la clínica";
+            var doctorName = appointment.User?.Name ?? "nuestro equipo";
 
-            return $"{patientName} | {date} | {time} | {clinicName}";
+            return $"{patientName} | {time} | {doctorName}";
         }
 
         private string BuildCancelFollowUpBody(Appointment appointment)

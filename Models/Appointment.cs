@@ -57,6 +57,14 @@ namespace MedPal.API.Models
 		public DateTime? DeletedAt { get; set; }
 		public int? DeletedByUserId { get; set; }
 
+		/// <summary>
+		/// Referencia a la cita original cuando se reagenda (cancel + create new)
+		/// </summary>
+		public int? OriginalAppointmentId { get; set; }
+
+		[ForeignKey("OriginalAppointmentId")]
+		public virtual Appointment? OriginalAppointment { get; set; }
+
 		public virtual Patient Patient { get; set; }
 		public virtual User User { get; set; }
 		public virtual Clinic Clinic { get; set; }

@@ -93,7 +93,7 @@ namespace MedPal.API.Controllers
             [FromServices] IAppointmentReminderService reminderService)
         {
             var appointmentReadDTO = await _appointmentService.CreateAppointmentAsync(appointmentWriteDto);
-            _ = SendCreatedMessageAsync(appointmentReadDTO.Id, reminderService);
+            await SendCreatedMessageAsync(appointmentReadDTO.Id, reminderService);
             return CreatedAtAction(nameof(GetAppointmentById), new { id = appointmentReadDTO.Id }, appointmentReadDTO);
         }
 
@@ -190,7 +190,7 @@ namespace MedPal.API.Controllers
             if (result == null)
                 return NotFound();
 
-            _ = SendCreatedMessageAsync(result.Id, reminderService);
+            await SendCreatedMessageAsync(result.Id, reminderService);
             return Ok(result);
         }
 
@@ -207,7 +207,7 @@ namespace MedPal.API.Controllers
             request.PatientId = patientId;
 
             var result = await _appointmentService.CreateAppointmentAsync(request);
-            _ = SendCreatedMessageAsync(result.Id, reminderService);
+            await SendCreatedMessageAsync(result.Id, reminderService);
             return CreatedAtAction(nameof(GetAppointmentById), new { id = result.Id }, result);
         }
 

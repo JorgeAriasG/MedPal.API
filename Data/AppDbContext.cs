@@ -551,11 +551,8 @@ namespace MedPal.API.Data
 
             // Soft delete filters (entities without tenant filters)
             modelBuilder.Entity<Payment>().HasQueryFilter(p => !p.IsDeleted);
-            modelBuilder.Entity<Allergy>().HasQueryFilter(a => !a.IsDeleted);
             modelBuilder.Entity<InsuranceProvider>().HasQueryFilter(ip => !ip.IsDeleted);
             modelBuilder.Entity<NotificationMessage>().HasQueryFilter(nm => !nm.IsDeleted);
-            modelBuilder.Entity<MedicalHistory>().HasQueryFilter(mh => !mh.IsDeleted);
-            modelBuilder.Entity<PatientDetails>().HasQueryFilter(pd => !pd.IsDeleted);
             modelBuilder.Entity<Settings>().HasQueryFilter(s => !s.IsDeleted);
             modelBuilder.Entity<PrescriptionItem>().HasQueryFilter(pri => !pri.IsDeleted);
             modelBuilder.Entity<UserRole>().HasQueryFilter(ur => !ur.IsDeleted);
@@ -914,6 +911,107 @@ namespace MedPal.API.Data
                             (ar.PatientId != null && tenantContext.CurrentAccountId != null && ar.Patient.AccountId == tenantContext.CurrentAccountId) ||
                             (tenantContext.CurrentClinicId != null && ar.PatientId != null &&
                                 ar.Patient.PatientClinics.Any(pc =>
+                                    pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
+                        ));
+
+                // Phase 3: PatientDetails-Derived entities (chain: Entity → PatientDetails → Patient → Account/Clinics)
+
+                // PatientDetails: scoped by Patient.AccountId + PatientClinics
+                modelBuilder.Entity<PatientDetails>()
+                    .HasQueryFilter(pd =>
+                        !pd.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && pd.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null &&
+                                pd.Patient.PatientClinics.Any(pc =>
+                                    pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
+                        ));
+
+                // MedicalHistory: scoped by PatientDetails.Patient.AccountId + PatientClinics
+                modelBuilder.Entity<MedicalHistory>()
+                    .HasQueryFilter(mh =>
+                        !mh.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && mh.PatientDetails.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null &&
+                                mh.PatientDetails.Patient.PatientClinics.Any(pc =>
+                                    pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
+                        ));
+
+                // Allergy: scoped by PatientDetails.Patient.AccountId + PatientClinics
+                modelBuilder.Entity<Allergy>()
+                    .HasQueryFilter(a =>
+                        !a.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && a.PatientDetails.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null &&
+                                a.PatientDetails.Patient.PatientClinics.Any(pc =>
+                                    pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
+                        ));
+
+                // VitalSign: scoped by PatientDetails.Patient.AccountId + PatientClinics
+                modelBuilder.Entity<VitalSign>()
+                    .HasQueryFilter(vs =>
+                        !vs.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && vs.PatientDetails.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null &&
+                                vs.PatientDetails.Patient.PatientClinics.Any(pc =>
+                                    pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
+                        ));
+
+                // BodyComposition: scoped by PatientDetails.Patient.AccountId + PatientClinics
+                modelBuilder.Entity<BodyComposition>()
+                    .HasQueryFilter(bc =>
+                        !bc.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && bc.PatientDetails.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null &&
+                                bc.PatientDetails.Patient.PatientClinics.Any(pc =>
+                                    pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
+                        ));
+
+                // AnthropometryRecord: scoped by PatientDetails.Patient.AccountId + PatientClinics
+                modelBuilder.Entity<AnthropometryRecord>()
+                    .HasQueryFilter(ar =>
+                        !ar.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && ar.PatientDetails.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null &&
+                                ar.PatientDetails.Patient.PatientClinics.Any(pc =>
+                                    pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
+                        ));
+
+                // DietPlan: scoped by PatientDetails.Patient.AccountId + PatientClinics
+                modelBuilder.Entity<DietPlan>()
+                    .HasQueryFilter(dp =>
+                        !dp.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && dp.PatientDetails.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null &&
+                                dp.PatientDetails.Patient.PatientClinics.Any(pc =>
+                                    pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
+                        ));
+
+                // NutritionProgress: scoped by PatientDetails.Patient.AccountId + PatientClinics
+                modelBuilder.Entity<NutritionProgress>()
+                    .HasQueryFilter(np =>
+                        !np.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && np.PatientDetails.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null &&
+                                np.PatientDetails.Patient.PatientClinics.Any(pc =>
+                                    pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
+                        ));
+
+                // Supplement: scoped by PatientDetails.Patient.AccountId + PatientClinics
+                modelBuilder.Entity<Supplement>()
+                    .HasQueryFilter(s =>
+                        !s.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && s.PatientDetails.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null &&
+                                s.PatientDetails.Patient.PatientClinics.Any(pc =>
                                     pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
                         ));
             }

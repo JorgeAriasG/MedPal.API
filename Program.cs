@@ -5,6 +5,7 @@ using MedPal.API.Repositories;
 using MedPal.API.Repositories.Implementations;
 using MedPal.API.Repositories.Authorization;
 using MedPal.API.Mapping;
+using MedPal.API.Interceptors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MedPal.API.Services;
 using MedPal.API.Services.Implementations;
@@ -104,10 +105,14 @@ builder.Services.AddScoped<ITenantContextService, TenantContextService>();
 // Register Patient Consent Service (Phase 3 - Consent and Audit)
 builder.Services.AddScoped<IPatientConsentService, ConsentService>();
 
+// Register Audit Interceptor for automatic change tracking
+builder.Services.AddScoped<AuditSaveChangesInterceptor>();
+
 // Configure DbContext with lazy loading proxies and SQL Server
 // DbContext is registered after TenantContextService to avoid circular dependency
 builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
 {
+    options.AddInterceptors(serviceProvider.GetRequiredService<AuditSaveChangesInterceptor>());
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
            .UseLazyLoadingProxies();
 }, contextLifetime: ServiceLifetime.Scoped, optionsLifetime: ServiceLifetime.Scoped);
@@ -136,6 +141,9 @@ builder.Services.AddScoped<IRoleAuditService, RoleAuditService>();
 
 // Medical Record Access Audit (NOM-004 compliance)
 builder.Services.AddScoped<IMedicalRecordAccessLogService, MedicalRecordAccessLogService>();
+
+// Entity Change Audit Log (automatic change tracking)
+builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 
 // Prescription Services
 builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();

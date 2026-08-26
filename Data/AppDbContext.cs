@@ -901,31 +901,6 @@ namespace MedPal.API.Data
                 }
             }
 
-            // Validaciones de Patient
-            var patientsToValidate = ChangeTracker.Entries<Patient>()
-                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
-                .Select(e => e.Entity)
-                .ToList();
-
-            foreach (var patient in patientsToValidate)
-            {
-                // Patient.UpdatedAt no puede ser null
-                if (patient.UpdatedAt == null)
-                    patient.UpdatedAt = DateTime.UtcNow;
-            }
-
-            // Auto-stamp UpdatedAt para Appointments
-            var appointmentsToStamp = ChangeTracker.Entries<Appointment>()
-                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
-                .Select(e => e.Entity)
-                .ToList();
-
-            foreach (var appt in appointmentsToStamp)
-            {
-                if (appt.UpdatedAt == null)
-                    appt.UpdatedAt = DateTime.UtcNow;
-            }
-
             // Auto-stamp UpdatedAt/CreatedAt para PrescriptionItems
             var prescItemsToStamp = ChangeTracker.Entries<PrescriptionItem>()
                 .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)

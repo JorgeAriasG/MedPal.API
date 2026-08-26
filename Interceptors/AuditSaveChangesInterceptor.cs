@@ -101,7 +101,7 @@ namespace MedPal.API.Interceptors
                     auditEntries.Add(auditEntry);
             }
 
-            if (auditEntries.Count > 0)
+            if (auditEntries.Count > 0 && userId.HasValue)
                 context.Set<AuditLog>().AddRange(auditEntries);
 
             return base.SavingChangesAsync(eventData, result, cancellationToken);

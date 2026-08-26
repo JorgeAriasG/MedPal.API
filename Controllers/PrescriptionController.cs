@@ -136,9 +136,11 @@ namespace MedPal.API.Controllers
                 return NotFound();
             }
 
-            // Optional: Check if user has access (Doctor who created it or Patient who owns it)
-            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            // Add logic here if strictly enforcing ownership view
+            var access = await _authorizationService.AuthorizeAsync(User, null, new[] { new PatientAccessRequirement(prescription.PatientId) });
+            if (!access.Succeeded)
+            {
+                return Forbid();
+            }
 
             return MapToReadDTO(prescription);
         }
@@ -160,9 +162,11 @@ namespace MedPal.API.Controllers
         [Authorize(Policy = "MedicalRecords.ViewAssigned")]
         public async Task<ActionResult<IEnumerable<PrescriptionReadDTO>>> GetPrescriptionsByPatientId(int patientId)
         {
-            // Optional: Validate if User has access to this Patient (Doctor assigned or Patient themselves)
-            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            // TODO: Add stricter check: Is this user the Patient or their assigned Doctor?
+            var access = await _authorizationService.AuthorizeAsync(User, null, new[] { new PatientAccessRequirement(patientId) });
+            if (!access.Succeeded)
+            {
+                return Forbid();
+            }
 
             var prescriptions = await _prescriptionRepository.GetByPatientIdAsync(patientId);
             return Ok(prescriptions.Select(MapToReadDTO));

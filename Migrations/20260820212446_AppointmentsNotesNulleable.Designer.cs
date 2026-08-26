@@ -4,6 +4,7 @@ using MedPal.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MedPal.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260820212446_AppointmentsNotesNulleable")]
+    partial class AppointmentsNotesNulleable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -268,12 +271,7 @@ namespace MedPal.API.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Notes")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("");
-
-                    b.Property<int?>("OriginalAppointmentId")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
@@ -299,8 +297,6 @@ namespace MedPal.API.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClinicId");
-
-                    b.HasIndex("OriginalAppointmentId");
 
                     b.HasIndex("PatientId");
 
@@ -2360,9 +2356,6 @@ namespace MedPal.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CreatedByUserId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
@@ -2388,12 +2381,6 @@ namespace MedPal.API.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("LastModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("LastModifiedByUserId")
-                        .HasColumnType("int");
-
                     b.Property<string>("MedicationName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -2401,12 +2388,8 @@ namespace MedPal.API.Migrations
                     b.Property<int>("PrescriptionId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .IsRequired()
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -3036,10 +3019,6 @@ namespace MedPal.API.Migrations
                         .WithMany("Appointments")
                         .HasForeignKey("ClinicId");
 
-                    b.HasOne("MedPal.API.Models.Appointment", "OriginalAppointment")
-                        .WithMany()
-                        .HasForeignKey("OriginalAppointmentId");
-
                     b.HasOne("MedPal.API.Models.Patient", "Patient")
                         .WithMany("Appointments")
                         .HasForeignKey("PatientId")
@@ -3053,8 +3032,6 @@ namespace MedPal.API.Migrations
                         .IsRequired();
 
                     b.Navigation("Clinic");
-
-                    b.Navigation("OriginalAppointment");
 
                     b.Navigation("Patient");
 

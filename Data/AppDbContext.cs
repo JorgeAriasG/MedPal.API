@@ -550,17 +550,12 @@ namespace MedPal.API.Data
             });
 
             // Soft delete filters (entities without tenant filters)
-            modelBuilder.Entity<Prescription>().HasQueryFilter(p => !p.IsDeleted);
-            modelBuilder.Entity<Invoice>().HasQueryFilter(i => !i.IsDeleted);
             modelBuilder.Entity<Payment>().HasQueryFilter(p => !p.IsDeleted);
-            modelBuilder.Entity<Report>().HasQueryFilter(r => !r.IsDeleted);
             modelBuilder.Entity<Allergy>().HasQueryFilter(a => !a.IsDeleted);
             modelBuilder.Entity<InsuranceProvider>().HasQueryFilter(ip => !ip.IsDeleted);
             modelBuilder.Entity<NotificationMessage>().HasQueryFilter(nm => !nm.IsDeleted);
             modelBuilder.Entity<MedicalHistory>().HasQueryFilter(mh => !mh.IsDeleted);
             modelBuilder.Entity<PatientDetails>().HasQueryFilter(pd => !pd.IsDeleted);
-            modelBuilder.Entity<PatientInsurance>().HasQueryFilter(pi => !pi.IsDeleted);
-            modelBuilder.Entity<ArcoRequest>().HasQueryFilter(ar => !ar.IsDeleted);
             modelBuilder.Entity<Settings>().HasQueryFilter(s => !s.IsDeleted);
             modelBuilder.Entity<PrescriptionItem>().HasQueryFilter(pri => !pri.IsDeleted);
             modelBuilder.Entity<UserRole>().HasQueryFilter(ur => !ur.IsDeleted);
@@ -845,6 +840,81 @@ namespace MedPal.API.Data
                             tenantContext.IsSuperAdmin ||
                             (tenantContext.CurrentAccountId != null && a.Patient.AccountId == tenantContext.CurrentAccountId) ||
                             (tenantContext.CurrentClinicId != null && a.ClinicId == tenantContext.CurrentClinicId)
+                        ));
+
+                // Phase 2: Patient-Direct entities
+
+                // Invoice: scoped by Patient.AccountId + Appointment.ClinicId
+                modelBuilder.Entity<Invoice>()
+                    .HasQueryFilter(i =>
+                        !i.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && i.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null && i.Appointment.ClinicId == tenantContext.CurrentClinicId)
+                        ));
+
+                // Prescription: scoped by Patient.AccountId + PatientClinics for ClinicAdmin
+                modelBuilder.Entity<Prescription>()
+                    .HasQueryFilter(p =>
+                        !p.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && p.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null &&
+                                p.Patient.PatientClinics.Any(pc =>
+                                    pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
+                        ));
+
+                // Report: scoped by Patient.AccountId + PatientClinics for ClinicAdmin
+                modelBuilder.Entity<Report>()
+                    .HasQueryFilter(r =>
+                        !r.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && r.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null &&
+                                r.Patient.PatientClinics.Any(pc =>
+                                    pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
+                        ));
+
+                // EmergencyContact: scoped by Patient.AccountId + PatientClinics for ClinicAdmin
+                modelBuilder.Entity<EmergencyContact>()
+                    .HasQueryFilter(ec =>
+                        !ec.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && ec.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null &&
+                                ec.Patient.PatientClinics.Any(pc =>
+                                    pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
+                        ));
+
+                // PatientInsurance: scoped by Patient.AccountId + PatientClinics for ClinicAdmin
+                modelBuilder.Entity<PatientInsurance>()
+                    .HasQueryFilter(pi =>
+                        !pi.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && pi.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null &&
+                                pi.Patient.PatientClinics.Any(pc =>
+                                    pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
+                        ));
+
+                // WhatsAppInteraction: scoped by Patient.AccountId + Appointment.ClinicId
+                modelBuilder.Entity<WhatsAppInteraction>()
+                    .HasQueryFilter(wi =>
+                        !wi.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && wi.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null && wi.Appointment.ClinicId == tenantContext.CurrentClinicId)
+                        ));
+
+                // ArcoRequest: scoped by Patient.AccountId + PatientClinics for ClinicAdmin (PatientId is nullable)
+                modelBuilder.Entity<ArcoRequest>()
+                    .HasQueryFilter(ar =>
+                        !ar.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (ar.PatientId != null && tenantContext.CurrentAccountId != null && ar.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null && ar.PatientId != null &&
+                                ar.Patient.PatientClinics.Any(pc =>
+                                    pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
                         ));
             }
 

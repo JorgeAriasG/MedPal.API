@@ -13,7 +13,9 @@ namespace MedPal.API.Mapping
         {
             CreateMap<Patient, PatientReadDTO>()
                 .ForMember(dest => dest.EmergencyContact, opt => opt.Ignore())
-                .ForMember(dest => dest.PatientDetailsId, opt => opt.MapFrom(src => src.PatientDetails != null ? src.PatientDetails.Id : (int?)null));
+                .ForMember(dest => dest.PatientDetailsId, opt => opt.MapFrom(src => src.PatientDetails != null ? src.PatientDetails.Id : (int?)null))
+                .ForMember(dest => dest.Clinic, opt => opt.Ignore())
+                .ForMember(dest => dest.Clinics, opt => opt.Ignore());
             CreateMap<Patient, PatientWriteDTO>()
                 .ForMember(dest => dest.EmergencyContact, opt => opt.Ignore());
             CreateMap<PatientWriteDTO, Patient>(MemberList.Source)

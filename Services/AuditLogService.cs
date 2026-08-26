@@ -23,6 +23,7 @@ namespace MedPal.API.Services
         {
             var query = _context.AuditLogs
                 .Include(a => a.User)
+                .IgnoreQueryFilters()
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(entityType))
@@ -69,6 +70,7 @@ namespace MedPal.API.Services
         {
             return await _context.AuditLogs
                 .Include(a => a.User)
+                .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
     }

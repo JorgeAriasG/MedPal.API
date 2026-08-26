@@ -29,17 +29,17 @@ namespace MedPal.API.Models
         /// Nombres de campos modificados, separados por coma
         /// Ej: "Email, Phone, Address"
         /// </summary>
-        public string ChangedFields { get; set; }
+        public string? ChangedFields { get; set; }
 
         /// <summary>
         /// Valores anteriores en formato JSON
         /// </summary>
-        public string OldValues { get; set; }
+        public string? OldValues { get; set; }
 
         /// <summary>
         /// Valores nuevos en formato JSON
         /// </summary>
-        public string NewValues { get; set; }
+        public string? NewValues { get; set; }
 
         [Required]
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
@@ -47,18 +47,18 @@ namespace MedPal.API.Models
         /// <summary>
         /// Dirección IP del cliente que realizó la acción
         /// </summary>
-        public string IpAddress { get; set; }
+        public string? IpAddress { get; set; }
 
         /// <summary>
         /// User-Agent del navegador/cliente
         /// </summary>
-        public string UserAgent { get; set; }
+        public string? UserAgent { get; set; }
 
         /// <summary>
         /// Descripción adicional de la acción
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
     }
 }

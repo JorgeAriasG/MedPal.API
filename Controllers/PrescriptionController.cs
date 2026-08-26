@@ -112,6 +112,13 @@ namespace MedPal.API.Controllers
         [Authorize(Policy = "MedicalRecords.Create")]
         public async Task<ActionResult> CheckAllergies([FromBody] AllergyCheckRequestDTO request)
         {
+            var access = await _authorizationService.AuthorizeAsync(
+                User, null, new[] { new PatientAccessRequirement(request.PatientId) });
+            if (!access.Succeeded)
+            {
+                return Forbid();
+            }
+
             var patientAllergies = await _patientRepository.GetPatientAllergyNamesAsync(request.PatientId, default);
             var proposedMeds = request.MedicationNames.Select(m => m.ToLower()).ToList();
 
@@ -209,13 +216,20 @@ namespace MedPal.API.Controllers
 
         // GET: api/Prescription/{id}/qr
         [HttpGet("{id}/qr")]
-        [Authorize]
+        [Authorize(Policy = "MedicalRecords.ViewAssigned")]
         public async Task<IActionResult> GetPrescriptionQr(int id)
         {
             var prescription = await _prescriptionRepository.GetByIdAsync(id);
             if (prescription == null)
             {
                 return NotFound();
+            }
+
+            var access = await _authorizationService.AuthorizeAsync(
+                User, null, new[] { new PatientAccessRequirement(prescription.PatientId) });
+            if (!access.Succeeded)
+            {
+                return Forbid();
             }
 
             // URL that the QR will point to (The validation endpoint in frontend or backend)

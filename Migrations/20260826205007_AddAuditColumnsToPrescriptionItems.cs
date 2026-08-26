@@ -45,12 +45,6 @@ namespace MedPal.API.Migrations
                 oldType: "nvarchar(max)",
                 oldNullable: true);
 
-            migrationBuilder.AddColumn<int>(
-                name: "OriginalAppointmentId",
-                table: "Appointments",
-                type: "int",
-                nullable: true);
-
             migrationBuilder.CreateIndex(
                 name: "IX_Appointments_OriginalAppointmentId",
                 table: "Appointments",
@@ -90,10 +84,6 @@ namespace MedPal.API.Migrations
             migrationBuilder.DropColumn(
                 name: "UpdatedByUserId",
                 table: "PrescriptionItems");
-
-            migrationBuilder.DropColumn(
-                name: "OriginalAppointmentId",
-                table: "Appointments");
 
             migrationBuilder.AlterColumn<string>(
                 name: "Notes",

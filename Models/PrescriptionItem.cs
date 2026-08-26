@@ -5,7 +5,7 @@ using MedPal.API.Interfaces;
 
 namespace MedPal.API.Models
 {
-    public class PrescriptionItem : ISoftDelete
+    public class PrescriptionItem : ISoftDelete, IAuditableEntity
     {
         [Key]
         public int Id { get; set; }
@@ -31,12 +31,18 @@ namespace MedPal.API.Models
         public DateTime CreatedAt { get; set; }
 
         [Required]
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         // ISoftDelete implementation
         public bool IsDeleted { get; set; } = false;
         public DateTime? DeletedAt { get; set; }
         public int? DeletedByUserId { get; set; }
+
+        // IAuditableEntity implementation
+        public int? CreatedByUserId { get; set; }
+        public int? UpdatedByUserId { get; set; }
+        public DateTime? LastModifiedAt { get; set; }
+        public int? LastModifiedByUserId { get; set; }
 
         // Navigation
         public virtual Prescription Prescription { get; set; }

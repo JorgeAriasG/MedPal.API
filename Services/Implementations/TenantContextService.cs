@@ -124,6 +124,15 @@ public class TenantContextService : ITenantContextService
         }
     }
 
+    public bool IsAvailable
+    {
+        get
+        {
+            EnsureCached();
+            return _cachedUserId != null;
+        }
+    }
+
     public bool IsSuperAdmin
     {
         get

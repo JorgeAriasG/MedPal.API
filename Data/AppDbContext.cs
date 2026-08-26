@@ -98,11 +98,12 @@ namespace MedPal.API.Data
         /// </summary>
         private ITenantContextService? GetTenantContext()
         {
-            if (_tenantContext != null) return _tenantContext;
-            
-            // Try to get from service provider (runtime)
-            _tenantContext = _serviceProvider?.GetService(typeof(ITenantContextService)) as ITenantContextService;
-            
+            var resolved = _serviceProvider?.GetService(typeof(ITenantContextService)) as ITenantContextService;
+            if (resolved == null) return null;
+
+            if (!resolved.IsAvailable) return null;
+
+            _tenantContext = resolved;
             return _tenantContext;
         }
 
@@ -548,11 +549,7 @@ namespace MedPal.API.Data
                 entity.HasIndex(a => new { a.MedicalHistoryId, a.IsDeleted });
             });
 
-            // Add query filters for soft delete pattern
-            // Automatically filter out deleted records from all queries
-            modelBuilder.Entity<Patient>().HasQueryFilter(p => !p.IsDeleted);
-            modelBuilder.Entity<User>().HasQueryFilter(u => !u.IsDeleted);
-            modelBuilder.Entity<Clinic>().HasQueryFilter(c => !c.IsDeleted);
+            // Soft delete filters (entities without tenant filters)
             modelBuilder.Entity<Prescription>().HasQueryFilter(p => !p.IsDeleted);
             modelBuilder.Entity<Invoice>().HasQueryFilter(i => !i.IsDeleted);
             modelBuilder.Entity<Payment>().HasQueryFilter(p => !p.IsDeleted);
@@ -560,7 +557,6 @@ namespace MedPal.API.Data
             modelBuilder.Entity<Allergy>().HasQueryFilter(a => !a.IsDeleted);
             modelBuilder.Entity<InsuranceProvider>().HasQueryFilter(ip => !ip.IsDeleted);
             modelBuilder.Entity<NotificationMessage>().HasQueryFilter(nm => !nm.IsDeleted);
-            modelBuilder.Entity<Appointment>().HasQueryFilter(a => !a.IsDeleted);
             modelBuilder.Entity<MedicalHistory>().HasQueryFilter(mh => !mh.IsDeleted);
             modelBuilder.Entity<PatientDetails>().HasQueryFilter(pd => !pd.IsDeleted);
             modelBuilder.Entity<PatientInsurance>().HasQueryFilter(pi => !pi.IsDeleted);
@@ -809,46 +805,48 @@ namespace MedPal.API.Data
 
             // NOTE: MedicalRecordAccessLog does NOT have soft delete filter (immutable audit trail per NOM-004)
 
-            // // Fase 2: Query Filters para Multi-tenancy (Control de Acceso)
-            // var tenantContext = GetTenantContext();
-            // if (tenantContext != null)
-            // {
-            //     // Query Filter para User: 
-            //     // SuperAdmin ve todos, AccountAdmin/ClinicAdmin ve solo de su scope
-            //     modelBuilder.Entity<User>()
-            //         .HasQueryFilter(u =>
-            //             tenantContext.IsSuperAdmin ||
-            //             (tenantContext.CurrentAccountId != null && u.AccountId == tenantContext.CurrentAccountId)
-            //         );
+            // Phase 1: Multi-tenant query filters (soft delete + tenant scoping combined)
+            var tenantContext = GetTenantContext();
+            if (tenantContext != null)
+            {
+                // User: SuperAdmin sees all, otherwise scoped by AccountId
+                modelBuilder.Entity<User>()
+                    .HasQueryFilter(u =>
+                        !u.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && u.AccountId == tenantContext.CurrentAccountId)
+                        ));
 
-            //     // Query Filter para Clinic:
-            //     // SuperAdmin ve todos, AccountAdmin/ClinicAdmin ve solo de su scope
-            //     modelBuilder.Entity<Clinic>()
-            //         .HasQueryFilter(c =>
-            //             tenantContext.IsSuperAdmin ||
-            //             c.AccountId == null ||  // Permitir datos legacy sin AccountId
-            //             (tenantContext.CurrentAccountId != null && c.AccountId == tenantContext.CurrentAccountId)
-            //         );
+                // Clinic: SuperAdmin sees all, otherwise scoped by AccountId (legacy null passes through)
+                modelBuilder.Entity<Clinic>()
+                    .HasQueryFilter(c =>
+                        !c.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            c.AccountId == null ||
+                            (tenantContext.CurrentAccountId != null && c.AccountId == tenantContext.CurrentAccountId)
+                        ));
 
-            //     // Query Filter para Patient:
-            //     // SuperAdmin ve todos, AccountAdmin ve pacientes de su cuenta, ClinicAdmin/Doctor ve de su clínica
-            //     modelBuilder.Entity<Patient>()
-            //         .HasQueryFilter(p =>
-            //             tenantContext.IsSuperAdmin ||
-            //             p.AccountId == null ||  // Permitir datos legacy sin AccountId
-            //             (tenantContext.IsAccountAdmin && p.AccountId == tenantContext.CurrentAccountId) ||
-            //             (tenantContext.IsClinicAdmin && p.ClinicId == tenantContext.CurrentClinicId)
-            //         );
+                // Patient: SuperAdmin sees all, AccountAdmin by AccountId, ClinicAdmin by PatientClinics M:N
+                modelBuilder.Entity<Patient>()
+                    .HasQueryFilter(p =>
+                        !p.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            p.AccountId == null ||
+                            (tenantContext.CurrentAccountId != null && p.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null &&
+                                p.PatientClinics.Any(pc =>
+                                    pc.ClinicId == tenantContext.CurrentClinicId && !pc.IsDeleted))
+                        ));
 
-            //     // Query Filter para Appointment:
-            //     // Similar a Patient pero también filtra por clínica
-            //     modelBuilder.Entity<Appointment>()
-            //         .HasQueryFilter(a =>
-            //             tenantContext.IsSuperAdmin ||
-            //             (tenantContext.IsAccountAdmin && a.Patient.AccountId == tenantContext.CurrentAccountId) ||
-            //             (tenantContext.IsClinicAdmin && a.ClinicId == tenantContext.CurrentClinicId)
-            //         );
-            // }
+                // Appointment: SuperAdmin sees all, AccountAdmin by Patient.AccountId, ClinicAdmin by direct ClinicId
+                modelBuilder.Entity<Appointment>()
+                    .HasQueryFilter(a =>
+                        !a.IsDeleted && (
+                            tenantContext.IsSuperAdmin ||
+                            (tenantContext.CurrentAccountId != null && a.Patient.AccountId == tenantContext.CurrentAccountId) ||
+                            (tenantContext.CurrentClinicId != null && a.ClinicId == tenantContext.CurrentClinicId)
+                        ));
+            }
 
             base.OnModelCreating(modelBuilder);
         }

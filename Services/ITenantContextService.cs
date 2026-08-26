@@ -34,6 +34,12 @@ public interface ITenantContextService
     SystemRole? CurrentRole { get; }
 
     /// <summary>
+    /// Indica si el contexto de tenancy está disponible (hay usuario autenticado).
+    /// False durante migraciones, seeders, background jobs sin HTTP context.
+    /// </summary>
+    bool IsAvailable { get; }
+
+    /// <summary>
     /// Indica si el usuario actual es SuperAdmin.
     /// SuperAdmin tiene acceso a todos los datos del sistema.
     /// </summary>

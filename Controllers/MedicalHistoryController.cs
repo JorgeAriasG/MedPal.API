@@ -20,19 +20,22 @@ namespace MedPal.API.Controllers
         private readonly IAuthorizationService _authorizationService;
         private readonly IUserService _userService;
         private readonly IPatientConsentService _consentService;
+        private readonly IMedicalRecordAccessLogService _accessLogService;
 
         public MedicalHistoryController(
             IMedicalHistoryRepository medicalHistoryRepository,
             IMapper mapper,
             IAuthorizationService authorizationService,
             IUserService userService,
-            IPatientConsentService consentService)
+            IPatientConsentService consentService,
+            IMedicalRecordAccessLogService accessLogService)
         {
             _medicalHistoryRepository = medicalHistoryRepository;
             _mapper = mapper;
             _authorizationService = authorizationService;
             _userService = userService;
             _consentService = consentService;
+            _accessLogService = accessLogService;
         }
 
         // GET: api/medicalhistory
@@ -65,6 +68,7 @@ namespace MedPal.API.Controllers
             }
 
             var medicalHistoryReadDTO = _mapper.Map<MedicalHistoryReadDTO>(medicalHistory);
+            await LogAccessAsync(medicalHistory.PatientDetailsId, medicalHistory.Id, "Treatment");
             return Ok(medicalHistoryReadDTO);
         }
 
@@ -98,6 +102,7 @@ namespace MedPal.API.Controllers
             await _medicalHistoryRepository.CompleteAsync();
 
             var medicalHistoryReadDTO = _mapper.Map<MedicalHistoryReadDTO>(medicalHistory);
+            await LogAccessAsync(medicalHistory.PatientDetailsId, medicalHistory.Id, "Treatment");
             return CreatedAtAction(nameof(GetMedicalHistoryById), new { id = medicalHistoryReadDTO.Id }, medicalHistoryReadDTO);
         }
 
@@ -132,6 +137,7 @@ namespace MedPal.API.Controllers
             _medicalHistoryRepository.UpdateMedicalHistory(medicalHistory);
             await _medicalHistoryRepository.CompleteAsync();
 
+            await LogAccessAsync(medicalHistory.PatientDetailsId, medicalHistory.Id, "Administration");
             return NoContent();
         }
 
@@ -223,6 +229,35 @@ namespace MedPal.API.Controllers
 
             // Consent-based access (doctor or clinic-level)
             return await _consentService.IsConsentForDoctorValidAsync(history.PatientDetailsId, currentUserId);
+        }
+
+        private async Task LogAccessAsync(int patientDetailsId, int? medicalHistoryId, string purpose)
+        {
+            if (!int.TryParse(_userService.UserId, out int userId)) return;
+
+            int? clinicId = null;
+            if (int.TryParse(User.FindFirst("clinic_id")?.Value, out int cid))
+                clinicId = cid;
+
+            var hasConsent = medicalHistoryId.HasValue
+                ? await _consentService.IsConsentForDoctorValidAsync(patientDetailsId, userId)
+                : false;
+
+            var accessLog = new MedicalRecordAccessLog
+            {
+                UserId = userId,
+                MedicalHistoryId = medicalHistoryId,
+                PatientDetailsId = patientDetailsId,
+                AccessTime = DateTime.UtcNow,
+                Purpose = purpose,
+                AccessingClinicId = clinicId ?? 0,
+                MedicalRecordOwnerClinicId = clinicId ?? 0,
+                HadValidConsent = hasConsent,
+                IpAddress = HttpContext?.Connection?.RemoteIpAddress?.ToString(),
+                SessionId = HttpContext?.Request?.Headers["X-Session-Id"].FirstOrDefault()
+            };
+
+            await _accessLogService.LogAccessAsync(accessLog);
         }
     }
 }

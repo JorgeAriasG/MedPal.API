@@ -134,6 +134,9 @@ builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 // Audit service (NOM-024 compliance)
 builder.Services.AddScoped<IRoleAuditService, RoleAuditService>();
 
+// Medical Record Access Audit (NOM-004 compliance)
+builder.Services.AddScoped<IMedicalRecordAccessLogService, MedicalRecordAccessLogService>();
+
 // Prescription Services
 builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
 builder.Services.AddScoped<IQrCodeService, QrCodeService>();

@@ -3,6 +3,7 @@ using MedPal.API.Authorization;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
+using MedPal.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
@@ -16,12 +17,18 @@ namespace MedPal.API.Controllers
         private readonly IPatientDetailsRepository _patientDetailsRepository;
         private readonly IMapper _mapper;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IMedicalRecordAccessLogService _accessLogService;
 
-        public PatientDetailsController(IPatientDetailsRepository patientDetailsRepository, IMapper mapper, IAuthorizationService authorizationService)
+        public PatientDetailsController(
+            IPatientDetailsRepository patientDetailsRepository,
+            IMapper mapper,
+            IAuthorizationService authorizationService,
+            IMedicalRecordAccessLogService accessLogService)
         {
             _patientDetailsRepository = patientDetailsRepository;
             _mapper = mapper;
             _authorizationService = authorizationService;
+            _accessLogService = accessLogService;
         }
 
         private async Task<bool> CanAccessPatientAsync(int patientId)
@@ -50,6 +57,7 @@ namespace MedPal.API.Controllers
                 return NotFound();
             }
             var patientDetailsReadDTO = _mapper.Map<PatientDetailsReadDTO>(patientDetails);
+            await LogAccessAsync(patientDetails.Id, "Treatment");
             return Ok(patientDetailsReadDTO);
         }
 
@@ -70,6 +78,7 @@ namespace MedPal.API.Controllers
             }
 
             var patientDetailsReadDTO = _mapper.Map<PatientDetailsReadDTO>(patientDetails);
+            await LogAccessAsync(patientDetails.Id, "Treatment");
             return Ok(patientDetailsReadDTO);
         }
 
@@ -140,6 +149,32 @@ namespace MedPal.API.Controllers
             await _patientDetailsRepository.CompleteAsync();
 
             return NoContent();
+        }
+
+        private async Task LogAccessAsync(int patientDetailsId, string purpose)
+        {
+            int? userId = null;
+            if (int.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out int uid))
+                userId = uid;
+
+            int? clinicId = null;
+            if (int.TryParse(User.FindFirst("clinic_id")?.Value, out int cid))
+                clinicId = cid;
+
+            var accessLog = new MedicalRecordAccessLog
+            {
+                UserId = userId ?? 0,
+                PatientDetailsId = patientDetailsId,
+                AccessTime = DateTime.UtcNow,
+                Purpose = purpose,
+                AccessingClinicId = clinicId ?? 0,
+                MedicalRecordOwnerClinicId = clinicId ?? 0,
+                HadValidConsent = true,
+                IpAddress = HttpContext?.Connection?.RemoteIpAddress?.ToString(),
+                SessionId = HttpContext?.Request?.Headers["X-Session-Id"].FirstOrDefault()
+            };
+
+            await _accessLogService.LogAccessAsync(accessLog);
         }
     }
 }

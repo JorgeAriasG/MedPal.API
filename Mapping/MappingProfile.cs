@@ -17,15 +17,19 @@ namespace MedPal.API.Mapping
                 .ForMember(dest => dest.Clinic, opt => opt.Ignore())
                 .ForMember(dest => dest.Clinics, opt => opt.Ignore());
             CreateMap<Patient, PatientWriteDTO>()
-                .ForMember(dest => dest.EmergencyContact, opt => opt.Ignore());
+                .ForMember(dest => dest.EmergencyContact, opt => opt.Ignore())
+                .ForMember(dest => dest.ClinicIds, opt => opt.Ignore());
             CreateMap<PatientWriteDTO, Patient>(MemberList.Source)
-                .ForSourceMember(src => src.EmergencyContact, opt => opt.DoNotValidate());
+                .ForSourceMember(src => src.EmergencyContact, opt => opt.DoNotValidate())
+                .ForSourceMember(src => src.ClinicIds, opt => opt.DoNotValidate());
             CreateMap<Patient, Patient>().ReverseMap();
             
             CreateMap<User, UserReadDTO>()
-                .ForMember(dest => dest.Token, opt => opt.Ignore());
+                .ForMember(dest => dest.Token, opt => opt.Ignore())
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.UserRoles.Any() ? src.UserRoles.First().Role.Name : null));
             CreateMap<UserReadDTO, User>(MemberList.Source)
-                .ForSourceMember(src => src.Token, opt => opt.DoNotValidate());
+                .ForSourceMember(src => src.Token, opt => opt.DoNotValidate())
+                .ForSourceMember(src => src.Role, opt => opt.DoNotValidate());
 
             CreateMap<Clinic, ClinicReadDTO>().ReverseMap();
             CreateMap<ClinicWriteDTO, Clinic>(MemberList.Source);
@@ -33,7 +37,24 @@ namespace MedPal.API.Mapping
             CreateMap<PatientDetailsWriteDTO, PatientDetails>(MemberList.Source);
             CreateMap<MedicalHistory, MedicalHistoryReadDTO>()
                 .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.HealthcareProfessional != null ? src.HealthcareProfessional.Name : null));
-            CreateMap<MedicalHistoryReadDTO, MedicalHistory>();
+            CreateMap<MedicalHistoryReadDTO, MedicalHistory>()
+                .ForMember(dest => dest.PatientDetailsId, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedByUserId, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedByUserId, opt => opt.Ignore())
+                .ForMember(dest => dest.LastModifiedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.LastModifiedByUserId, opt => opt.Ignore())
+                .ForMember(dest => dest.IsConfidential, opt => opt.Ignore())
+                .ForMember(dest => dest.OwnerClinicId, opt => opt.Ignore())
+                .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
+                .ForMember(dest => dest.DeletedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.DeletedByUserId, opt => opt.Ignore())
+                .ForMember(dest => dest.PatientDetails, opt => opt.Ignore())
+                .ForMember(dest => dest.HealthcareProfessional, opt => opt.Ignore())
+                .ForMember(dest => dest.LastModifiedByUser, opt => opt.Ignore())
+                .ForMember(dest => dest.Prescription, opt => opt.Ignore())
+                .ForMember(dest => dest.OwnerClinic, opt => opt.Ignore());
             CreateMap<MedicalHistoryWriteDTO, MedicalHistory>(MemberList.Source);
             CreateMap<Allergy, AllergyReadDTO>().ReverseMap();
             CreateMap<AllergyWriteDTO, Allergy>(MemberList.Source);
@@ -60,13 +81,15 @@ namespace MedPal.API.Mapping
                 .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password))
                 .ForSourceMember(src => src.RoleId, opt => opt.DoNotValidate())
                 .ForSourceMember(src => src.ConfirmPassword, opt => opt.DoNotValidate())
-                .ForSourceMember(src => src.AcceptPrivacyTerms, opt => opt.DoNotValidate());
+                .ForSourceMember(src => src.AcceptPrivacyTerms, opt => opt.DoNotValidate())
+                .ForSourceMember(src => src.PlanName, opt => opt.DoNotValidate());
 
             // Custom mappings for User and UserRegisterDTO
             CreateMap<UserRegisterDTO, User>(MemberList.Source)
                 .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password))
                 .ForSourceMember(src => src.ConfirmPassword, opt => opt.DoNotValidate())
-                .ForSourceMember(src => src.AcceptPrivacyTerms, opt => opt.DoNotValidate());
+                .ForSourceMember(src => src.AcceptPrivacyTerms, opt => opt.DoNotValidate())
+                .ForSourceMember(src => src.PlanName, opt => opt.DoNotValidate());
 
             // Permission mappings
             CreateMap<Permission, PermissionDTO>();
@@ -113,7 +136,9 @@ namespace MedPal.API.Mapping
             CreateMap<PatientConsent, ConsentReadDTO>().ReverseMap();
 
             // Waitlist mappings
-            CreateMap<WaitlistRegisterDTO, WaitlistEntry>();
+            CreateMap<WaitlistRegisterDTO, WaitlistEntry>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
 
             // Nutrition Module mappings
             CreateMap<FoodItem, FoodItemReadDTO>().ReverseMap();
@@ -128,7 +153,8 @@ namespace MedPal.API.Mapping
             CreateMap<DietPlan, DietPlanReadDTO>()
                 .ForMember(dest => dest.Meals, opt => opt.MapFrom(src => src.Meals.OrderBy(m => m.MealOrder)));
             CreateMap<DietPlanWriteDTO, DietPlan>(MemberList.Source)
-                .ForMember(dest => dest.Meals, opt => opt.Ignore());
+                .ForMember(dest => dest.Meals, opt => opt.Ignore())
+                .ForSourceMember(src => src.Meals, opt => opt.DoNotValidate());
             CreateMap<DietPlanMeal, DietPlanMealDTO>()
                 .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
             CreateMap<DietPlanMealWriteDTO, DietPlanMeal>(MemberList.Source);

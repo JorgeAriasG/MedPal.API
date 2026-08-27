@@ -79,14 +79,18 @@ namespace MedPal.API.Services.Implementations
                 request.PatientId = ghostPatient.Id;
             }
 
-            // Verificación cross-account: si el paciente pertenece a otro account,
+            // Verificación cross-account: si la cuenta primaria del paciente difiere de la del account destino,
             // el account destino debe tener una membresía verificada por el paciente.
             if (request.PatientId.HasValue && request.ClinicId.HasValue)
             {
                 var candidate = await _patientRepository.GetPatientByIdAsync(request.PatientId.Value);
                 var clinicAccountId = await _patientRepository.GetClinicAccountIdAsync(request.ClinicId.Value);
-                if (candidate != null && candidate.AccountId.HasValue && clinicAccountId.HasValue &&
-                    candidate.AccountId.Value != clinicAccountId.Value)
+                int? primaryAccountId = candidate?.PatientAccounts?
+                    .Where(pa => pa.IsPrimaryAccount && !pa.IsDeleted)
+                    .Select(pa => (int?)pa.AccountId)
+                    .FirstOrDefault();
+                if (candidate != null && clinicAccountId.HasValue &&
+                    primaryAccountId.HasValue && primaryAccountId.Value != clinicAccountId.Value)
                 {
                     var verified = await _patientRepository.HasVerifiedMembershipAsync(candidate.Id, clinicAccountId.Value);
                     if (!verified)
@@ -257,7 +261,6 @@ namespace MedPal.API.Services.Implementations
                 Address = "Sin configurar",
                 Phone = request.PatientPhone ?? "",
                 Email = $"pendiente_{Guid.NewGuid():N}@clinicflow.temp", // Email temporal único
-                AccountId = clinicAccountId,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };

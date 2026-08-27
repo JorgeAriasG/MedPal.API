@@ -134,7 +134,6 @@ namespace MedPal.API.Data.Seeders
                     Lastname = rndLastName,
                     IsDeleted = false,
                     CreatedAt = DateTime.UtcNow,
-                    AccountId = account.Id,
                     PatientDetails = new PatientDetails
                     {
                         CreatedAt = DateTime.UtcNow,
@@ -172,6 +171,17 @@ namespace MedPal.API.Data.Seeders
 
             var patientClinics = patients.Select(p => new PatientClinic { PatientId = p.Id, ClinicId = clinicA.Id, CreatedAt = DateTime.UtcNow }).ToList();
             context.PatientClinics.AddRange(patientClinics);
+
+            var patientAccounts = patients.Select(p => new PatientAccount
+            {
+                PatientId = p.Id,
+                AccountId = account.Id,
+                IsPrimaryAccount = true,
+                IsVerifiedByPatient = true,
+                ConsentToShareProfile = true,
+                CreatedAt = DateTime.UtcNow
+            }).ToList();
+            context.PatientAccounts.AddRange(patientAccounts);
             await context.SaveChangesAsync();
 
             var today = DateTime.UtcNow;

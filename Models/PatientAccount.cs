@@ -5,7 +5,7 @@ namespace MedPal.API.Models
 {
     /// <summary>
     /// Membership of a patient in an account (M:N).
-    /// Patient.AccountId remains the denormalized primary account for tenancy queries.
+    /// Tenancy is resolved through this table; the primary membership gates staff access.
     /// Cross-account memberships require patient verification before the account can book appointments.
     /// </summary>
     public class PatientAccount : ISoftDelete, IAuditableEntity
@@ -17,7 +17,7 @@ namespace MedPal.API.Models
         public virtual Account Account { get; set; }
 
         /// <summary>
-        /// True when this is the patient's primary account (mirrors Patient.AccountId).
+        /// True when this is the patient's primary account (gates staff access).
         /// </summary>
         public bool IsPrimaryAccount { get; set; } = false;
 

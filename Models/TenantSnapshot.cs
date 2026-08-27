@@ -22,8 +22,10 @@ public sealed record TenantSnapshot
         string.Equals(Role, "SuperAdmin", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
-    /// True when an authenticated user exists (UserId is set).
-    /// False during migrations, seeders, background jobs without HTTP context.
+    /// True when an authenticated STAFF user exists (UserId is set).
+    /// False during migrations, seeders, background jobs without HTTP context,
+    /// for anonymous callers, and for patient portal tokens (patients are not
+    /// tenant principals - their data is scoped by explicit patientId filters).
     /// </summary>
     public bool HasContext => UserId != null;
 }

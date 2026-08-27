@@ -32,7 +32,6 @@ namespace MedPal.API.Models
         // Navegaciones
         public virtual ICollection<Clinic> Clinics { get; set; } = new List<Clinic>();
         public virtual ICollection<User> Users { get; set; } = new List<User>();
-        public virtual ICollection<Patient> Patients { get; set; } = new List<Patient>();
         public virtual ICollection<PatientAccount> PatientAccounts { get; set; } = new List<PatientAccount>();
         public virtual ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
     }

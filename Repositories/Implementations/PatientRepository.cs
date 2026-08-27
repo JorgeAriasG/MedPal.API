@@ -168,10 +168,8 @@ namespace MedPal.API.Repositories.Implementations
                 return;
             }
 
-            var patientAccountId = await _context.Patients
-                .Where(p => p.Id == patientId)
-                .Select(p => p.AccountId)
-                .FirstOrDefaultAsync();
+            var hasPrimary = await _context.PatientAccounts
+                .AnyAsync(pa => pa.PatientId == patientId && pa.IsPrimaryAccount && !pa.IsDeleted);
 
             foreach (var accountId in accountIds)
             {
@@ -180,11 +178,14 @@ namespace MedPal.API.Repositories.Implementations
 
                 if (exists == null)
                 {
+                    var isPrimary = !hasPrimary;
+                    if (isPrimary) hasPrimary = true;
+
                     _context.PatientAccounts.Add(new PatientAccount
                     {
                         PatientId = patientId,
                         AccountId = accountId,
-                        IsPrimaryAccount = patientAccountId == accountId,
+                        IsPrimaryAccount = isPrimary,
                         CreatedAt = DateTime.UtcNow
                     });
                 }
@@ -210,6 +211,18 @@ namespace MedPal.API.Repositories.Implementations
 
         public async Task CreatePatientAccountAsync(int patientId, int accountId, bool isPrimary, bool isVerifiedByPatient, bool? consentToShareProfile)
         {
+            if (isPrimary)
+            {
+                var others = await _context.PatientAccounts
+                    .Where(pa => pa.PatientId == patientId && pa.AccountId != accountId && pa.IsPrimaryAccount && !pa.IsDeleted)
+                    .ToListAsync();
+                foreach (var other in others)
+                {
+                    other.IsPrimaryAccount = false;
+                    _context.PatientAccounts.Update(other);
+                }
+            }
+
             var existing = await _context.PatientAccounts
                 .FirstOrDefaultAsync(pa => pa.PatientId == patientId && pa.AccountId == accountId);
 

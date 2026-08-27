@@ -23,8 +23,9 @@ namespace MedPal.API.Repositories.Implementations
             var clinicId = _tenantContext.CurrentClinicId;
 
             return query.Where(pd =>
-                pd.Patient.AccountId == accountId ||
-                (pd.Patient.AccountId == null && clinicId.HasValue &&
+                pd.Patient.PatientAccounts.Any(pa =>
+                    pa.AccountId == accountId && !pa.IsDeleted) ||
+                (clinicId.HasValue &&
                  pd.Patient.PatientClinics.Any(pc => pc.ClinicId == clinicId.Value && !pc.IsDeleted)));
         }
 

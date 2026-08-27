@@ -56,7 +56,6 @@ namespace MedPal.API.Controllers
                 Address = dto.Address ?? "Sin configurar",
                 Dob = dto.Dob ?? DateTime.UtcNow.AddYears(-30),
                 Gender = dto.Gender ?? "No especificado",
-                AccountId = primaryAccountId,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -121,7 +120,6 @@ namespace MedPal.API.Controllers
                 Address = dto.Address ?? "Sin configurar",
                 Dob = dto.Dob ?? DateTime.UtcNow.AddYears(-30),
                 Gender = dto.Gender ?? "No especificado",
-                AccountId = null,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };

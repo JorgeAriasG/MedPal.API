@@ -65,7 +65,12 @@ namespace MedPal.API.Authorization
             var accountId = _tenantContext.CurrentAccountId;
             if (accountId.HasValue)
             {
-                if (patient.AccountId.HasValue && patient.AccountId.Value == accountId.Value)
+                // Primary-account membership: staff of the patient's home account
+                if (patient.PatientAccounts != null &&
+                    patient.PatientAccounts.Any(pa =>
+                        pa.AccountId == accountId.Value &&
+                        pa.IsPrimaryAccount &&
+                        !pa.IsDeleted))
                 {
                     context.Succeed(requirement);
                     return;
@@ -82,9 +87,9 @@ namespace MedPal.API.Authorization
                     return;
                 }
 
-                // Legacy patient without account: allow staff whose clinic is linked to the patient.
+                // Patient without membership in this account: allow staff whose clinic is linked to the patient.
                 var clinicId = _tenantContext.CurrentClinicId;
-                if (patient.AccountId == null && clinicId.HasValue &&
+                if (clinicId.HasValue &&
                     patient.PatientClinics != null &&
                     patient.PatientClinics.Any(pc => pc.ClinicId == clinicId.Value && !pc.IsDeleted))
                 {

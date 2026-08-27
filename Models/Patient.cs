@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using MedPal.API.Interfaces;
 
 namespace MedPal.API.Models
@@ -52,10 +51,6 @@ namespace MedPal.API.Models
         [Required]
         public DateTime? UpdatedAt { get; set; }
         
-        // Multi-tenancy denormalized para queries rápidas
-        [ForeignKey("Account")]
-        public int? AccountId { get; set; }
-
         // Relación opcional con User (para portal de pacientes)
         public int? UserId { get; set; }
 
@@ -78,7 +73,6 @@ namespace MedPal.API.Models
         public bool IsWhatsAppConsented { get; set; } = false;
 
         // Navigation Properties
-        public virtual Account Account { get; set; }
         public virtual User User { get; set; }
         public virtual PatientDetails PatientDetails { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }

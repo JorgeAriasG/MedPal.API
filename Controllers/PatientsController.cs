@@ -80,12 +80,6 @@ namespace MedPal.API.Controllers
             var patient = _mapper.Map<Patient>(patientWriteDto);
             patient.Phone = PhoneNormalizer.Normalize(patientWriteDto.Phone) ?? patientWriteDto.Phone ?? "";
             patient.Dob.ToLocalTime();
-            var accountIdClaim = User.FindFirst("account_id");
-            if (!int.TryParse(accountIdClaim?.Value, out int accountId))
-            {
-                return Unauthorized("Usuario no tiene AccountId asignado");
-            }
-            patient.AccountId = accountId;
             patient.CreatedByUserId = userId;
             patient.CreatedAt = DateTime.UtcNow;
             var createdPatient = await _patientRepository.AddPatientAsync(patient);

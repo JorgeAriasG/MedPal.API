@@ -46,6 +46,7 @@ namespace MedPal.API.Controllers
 
         // POST: api/consent/grant
         [HttpPost("grant")]
+        [Authorize(Policy = "ManagePatientsPolicy")]
         public async Task<ActionResult<ConsentReadDTO>> GrantConsent([FromBody] ConsentGrantDTO dto)
         {
             var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -65,11 +66,11 @@ namespace MedPal.API.Controllers
 
         // POST: api/consent/{id}/revoke
         [HttpPost("{id}/revoke")]
+        [Authorize(Policy = "ManagePatientsPolicy")]
         public async Task<IActionResult> RevokeConsent(int id)
         {
-            // Find the consent first
-            var consents = await _consentService.GetPatientConsentsAsync(0); // We'll need to find by id
-            var consent = consents.FirstOrDefault(c => c.Id == id);
+            // Find the consent by ID (Bug 3 fix: was calling GetPatientConsentsAsync(0))
+            var consent = await _consentService.GetConsentByIdAsync(id);
             if (consent == null) return NotFound();
 
             var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

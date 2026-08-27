@@ -46,6 +46,14 @@ namespace MedPal.API.Services
         Task<bool> IsConsentValidAsync(int patientDetailsId, int requestingClinicId, int ownerClinicId);
 
         /// <summary>
+        /// Retrieves a single consent record by its ID, including soft-deleted records.
+        /// Used for consent operations that target a specific consent (e.g., revoke by ID).
+        /// </summary>
+        /// <param name="consentId">The consent record's primary key</param>
+        /// <returns>The PatientConsent record if found; null otherwise</returns>
+        Task<PatientConsent?> GetConsentByIdAsync(int consentId);
+
+        /// <summary>
         /// Retrieves all non-deleted consent records for a specific patient.
         /// Includes expired consents for audit purposes.
         /// </summary>

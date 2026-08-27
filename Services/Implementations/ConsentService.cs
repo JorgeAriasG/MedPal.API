@@ -192,6 +192,30 @@ namespace MedPal.API.Services.Implementations
         }
 
         /// <summary>
+        /// Retrieves a single consent record by its ID, including soft-deleted records.
+        /// Uses IgnoreQueryFilters to find revoked consents (needed for revoke-by-ID flow).
+        /// </summary>
+        public async Task<PatientConsent?> GetConsentByIdAsync(int consentId)
+        {
+            try
+            {
+                return await _context.PatientConsents
+                    .IgnoreQueryFilters()
+                    .Include(pc => pc.RequestingClinic)
+                    .Include(pc => pc.OwnerClinic)
+                    .Include(pc => pc.ApprovedByUser)
+                    .Include(pc => pc.TargetDoctor)
+                    .Include(pc => pc.PatientDetails).ThenInclude(pd => pd.Patient)
+                    .FirstOrDefaultAsync(pc => pc.Id == consentId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error retrieving consent by ID {consentId}: {ex.Message}");
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Retrieves all non-deleted consent records for a specific patient.
         /// </summary>
         public async Task<IEnumerable<PatientConsent>> GetPatientConsentsAsync(int patientDetailsId)
@@ -203,6 +227,8 @@ namespace MedPal.API.Services.Implementations
                     .Include(pc => pc.RequestingClinic)
                     .Include(pc => pc.OwnerClinic)
                     .Include(pc => pc.ApprovedByUser)
+                    .Include(pc => pc.TargetDoctor)
+                    .Include(pc => pc.PatientDetails).ThenInclude(pd => pd.Patient)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -229,6 +255,9 @@ namespace MedPal.API.Services.Implementations
                         (pc.ExpiryDate == null || pc.ExpiryDate > now))
                     .Include(pc => pc.RequestingClinic)
                     .Include(pc => pc.OwnerClinic)
+                    .Include(pc => pc.ApprovedByUser)
+                    .Include(pc => pc.TargetDoctor)
+                    .Include(pc => pc.PatientDetails).ThenInclude(pd => pd.Patient)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -250,8 +279,11 @@ namespace MedPal.API.Services.Implementations
                         pc.PatientDetailsId == patientDetailsId &&
                         pc.RequestingClinicId == requestingClinicId &&
                         !pc.IsDeleted)
+                    .Include(pc => pc.RequestingClinic)
                     .Include(pc => pc.OwnerClinic)
                     .Include(pc => pc.ApprovedByUser)
+                    .Include(pc => pc.TargetDoctor)
+                    .Include(pc => pc.PatientDetails).ThenInclude(pd => pd.Patient)
                     .ToListAsync();
             }
             catch (Exception ex)

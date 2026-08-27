@@ -133,7 +133,13 @@ namespace MedPal.API.Mapping
             CreateMap<Cie10Code, Cie10CodeDTO>().ReverseMap();
 
             // Consent mappings
-            CreateMap<PatientConsent, ConsentReadDTO>().ReverseMap();
+            CreateMap<PatientConsent, ConsentReadDTO>()
+                .ForMember(dest => dest.RequestingClinicName, opt => opt.MapFrom(src => src.RequestingClinic != null ? src.RequestingClinic.Name : null))
+                .ForMember(dest => dest.OwnerClinicName, opt => opt.MapFrom(src => src.OwnerClinic != null ? src.OwnerClinic.Name : null))
+                .ForMember(dest => dest.PatientName, opt => opt.MapFrom(src => src.PatientDetails != null && src.PatientDetails.Patient != null ? src.PatientDetails.Patient.Name : null))
+                .ForMember(dest => dest.ApprovedByUserName, opt => opt.MapFrom(src => src.ApprovedByUser != null ? src.ApprovedByUser.Name : null))
+                .ForMember(dest => dest.TargetDoctorName, opt => opt.MapFrom(src => src.TargetDoctor != null ? src.TargetDoctor.Name : null))
+                .ReverseMap();
 
             // Waitlist mappings
             CreateMap<WaitlistRegisterDTO, WaitlistEntry>()

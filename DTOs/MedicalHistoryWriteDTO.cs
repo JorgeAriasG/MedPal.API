@@ -29,9 +29,6 @@ namespace MedPal.API.DTOs
         // Tratamientos/procedimientos as JSON string (e.g. [{"name":"...","description":"..."}])
         public string? Treatments { get; set; }
 
-        // Relación opcional con una Prescription
-        public int? PrescriptionId { get; set; }
-
         public bool IsConfidential { get; set; } = true;
     }
 }

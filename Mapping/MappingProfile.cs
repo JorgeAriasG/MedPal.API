@@ -53,7 +53,6 @@ namespace MedPal.API.Mapping
                 .ForMember(dest => dest.PatientDetails, opt => opt.Ignore())
                 .ForMember(dest => dest.HealthcareProfessional, opt => opt.Ignore())
                 .ForMember(dest => dest.LastModifiedByUser, opt => opt.Ignore())
-                .ForMember(dest => dest.Prescription, opt => opt.Ignore())
                 .ForMember(dest => dest.OwnerClinic, opt => opt.Ignore());
             CreateMap<MedicalHistoryWriteDTO, MedicalHistory>(MemberList.Source);
             CreateMap<Allergy, AllergyReadDTO>().ReverseMap();

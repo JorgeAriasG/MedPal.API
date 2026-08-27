@@ -17,6 +17,7 @@ namespace MedPal.API.Repositories.Implementations
         {
             return await _context.Set<PatientAuth>()
                 .Include(pa => pa.Patient)
+                .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(pa => pa.Email.ToLower() == email.ToLower());
         }
 
@@ -24,6 +25,7 @@ namespace MedPal.API.Repositories.Implementations
         {
             return await _context.Set<PatientAuth>()
                 .Include(pa => pa.Patient)
+                .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(pa => pa.PatientId == patientId);
         }
 

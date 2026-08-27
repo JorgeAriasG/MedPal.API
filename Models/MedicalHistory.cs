@@ -38,10 +38,6 @@ namespace MedPal.API.Models
         // Fecha de seguimiento recomendado
         public DateTime? FollowUpDate { get; set; }
 
-        // Relación con Prescription (opcional - si se prescribió algo)
-        [ForeignKey("Prescription")]
-        public int? PrescriptionId { get; set; }
-
         // Datos de auditoría (cumplimiento LSSI-PC/NOM)
         [Required]
         public DateTime CreatedAt { get; set; }
@@ -78,7 +74,6 @@ namespace MedPal.API.Models
         public virtual PatientDetails PatientDetails { get; set; }
         public virtual User HealthcareProfessional { get; set; }
         public virtual User LastModifiedByUser { get; set; }
-        public virtual Prescription Prescription { get; set; }
         public virtual Clinic OwnerClinic { get; set; }
     }
 }

@@ -85,6 +85,7 @@ namespace MedPal.API.Services
                 .Include(a => a.Role)
                 .Include(a => a.Clinic)
                 .Include(a => a.AssignedByUser)
+                .IgnoreQueryFilters()
                 .AsQueryable();
 
             if (userId.HasValue)

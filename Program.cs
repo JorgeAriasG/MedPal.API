@@ -191,7 +191,9 @@ builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 builder.Services.AddScoped<IStripeService, StripeService>();
 builder.Services.AddScoped<IPendingRegistrationRepository, PendingRegistrationRepository>();
-builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+        builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+        builder.Services.AddScoped<IPatientRegistrationTokenRepository, PatientRegistrationTokenRepository>();
+        builder.Services.AddScoped<IBookingLinkService, BookingLinkService>();
 
 // Notification Services (Phase 3 + WhatsApp)
 builder.Services.Configure<WhatsAppSettings>(builder.Configuration.GetSection("WhatsApp"));

@@ -3,6 +3,7 @@ using MedPal.API.Data;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Services;
+using MedPal.API.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedPal.API.Repositories.Implementations
@@ -277,6 +278,71 @@ namespace MedPal.API.Repositories.Implementations
                     pa.AccountId == accountId &&
                     pa.IsVerifiedByPatient &&
                     !pa.IsDeleted);
+        }
+
+        public async Task<Patient?> FindPatientByPhoneAsync(string phone)
+        {
+            var normalized = PhoneNormalizer.Normalize(phone ?? "") ?? phone ?? "";
+            return await _context.Patients
+                .IgnoreQueryFilters()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => !p.IsDeleted && (p.Phone == normalized || p.Phone == phone));
+        }
+
+        // Auto-provisioning (A5): any booking ensures the clinic's owning account has a membership.
+        // Primary if the patient has none yet, otherwise secondary. Idempotent.
+        public async Task EnsureAccountMembershipAsync(int patientId, int clinicId)
+        {
+            var accountId = await _context.Clinics
+                .Where(c => c.Id == clinicId && c.AccountId.HasValue && !c.IsDeleted)
+                .Select(c => (int?)c.AccountId!.Value)
+                .FirstOrDefaultAsync();
+            if (!accountId.HasValue)
+                return;
+
+            var hasMembership = await _context.PatientAccounts
+                .AnyAsync(pa => pa.PatientId == patientId && pa.AccountId == accountId.Value && !pa.IsDeleted);
+            if (hasMembership)
+                return;
+
+            var hasPrimary = await _context.PatientAccounts
+                .AnyAsync(pa => pa.PatientId == patientId && pa.IsPrimaryAccount && !pa.IsDeleted);
+
+            _context.PatientAccounts.Add(new PatientAccount
+            {
+                PatientId = patientId,
+                AccountId = accountId.Value,
+                IsPrimaryAccount = !hasPrimary,
+                CreatedAt = DateTime.UtcNow
+            });
+
+            var hasClinicLink = await _context.PatientClinics
+                .AnyAsync(pc => pc.PatientId == patientId && pc.ClinicId == clinicId && !pc.IsDeleted);
+            if (!hasClinicLink)
+            {
+                _context.PatientClinics.Add(new PatientClinic
+                {
+                    PatientId = patientId,
+                    ClinicId = clinicId,
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        // Consent given by the patient at booking confirmation: marks the membership verified + consented.
+        public async Task GrantConsentAsync(int patientId, int accountId)
+        {
+            var membership = await _context.PatientAccounts
+                .FirstOrDefaultAsync(pa => pa.PatientId == patientId && pa.AccountId == accountId && !pa.IsDeleted);
+            if (membership == null)
+                return;
+
+            membership.IsVerifiedByPatient = true;
+            membership.ConsentToShareProfile = true;
+            membership.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
         }
     }
 }

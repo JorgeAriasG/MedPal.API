@@ -23,5 +23,8 @@ namespace MedPal.API.Repositories
         Task<int?> GetClinicAccountIdAsync(int clinicId);
         Task CreatePatientAccountAsync(int patientId, int accountId, bool isPrimary, bool isVerifiedByPatient, bool? consentToShareProfile);
         Task<bool> HasVerifiedMembershipAsync(int patientId, int accountId);
+        Task<Patient?> FindPatientByPhoneAsync(string phone);
+        Task EnsureAccountMembershipAsync(int patientId, int clinicId);
+        Task GrantConsentAsync(int patientId, int accountId);
     }
 }

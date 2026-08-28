@@ -37,6 +37,7 @@ namespace MedPal.API.Data
         public DbSet<Payment> Payments { get; set; }
         public DbSet<PatientClinic> PatientClinics { get; set; }
         public DbSet<PatientAccount> PatientAccounts { get; set; }
+        public DbSet<PatientRegistrationToken> PatientRegistrationTokens { get; set; }
         public DbSet<NotificationMessage> NotificationMessages { get; set; }
         public DbSet<WhatsAppInteraction> WhatsAppInteractions { get; set; }
 

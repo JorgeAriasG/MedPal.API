@@ -19,8 +19,27 @@ namespace MedPal.API.Repositories.Implementations
 
         public async Task<IEnumerable<Patient>> GetAllPatientsAsync(int clinicId, int? userId = null, string? search = null, string? sortBy = "name", bool descending = false)
         {
-            IQueryable<Patient> query = _context.Patients
-                .Where(p => p.PatientClinics.Any(pc => pc.ClinicId == clinicId));
+            var owningAccountId = await _context.Clinics
+                .Where(c => c.Id == clinicId)
+                .Select(c => (int?)c.AccountId)
+                .FirstOrDefaultAsync();
+
+            // Account-based roster (T02 A6): the account is the parent of one or all clinics in
+            // the tenant, so the roster is scoped to the patient's eligible membership in the
+            // account that owns the selected clinic. Tenant-less clinics (legacy) keep the
+            // clinic-link roster.
+            IQueryable<Patient> query;
+            if (owningAccountId.HasValue)
+            {
+                query = _context.Patients.Where(p => p.PatientAccounts.Any(pa =>
+                    pa.AccountId == owningAccountId.Value &&
+                    !pa.IsDeleted &&
+                    (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false)))));
+            }
+            else
+            {
+                query = _context.Patients.Where(p => p.PatientClinics.Any(pc => pc.ClinicId == clinicId));
+            }
 
             if (!string.IsNullOrWhiteSpace(search))
             {

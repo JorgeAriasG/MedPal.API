@@ -52,6 +52,8 @@ Return an analysis report with cited paths, proposed contract, affected files, t
 
 ## Implementation evidence
 
+> Superseded note (T02 revision, 2026-08-27): D2/D3 framed membership as the patient-discovery scope and D3 deferred "broader secondary semantics" to T02. The T02 revision replaces that framing per the human owner: `PatientAccount` gates staff access only, patient browse is radius-based regardless of membership (ADR-004, acceptance #3), and booking auto-provisions the membership rather than being gated by it. See `T02-decisions.md` A1-A7.
+
 ### Decisions accepted (human owner, D1-D3)
 
 - **D1** `Discovery:AllowAnonymousPublicClinics` defaults to `false` (secure-off). Global clinic exposure must not be the default; unresolved eligibility returns an empty result or a controlled 401/404, never all clinics.

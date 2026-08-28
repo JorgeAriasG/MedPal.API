@@ -2,7 +2,7 @@
 
 - [x] T01 Capture endpoint/database contract tests and cross-account denial tests.
 - [x] T02 Approve patient-account eligibility, radius, Connect merchant boundary, and provider-storage decisions.
-- [ ] T02b Align the staff-access predicate (A6): eligible-membership filter/handler, demote clinic-link fallback to legacy ghosts; relink ghosts 1002/2002/2003.
+- [x] T02b Align the staff-access predicate (A6): eligible-membership filter/handler, account-based staff roster, demote clinic-link fallback to legacy ghosts; relink ghosts 1002/2002/2003 (memberships + clinic links backfilled, live-verified).
 - [ ] T02c Booking self-service and share link (A5/A7): membership auto-provisioning, name+phone ghost path, staff share URL, unique-token registration completion.
 - [ ] T03 Add expand-only schema and module interfaces.
 - [ ] T04 Implement geocoding adapter, durable job, restartable backfill, and review state.

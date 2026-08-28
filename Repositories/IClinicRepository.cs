@@ -19,5 +19,12 @@ namespace MedPal.API.Repositories
         Task<bool> UserBelongsToClinicAsync(int userId, int clinicId);
         Task<IEnumerable<Clinic>> GetAllClinicsAsync();
         Task<IEnumerable<Clinic>> GetAllClinicsAsync(int userId);
+
+        /// <summary>
+        /// Clinics a patient is eligible to discover: clinics of the patient's
+        /// primary plus any active (non-deleted) account memberships (T01, D3).
+        /// Clinics without an AccountId are never eligible.
+        /// </summary>
+        Task<IEnumerable<Clinic>> GetPatientClinicsAsync(int patientId);
     }
 }

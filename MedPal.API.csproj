@@ -28,4 +28,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="MedPal.API.Tests\**" />
+    <EmbeddedResource Remove="MedPal.API.Tests\**" />
+    <None Remove="MedPal.API.Tests\**" />
+  </ItemGroup>
+
 </Project>

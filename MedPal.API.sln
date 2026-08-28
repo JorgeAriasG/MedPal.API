@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedPal.API", "MedPal.API.csproj", "{44A806EA-C703-49B8-88DB-1D3416E85EA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedPal.API.Tests", "..\MedPal.API.Tests\MedPal.API.Tests.csproj", "{12E91922-9E51-40B3-9A5D-33C52FF06BD8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedPal.API.Tests", "MedPal.API.Tests\MedPal.API.Tests.csproj", "{12E91922-9E51-40B3-9A5D-33C52FF06BD8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -101,5 +101,19 @@ namespace MedPal.API.Repositories.Implementations
                 .Where(c => !c.IsDeleted)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Clinic>> GetPatientClinicsAsync(int patientId)
+        {
+            return await _context.Clinics
+                .AsNoTracking()
+                .Where(c => !c.IsDeleted
+                    && c.AccountId != null
+                    && _context.PatientAccounts.Any(pa =>
+                        pa.PatientId == patientId
+                        && pa.AccountId == c.AccountId
+                        && !pa.IsDeleted))
+                .OrderBy(c => c.Name)
+                .ToListAsync();
+        }
     }
 }

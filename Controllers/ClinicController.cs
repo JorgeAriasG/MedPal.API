@@ -6,6 +6,7 @@ using AutoMapper;
 using MedPal.API.Models;
 using MedPal.API.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -15,13 +16,15 @@ public class ClinicController : BaseController
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
     private readonly ISubscriptionService _subscriptionService;
+    private readonly IConfiguration _configuration;
 
-    public ClinicController(IClinicRepository clinicRepository, IMapper mapper, IUserService userService, ISubscriptionService subscriptionService)
+    public ClinicController(IClinicRepository clinicRepository, IMapper mapper, IUserService userService, ISubscriptionService subscriptionService, IConfiguration configuration)
     {
         _clinicRepository = clinicRepository;
         _mapper = mapper;
         _userService = userService;
         _subscriptionService = subscriptionService;
+        _configuration = configuration;
     }
 
     // GET: api/clinic
@@ -38,12 +41,34 @@ public class ClinicController : BaseController
         return Ok(clinicReadDTOs);
     }
 
-    // GET: api/clinic/all (public for patient portal)
+    // GET: api/clinic/all - legacy public clinic directory (T01)
+    // Retained behind a feature flag for the compatibility window only.
+    // When Discovery:AllowAnonymousPublicClinics is false (default, secure-off),
+    // the endpoint returns 404 and never enumerates clinics.
     [HttpGet("all")]
     [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<ClinicReadDTO>>> GetAllClinics()
     {
+        if (!_configuration.GetValue<bool>("Discovery:AllowAnonymousPublicClinics"))
+            return NotFound();
+
         var clinics = await _clinicRepository.GetAllClinicsAsync();
+        var clinicReadDTOs = _mapper.Map<IEnumerable<ClinicReadDTO>>(clinics);
+        return Ok(clinicReadDTOs);
+    }
+
+    // GET: api/patient/clinics - tenant-safe patient clinic discovery (T01)
+    // Returns only clinics of the patient's primary + active account memberships.
+    // No patient_id claim -> 401; no eligible memberships -> empty list, never global.
+    [HttpGet("~/api/patient/clinics")]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<ClinicReadDTO>>> GetPatientClinics()
+    {
+        var patientIdClaim = User.FindFirst("patient_id");
+        if (patientIdClaim == null || !int.TryParse(patientIdClaim.Value, out var patientId))
+            return Unauthorized();
+
+        var clinics = await _clinicRepository.GetPatientClinicsAsync(patientId);
         var clinicReadDTOs = _mapper.Map<IEnumerable<ClinicReadDTO>>(clinics);
         return Ok(clinicReadDTOs);
     }

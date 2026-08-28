@@ -860,7 +860,7 @@ namespace MedPal.API.Data
                         _tenant.IsSuperAdmin ||
                         (_tenant.AccountId != null &&
                             p.PatientAccounts.Any(pa =>
-                                pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                                pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null &&
                             p.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -880,7 +880,7 @@ namespace MedPal.API.Data
                     !a.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && a.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && a.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null && a.ClinicId == _tenant.ClinicId)
                     ));
 
@@ -892,7 +892,7 @@ namespace MedPal.API.Data
                     !i.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && i.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && i.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null && i.Appointment.ClinicId == _tenant.ClinicId)
                     ));
 
@@ -902,7 +902,7 @@ namespace MedPal.API.Data
                     !p.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && p.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && p.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null &&
                             p.Patient.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -914,7 +914,7 @@ namespace MedPal.API.Data
                     !r.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && r.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && r.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null &&
                             r.Patient.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -926,7 +926,7 @@ namespace MedPal.API.Data
                     !ec.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && ec.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && ec.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null &&
                             ec.Patient.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -938,7 +938,7 @@ namespace MedPal.API.Data
                     !pi.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && pi.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && pi.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null &&
                             pi.Patient.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -950,7 +950,7 @@ namespace MedPal.API.Data
                     !wi.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && wi.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && wi.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null && wi.Appointment.ClinicId == _tenant.ClinicId)
                     ));
 
@@ -960,7 +960,7 @@ namespace MedPal.API.Data
                     !ar.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (ar.PatientId != null && _tenant.AccountId != null && ar.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (ar.PatientId != null && _tenant.AccountId != null && ar.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null && ar.PatientId != null &&
                             ar.Patient.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -974,7 +974,7 @@ namespace MedPal.API.Data
                     !pd.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && pd.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && pd.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null &&
                             pd.Patient.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -986,7 +986,7 @@ namespace MedPal.API.Data
                     !mh.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && mh.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && mh.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null &&
                             mh.PatientDetails.Patient.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -998,7 +998,7 @@ namespace MedPal.API.Data
                     !a.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && a.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && a.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null &&
                             a.PatientDetails.Patient.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -1026,7 +1026,7 @@ namespace MedPal.API.Data
                     !vs.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && vs.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && vs.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null &&
                             vs.PatientDetails.Patient.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -1038,7 +1038,7 @@ namespace MedPal.API.Data
                     !bc.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && bc.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && bc.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null &&
                             bc.PatientDetails.Patient.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -1050,7 +1050,7 @@ namespace MedPal.API.Data
                     !ar.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && ar.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && ar.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null &&
                             ar.PatientDetails.Patient.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -1062,7 +1062,7 @@ namespace MedPal.API.Data
                     !dp.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && dp.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && dp.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null &&
                             dp.PatientDetails.Patient.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -1074,7 +1074,7 @@ namespace MedPal.API.Data
                     !np.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && np.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && np.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null &&
                             np.PatientDetails.Patient.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -1086,7 +1086,7 @@ namespace MedPal.API.Data
                     !s.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && s.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && s.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null &&
                             s.PatientDetails.Patient.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -1100,7 +1100,7 @@ namespace MedPal.API.Data
                     !pri.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && pri.Prescription.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && pri.Prescription.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null &&
                             pri.Prescription.Patient.PatientClinics.Any(pc =>
                                 pc.ClinicId == _tenant.ClinicId && !pc.IsDeleted))
@@ -1112,7 +1112,7 @@ namespace MedPal.API.Data
                     !p.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && p.Invoice.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && p.Invoice.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null && p.Invoice.Appointment.ClinicId == _tenant.ClinicId)
                     ));
 
@@ -1150,7 +1150,7 @@ namespace MedPal.API.Data
                     !ca.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && ca.MedicalHistory.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && ca.MedicalHistory.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null && (
                             ca.OwnerClinicId == _tenant.ClinicId ||
                             ca.MedicalHistory.PatientDetails.Patient.PatientClinics.Any(pc =>
@@ -1163,7 +1163,7 @@ namespace MedPal.API.Data
                     !pc.IsDeleted && (
                         !_tenant.HasContext ||
                         _tenant.IsSuperAdmin ||
-                        (_tenant.AccountId != null && pc.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted)) ||
+                        (_tenant.AccountId != null && pc.PatientDetails.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null && (
                             pc.RequestingClinicId == _tenant.ClinicId ||
                             pc.OwnerClinicId == _tenant.ClinicId))

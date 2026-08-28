@@ -122,13 +122,32 @@ namespace MedPal.API.Tests.Authorization
         }
 
         [Fact]
-        public async Task StaffOfAnotherAccount_ButClinicLinked_Succeeds()
+        public async Task StaffOfAnotherAccount_ClinicLinkedButHasEligibleMembershipElsewhere_Fails()
         {
             var patient = CreatePatient(1, primaryAccountId: 2, clinicId: 1);
             _patientRepo.Setup(r => r.GetPatientByIdAsync(1)).ReturnsAsync(patient);
             SetupStaffContext(accountId: 1, clinicId: 1);
 
-            Assert.True(await AuthorizeAsync(StaffPrincipal(1, 1), 1));
+            Assert.False(await AuthorizeAsync(StaffPrincipal(1, 1), 1));
+        }
+
+        [Fact]
+        public async Task StaffCrossAccount_VerifiedButNotConsented_Fails()
+        {
+            var patient = CreatePatient(1, primaryAccountId: 2, clinicId: 5);
+            patient.PatientAccounts!.Add(new PatientAccount
+            {
+                PatientId = 1,
+                AccountId = 1,
+                IsPrimaryAccount = false,
+                IsVerifiedByPatient = true,
+                ConsentToShareProfile = null,
+                IsDeleted = false
+            });
+            _patientRepo.Setup(r => r.GetPatientByIdAsync(1)).ReturnsAsync(patient);
+            SetupStaffContext(accountId: 1, clinicId: 5);
+
+            Assert.False(await AuthorizeAsync(StaffPrincipal(1, 5), 1));
         }
 
         [Fact]

@@ -10,10 +10,11 @@ namespace MedPal.API.Authorization
     /// Authorization handler for patient record access.
     /// Rules:
     /// 1. The owner themselves (portal, patient_id claim) can only access their own record.
-    /// 2. Any staff of the patient's account can access the patient record.
-    ///    Patients without an account (legacy ghosts / portal sign-ups) are visible to
-    ///    staff of a clinic the patient is linked to.
-    /// 3. SuperAdmin has full access.
+    /// 2. Any staff of the patient's eligible account can access the patient record.
+    ///    Eligible = active primary membership, or verified-and-consented secondary (A1).
+    /// 3. Legacy-ghost clinic-link fallback: patients with NO eligible membership anywhere
+    ///    remain reachable by staff of a clinic the patient is linked to (deprecated; T02b).
+    /// 4. SuperAdmin has full access.
     /// </summary>
     public class PatientAccessHandler : AuthorizationHandler<PatientAccessRequirement>
     {
@@ -61,40 +62,37 @@ namespace MedPal.API.Authorization
                 return;
             }
 
-            // RULE 3: Staff of the patient's account
+            // RULE 2: Staff of the patient's eligible account (A1)
             var accountId = _tenantContext.CurrentAccountId;
             if (accountId.HasValue)
             {
-                // Primary-account membership: staff of the patient's home account
+                // Eligible membership: active primary OR verified-and-consented secondary
                 if (patient.PatientAccounts != null &&
                     patient.PatientAccounts.Any(pa =>
                         pa.AccountId == accountId.Value &&
-                        pa.IsPrimaryAccount &&
-                        !pa.IsDeleted))
+                        !pa.IsDeleted &&
+                        (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false)))))
                 {
                     context.Succeed(requirement);
                     return;
                 }
 
-                // Cross-account membership: patient verified the link and consented to share their profile
-                if (patient.PatientAccounts != null &&
+                // RULE 3 (deprecated legacy-ghost fallback): clinic link only grants access
+                // when the patient has NO eligible membership anywhere.
+                var hasEligibleMembershipAnywhere = patient.PatientAccounts != null &&
                     patient.PatientAccounts.Any(pa =>
-                        pa.AccountId == accountId.Value &&
-                        pa.IsVerifiedByPatient &&
-                        (pa.ConsentToShareProfile ?? false)))
+                        !pa.IsDeleted &&
+                        (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))));
+                if (!hasEligibleMembershipAnywhere)
                 {
-                    context.Succeed(requirement);
-                    return;
-                }
-
-                // Patient without membership in this account: allow staff whose clinic is linked to the patient.
-                var clinicId = _tenantContext.CurrentClinicId;
-                if (clinicId.HasValue &&
-                    patient.PatientClinics != null &&
-                    patient.PatientClinics.Any(pc => pc.ClinicId == clinicId.Value && !pc.IsDeleted))
-                {
-                    context.Succeed(requirement);
-                    return;
+                    var clinicId = _tenantContext.CurrentClinicId;
+                    if (clinicId.HasValue &&
+                        patient.PatientClinics != null &&
+                        patient.PatientClinics.Any(pc => pc.ClinicId == clinicId.Value && !pc.IsDeleted))
+                    {
+                        context.Succeed(requirement);
+                        return;
+                    }
                 }
             }
 

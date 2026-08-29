@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using FluentValidation;
+using MedPal.API.Exceptions;
 using Microsoft.AspNetCore.Http;
 
 namespace MedPal.API.Middleware
@@ -68,6 +69,12 @@ namespace MedPal.API.Middleware
                     response.StatusCode = StatusCodes.Status401Unauthorized;
                     response.Error = unAuthEx.Message ?? "No autorizado";
                     response.ErrorType = "UnauthorizedAccessException";
+                    break;
+
+                case ForbiddenAccessException forbiddenEx:
+                    response.StatusCode = StatusCodes.Status403Forbidden;
+                    response.Error = forbiddenEx.Message ?? "Acceso denegado";
+                    response.ErrorType = "ForbiddenAccessException";
                     break;
 
                 case ValidationException valEx:

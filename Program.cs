@@ -9,6 +9,7 @@ using MedPal.API.Interceptors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MedPal.API.Services;
 using MedPal.API.Services.Implementations;
+using MedPal.API.Infrastructure;
 using MedPal.API.Authorization;
 using MedPal.API.Middleware;
 using Microsoft.AspNetCore.Authorization;
@@ -194,6 +195,13 @@ builder.Services.AddScoped<IPendingRegistrationRepository, PendingRegistrationRe
         builder.Services.AddScoped<IRegistrationService, RegistrationService>();
         builder.Services.AddScoped<IPatientRegistrationTokenRepository, PatientRegistrationTokenRepository>();
         builder.Services.AddScoped<IBookingLinkService, BookingLinkService>();
+
+// Booking domain (T02c): Unit of Work + servicios de aplicación. Controllers solo consumen servicios.
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IPatientTokenService, PatientTokenService>();
+builder.Services.AddScoped<IRegistrationNotificationService, RegistrationNotificationService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IPatientRegistrationService, PatientRegistrationService>();
 
 // Notification Services (Phase 3 + WhatsApp)
 builder.Services.Configure<WhatsAppSettings>(builder.Configuration.GetSection("WhatsApp"));

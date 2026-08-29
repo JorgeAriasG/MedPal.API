@@ -1170,6 +1170,19 @@ namespace MedPal.API.Data
                             pc.OwnerClinicId == _tenant.ClinicId))
                     ));
 
+            // PatientRegistrationToken: única hash + FK al paciente; el repo consulta con
+            // IgnoreQueryFilters (no aplica filtro de tenant).
+            modelBuilder.Entity<PatientRegistrationToken>(entity =>
+            {
+                entity.HasIndex(e => e.TokenHash).IsUnique();
+                entity.HasIndex(e => e.PatientId);
+                entity.HasIndex(e => new { e.PatientId, e.Status, e.ExpiresAt });
+                entity.HasOne<Patient>()
+                    .WithMany()
+                    .HasForeignKey(e => e.PatientId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
             base.OnModelCreating(modelBuilder);
         }
 

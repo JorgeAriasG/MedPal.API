@@ -8,6 +8,7 @@ namespace MedPal.API.Repositories
     public interface IAppointmentRepository
     {
         Task<IEnumerable<Appointment>> GetAllAppointmentsByIdAsync(int clinicId, int? userId = null, DateOnly? date = null);
+        Task<IEnumerable<Appointment>> GetPublicOverlapAsync(int clinicId, int userId, DateOnly date);
         Task<Appointment> GetAppointmentByIdAsync(int id);
         Task<Appointment> AddAppointmentAsync(Appointment appointment);
         Task<IEnumerable<Appointment>> GetByPatientIdAsync(int patientId);

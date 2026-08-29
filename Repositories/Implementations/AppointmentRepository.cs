@@ -33,6 +33,14 @@ namespace MedPal.API.Repositories
             return await ApplyTenantFilter(query).ToListAsync();
         }
 
+        public async Task<IEnumerable<Appointment>> GetPublicOverlapAsync(int clinicId, int userId, DateOnly date)
+        {
+            return await _context.Appointments
+                .AsNoTracking()
+                .Where(a => a.ClinicId == clinicId && a.UserId == userId && a.Date == date && !a.IsDeleted)
+                .ToListAsync();
+        }
+
         public async Task<Appointment> GetAppointmentByIdAsync(int id)
         {
             return await ApplyTenantFilter(_context.Appointments)

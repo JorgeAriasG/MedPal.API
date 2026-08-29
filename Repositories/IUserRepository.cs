@@ -9,6 +9,7 @@ namespace MedPal.API.Repositories
     {
         Task<IEnumerable<User>> GetAllUsersAsync();
         Task<User> GetUserByIdAsync(int id);
+        Task<User?> GetByIdIgnoreTenantAsync(int id);
         Task<User> GetOwnProfileAsync(int userId);
         Task<User> GetUserByEmailAsync(string email);
         Task<User> AddUserAsync(User user);

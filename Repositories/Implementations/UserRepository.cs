@@ -41,6 +41,12 @@ namespace MedPal.API.Repositories.Implementations
             return user;
         }
 
+        public async Task<User?> GetByIdIgnoreTenantAsync(int id)
+        {
+            return await _context.Users.AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
+        }
+
         public async Task<List<User>> GetAllUsersByAccountId(int accountId)
         {
             if (!_tenantContext.IsSuperAdmin && _tenantContext.CurrentAccountId != accountId)

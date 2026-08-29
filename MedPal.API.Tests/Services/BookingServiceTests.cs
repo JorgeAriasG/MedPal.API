@@ -101,6 +101,16 @@ namespace MedPal.API.Tests.Services
                     ClinicId = 1,
                     IsDeleted = false
                 });
+            _userRepoMock
+                .Setup(x => x.GetByIdIgnoreTenantAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => new User
+                {
+                    Id = id,
+                    Name = "Doctor",
+                    Email = $"doctor{id}@clinicflow.test",
+                    ClinicId = 1,
+                    IsDeleted = false
+                });
 
             _notificationMock = new Mock<IRegistrationNotificationService>();
 
@@ -115,6 +125,9 @@ namespace MedPal.API.Tests.Services
             var appointmentRepoMock = new Mock<IAppointmentRepository>();
             appointmentRepoMock
                 .Setup(x => x.GetAllAppointmentsByIdAsync(It.IsAny<int>(), It.IsAny<int?>(), It.IsAny<DateOnly?>()))
+                .ReturnsAsync(new List<Appointment>());
+            appointmentRepoMock
+                .Setup(x => x.GetPublicOverlapAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateOnly>()))
                 .ReturnsAsync(new List<Appointment>());
 
             return new BookingService(
@@ -245,6 +258,32 @@ namespace MedPal.API.Tests.Services
 
             Assert.Equal(4, slots.Count); // 08:00 - 10:00 con slots de 30 min
             Assert.All(slots, s => Assert.True(s.IsAvailable));
+
+            _userRepoMock.Verify(x => x.GetByIdIgnoreTenantAsync(2), Times.Once);
+            _userRepoMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task CompleteBooking_Anonymous_ResolvesDoctorIgnoringTenant()
+        {
+            var sr = CreateShareToken();
+            _context.Clinics.Add(new Clinic
+            {
+                Id = 1,
+                Name = "Clinic 1",
+                Location = "Test",
+                ContactInfo = "contact",
+                Open = new TimeOnly(8, 0),
+                Close = new TimeOnly(10, 0),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            });
+            await _context.SaveChangesAsync();
+
+            await _serviceWithRealPatientRepo.CompleteBookingAsync(null, sr, NewGhostDto(sr));
+
+            _userRepoMock.Verify(x => x.GetByIdIgnoreTenantAsync(2), Times.Once);
+            _userRepoMock.Verify(x => x.GetUserByIdAsync(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]

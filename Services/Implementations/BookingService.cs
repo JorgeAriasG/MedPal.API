@@ -75,7 +75,10 @@ namespace MedPal.API.Services.Implementations
             if (clinic == null || clinic.IsDeleted)
                 throw new KeyNotFoundException("Clínica no encontrada.");
 
-            var doctor = await _userRepository.GetUserByIdAsync(doctorId);
+            // Camino público: la resolución de médico ignora el scope de tenant porque
+            // el share-token (firmado) ya autentica la (clínica, médico) y se revalida
+            // que el médico pertenezca a esa clínica.
+            var doctor = await _userRepository.GetByIdIgnoreTenantAsync(doctorId);
             if (doctor == null || doctor.IsDeleted || doctor.ClinicId != clinicId)
                 throw new KeyNotFoundException("Médico no válido para esta clínica.");
 
@@ -197,13 +200,15 @@ namespace MedPal.API.Services.Implementations
             if (clinic == null || clinic.IsDeleted)
                 throw new KeyNotFoundException("Clínica no encontrada.");
 
-            var doctor = await _userRepository.GetUserByIdAsync(d);
+            // Camino público: médico y overlaps se leen ignorando el tenant filter
+            // (autorización vía share-token + revalidación de pertenencia a la clínica).
+            var doctor = await _userRepository.GetByIdIgnoreTenantAsync(d);
             if (doctor == null || doctor.IsDeleted || doctor.ClinicId != c)
                 throw new KeyNotFoundException("Médico no válido para esta clínica.");
 
-            var existingAppointments = await _appointmentRepository.GetAllAppointmentsByIdAsync(c);
+            var existingAppointments = await _appointmentRepository.GetPublicOverlapAsync(c, d, date);
             var doctorAppointments = existingAppointments
-                .Where(a => a.UserId == d && a.Date == date && !a.IsDeleted)
+                .Where(a => !a.IsDeleted)
                 .ToList();
 
             var slots = new List<TimeSlotDTO>();

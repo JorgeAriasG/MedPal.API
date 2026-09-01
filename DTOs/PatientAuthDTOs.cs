@@ -13,9 +13,11 @@ namespace MedPal.API.DTOs
         [Required(ErrorMessage = "El apellido es requerido")]
         public string Lastname { get; set; }
 
-        [Required(ErrorMessage = "El email es requerido")]
         [EmailAddress(ErrorMessage = "El email no es válido")]
-        public string Email { get; set; }
+        public string? Email { get; set; }
+
+        [Required(ErrorMessage = "El número de teléfono es requerido")]
+        public string Phone { get; set; }
 
         [Required(ErrorMessage = "La contraseña es requerida")]
         [StringLength(100, MinimumLength = 8, ErrorMessage = "La contraseña debe tener al menos 8 caracteres")]
@@ -24,8 +26,6 @@ namespace MedPal.API.DTOs
         [Required(ErrorMessage = "La confirmación de contraseña es requerida")]
         [Compare("Password", ErrorMessage = "Las contraseñas no coinciden")]
         public string ConfirmPassword { get; set; }
-
-        public string? Phone { get; set; }
 
         public string? Address { get; set; }
 
@@ -38,9 +38,10 @@ namespace MedPal.API.DTOs
 
     public class PatientLoginDTO
     {
-        [Required(ErrorMessage = "El email es requerido")]
         [EmailAddress(ErrorMessage = "El email no es válido")]
-        public string Email { get; set; }
+        public string? Email { get; set; }
+
+        public string? Phone { get; set; }
 
         [Required(ErrorMessage = "La contraseña es requerida")]
         public string Password { get; set; }

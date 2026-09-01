@@ -61,8 +61,8 @@ namespace MedPal.API.Services.Implementations
                 throw new ValidationException("Token expirado.");
             }
 
-            var email = dto.Email.Trim().ToLower();
-            if (await _authRepository.EmailExistsAsync(email))
+            var email = string.IsNullOrWhiteSpace(dto.Email) ? $"pendiente_{Guid.NewGuid():N}@clinicflow.temp" : dto.Email.Trim().ToLower();
+            if (!email.EndsWith("@clinicflow.temp", StringComparison.OrdinalIgnoreCase) && await _authRepository.EmailExistsAsync(email))
                 throw new ValidationException("El email ya está registrado.");
 
             await _unitOfWork.BeginTransactionAsync();

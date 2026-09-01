@@ -35,9 +35,8 @@ namespace MedPal.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            dto.Email = dto.Email.Trim().ToLower();
-
-            if (await _patientAuthRepository.EmailExistsAsync(dto.Email))
+            var email = ResolvePatientEmail(dto.Email);
+            if (await _patientAuthRepository.EmailExistsAsync(email))
                 return BadRequest(new { message = "El email ya está registrado" });
 
             int? primaryAccountId = null;
@@ -51,7 +50,7 @@ namespace MedPal.API.Controllers
                 Name = dto.Name,
                 Middlename = dto.Middlename ?? "",
                 Lastname = dto.Lastname,
-                Email = dto.Email,
+                Email = email,
                 Phone = PhoneNormalizer.Normalize(dto.Phone) ?? dto.Phone ?? "",
                 Address = dto.Address ?? "Sin configurar",
                 Dob = dto.Dob ?? DateTime.UtcNow.AddYears(-30),
@@ -59,6 +58,10 @@ namespace MedPal.API.Controllers
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
+
+            var phone = PhoneNormalizer.Normalize(dto.Phone) ?? dto.Phone;
+            if (await _patientRepository.FindPatientByPhoneAsync(phone) != null)
+                return BadRequest(new { message = "El número de teléfono ya está registrado" });
 
             var createdPatient = await _patientRepository.AddPatientAsync(patient);
 
@@ -78,21 +81,21 @@ namespace MedPal.API.Controllers
             var patientAuth = new PatientAuth
             {
                 PatientId = createdPatient.Id,
-                Email = dto.Email,
+                Email = email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 CreatedAt = DateTime.UtcNow
             };
 
             await _patientAuthRepository.CreateAsync(patientAuth);
 
-            var token = GeneratePatientToken(createdPatient, dto.Email);
+            var token = GeneratePatientToken(createdPatient, email);
 
             return Ok(new PatientLoginResponseDTO
             {
                 Id = createdPatient.Id,
                 Name = createdPatient.Name,
                 Lastname = createdPatient.Lastname,
-                Email = dto.Email,
+                Email = email,
                 Token = token,
                 Phone = createdPatient.Phone
             });
@@ -105,17 +108,20 @@ namespace MedPal.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            dto.Email = dto.Email.Trim().ToLower();
-
-            if (await _patientAuthRepository.EmailExistsAsync(dto.Email))
+            var email = ResolvePatientEmail(dto.Email);
+            if (await _patientAuthRepository.EmailExistsAsync(email))
                 return BadRequest(new { message = "El email ya está registrado" });
+
+            var phone = PhoneNormalizer.Normalize(dto.Phone) ?? dto.Phone;
+            if (!string.IsNullOrWhiteSpace(phone) && await _patientRepository.FindPatientByPhoneAsync(phone) != null)
+                return BadRequest(new { message = "El número de teléfono ya está registrado" });
 
             var patient = new Patient
             {
                 Name = dto.Name,
                 Middlename = dto.Middlename ?? "",
                 Lastname = dto.Lastname,
-                Email = dto.Email,
+                Email = email,
                 Phone = PhoneNormalizer.Normalize(dto.Phone) ?? dto.Phone ?? "",
                 Address = dto.Address ?? "Sin configurar",
                 Dob = dto.Dob ?? DateTime.UtcNow.AddYears(-30),
@@ -129,21 +135,21 @@ namespace MedPal.API.Controllers
             var patientAuth = new PatientAuth
             {
                 PatientId = createdPatient.Id,
-                Email = dto.Email,
+                Email = email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 CreatedAt = DateTime.UtcNow
             };
 
             await _patientAuthRepository.CreateAsync(patientAuth);
 
-            var token = GeneratePatientToken(createdPatient, dto.Email);
+            var token = GeneratePatientToken(createdPatient, email);
 
             return Ok(new PatientLoginResponseDTO
             {
                 Id = createdPatient.Id,
                 Name = createdPatient.Name,
                 Lastname = createdPatient.Lastname,
-                Email = dto.Email,
+                Email = email,
                 Token = token,
                 Phone = createdPatient.Phone
             });
@@ -156,26 +162,49 @@ namespace MedPal.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            dto.Email = dto.Email.Trim().ToLower();
+            var email = dto.Email?.Trim().ToLower() ?? "";
+            var phone = PhoneNormalizer.Normalize(dto.Phone ?? "") ?? dto.Phone?.Trim() ?? "";
 
-            var auth = await _patientAuthRepository.GetByEmailAsync(dto.Email);
+            if (string.IsNullOrWhiteSpace(email) && string.IsNullOrWhiteSpace(phone))
+                return BadRequest(new { message = "Ingresa tu email o número de teléfono." });
+
+            PatientAuth auth = null;
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                auth = await _patientAuthRepository.GetByEmailAsync(email);
+            }
+            else
+            {
+                var phonePatient = await _patientRepository.FindPatientByPhoneAsync(phone);
+                if (phonePatient != null)
+                    auth = await _patientAuthRepository.GetByPatientIdAsync(phonePatient.Id);
+            }
+
             if (auth == null || !BCrypt.Net.BCrypt.Verify(dto.Password, auth.PasswordHash))
                 return Unauthorized(new { message = "Email o contraseña incorrectos" });
 
             await _patientAuthRepository.UpdateLastLoginAsync(auth.Id);
 
             var patient = auth.Patient;
-            var token = GeneratePatientToken(patient, dto.Email);
+            var token = GeneratePatientToken(patient, patient.Email);
 
             return Ok(new PatientLoginResponseDTO
             {
                 Id = patient.Id,
                 Name = patient.Name,
                 Lastname = patient.Lastname,
-                Email = dto.Email,
+                Email = patient.Email,
                 Token = token,
                 Phone = patient.Phone
             });
+        }
+
+        private static string ResolvePatientEmail(string? email)
+        {
+            if (!string.IsNullOrWhiteSpace(email))
+                return email.Trim().ToLower();
+
+            return $"pendiente_{Guid.NewGuid():N}@clinicflow.temp";
         }
 
         private string GeneratePatientToken(Patient patient, string email)

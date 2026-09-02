@@ -58,6 +58,21 @@ namespace MedPal.API.Services
                 : settings.TemplateName;
 
             var bodyParams = ExtractAllParameters(message.Body);
+
+            var isUrlButtonTemplate = templateName == settings.RegistrationTemplateName;
+            string? urlButtonValue = null;
+            if (isUrlButtonTemplate && bodyParams.Length >= 2)
+            {
+                urlButtonValue = bodyParams[^1];
+                bodyParams = bodyParams[..^1];
+            }
+            else if (isUrlButtonTemplate)
+            {
+                _logger.LogWarning(
+                    "Registration template {TemplateName} requires a URL button but body has only {ParamCount} parameter(s)",
+                    templateName, bodyParams.Length);
+            }
+
             var components = new List<object>
             {
                 new
@@ -66,6 +81,20 @@ namespace MedPal.API.Services
                     parameters = bodyParams.Select(p => new { type = "text", text = p }).ToArray()
                 }
             };
+
+            if (isUrlButtonTemplate && urlButtonValue != null)
+            {
+                components.Add(new
+                {
+                    type = "button",
+                    sub_type = "url",
+                    index = 0,
+                    parameters = new object[]
+                    {
+                        new { type = "text", text = urlButtonValue }
+                    }
+                });
+            }
 
             var isReminderTemplate = templateName == settings.TemplateName;
 

@@ -35,11 +35,8 @@ namespace MedPal.API.Services.Implementations
                 if (patient == null || string.IsNullOrWhiteSpace(patient.Phone))
                     return;
 
-                var baseUrl = _config["Booking:CompleteRegistrationBaseUrl"] ?? "https://portal.clinicflow.com.mx/complete";
-                var link = $"{baseUrl}?token={Uri.EscapeDataString(rawToken)}";
-
-                var body = $"{patient.Name} | {link}";
-                var templateName = _config["WhatsApp:RegistrationTemplateName"] ?? "appointment_created";
+                var body = $"{patient.Name} | {rawToken}";
+                var templateName = _config["WhatsApp:RegistrationTemplateName"] ?? "patient_registration_link";
 
                 var notification = new NotificationMessage
                 {

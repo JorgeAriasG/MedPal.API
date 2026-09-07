@@ -2,12 +2,14 @@ using AutoMapper;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedPal.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class EmergencyContactController : ControllerBase
     {
         private readonly IEmergencyContactRepository _emergencyContactRepository;

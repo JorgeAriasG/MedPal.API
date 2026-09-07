@@ -408,7 +408,17 @@ builder.Services.AddAuthorizationBuilder()
                 _ => false
             };
         });
-    });
+    })
+    // Fase 1 (Endurecimiento crítico): fallback = cualquier endpoint sin [Authorize] explícito
+    // (ni política a nivel de clase) exige usuario autenticado. Los endpoints 100% públicos
+    // deben conservar [AllowAnonymous] explícito a nivel de método (o de clase para webhooks).
+    ;
+
+// FallbackPolicy global (Fase 1): RequireAuthenticatedUser por defecto para TODO
+builder.Services.Configure<Microsoft.AspNetCore.Authorization.AuthorizationOptions>(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+});
 
 builder.Services.AddCors(options =>
 {

@@ -9,6 +9,7 @@ using MedPal.API.Data;
 using MedPal.API.Enums;
 using MedPal.API.Models;
 using MedPal.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -18,6 +19,7 @@ namespace MedPal.API.Controllers
 {
     [ApiController]
     [Route("api/webhooks")]
+    [AllowAnonymous] // Webhook público: la autenticación se valida por firma (X-Hub-Signature-256) en el controlador
     public class WhatsAppWebhookController : ControllerBase
     {
         private readonly WhatsAppSettings _settings;

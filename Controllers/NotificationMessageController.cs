@@ -3,12 +3,14 @@ using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Enums;
 using MedPal.API.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedPal.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class NotificationMessageController : ControllerBase
     {
         private readonly INotificationMessageRepository _notificationMessageRepository;

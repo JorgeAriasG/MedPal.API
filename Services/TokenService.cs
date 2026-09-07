@@ -73,6 +73,9 @@ namespace MedPal.API.Services
             }
 
             // Añadir roles del usuario (desde la relación UserRoles)
+            // Fase 1: si el usuario NO tiene roles, NO se emiten claims de rol ni ClaimTypes.Role.
+            // El JWT se emite igual (el login ya es el gate), pero sin roles el usuario tiene 0
+            // permisos y la FallbackPolicy le barrará casi todo.
             if (user.UserRoles != null && user.UserRoles.Count > 0)
             {
                 foreach (var userRole in user.UserRoles)
@@ -88,12 +91,6 @@ namespace MedPal.API.Services
                         }
                     }
                 }
-            }
-            else
-            {
-                // Si no tiene roles asignados, asignar el rol por defecto
-                claims.Add(new Claim(ClaimTypes.Role, "User"));
-                claims.Add(new Claim("role", "Patient")); // Fase 2: Role por defecto para multi-tenancy
             }
 
             var token = new JwtSecurityToken(

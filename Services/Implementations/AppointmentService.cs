@@ -8,6 +8,7 @@ using MedPal.API.DTOs;
 using MedPal.API.Enums;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
+using MedPal.API.Utils;
 
 namespace MedPal.API.Services.Implementations
 {
@@ -242,14 +243,30 @@ namespace MedPal.API.Services.Implementations
         /// </summary>
         private async Task<Patient> CreateGhostPatientAsync(AppointmentWriteDTO request)
         {
-            // Parsear nombre: "Juan Pérez" → Name="Juan", Lastname="Pérez"
             var nameParts = request.PatientName!.Trim().Split(' ', 2);
             var firstName = nameParts[0];
-            var lastName = nameParts.Length > 1 ? nameParts[1] : "Sin apellido";
 
             var clinicAccountId = request.ClinicId.HasValue
                 ? await _patientRepository.GetClinicAccountIdAsync(request.ClinicId.Value)
                 : null;
+
+            var normalizedPhone = PhoneNormalizer.Normalize(request.PatientPhone ?? "") ?? request.PatientPhone ?? "";
+
+            // Dedupe por teléfono (staff): si el paciente ya existe, reutilizarlo y solo
+            // asegurar el vínculo a la clínica. Nunca se sobrescribe su cuenta primaria
+            // ni sus flags de verificación/consentimiento.
+            if (!string.IsNullOrWhiteSpace(normalizedPhone))
+            {
+                var existing = await _patientRepository.FindPatientByPhoneAsync(normalizedPhone);
+                if (existing != null)
+                {
+                    if (request.ClinicId.HasValue)
+                        await _patientRepository.AddPatientClinicsAsync(existing.Id, new List<int> { request.ClinicId.Value });
+                    return existing;
+                }
+            }
+
+            var lastName = nameParts.Length > 1 ? nameParts[1] : "Sin apellido";
 
             var ghostPatient = new Patient
             {
@@ -259,7 +276,7 @@ namespace MedPal.API.Services.Implementations
                 Dob = DateTime.UtcNow.AddYears(-30), // Default: 30 años (el médico actualizará)
                 Gender = "No especificado",
                 Address = "Sin configurar",
-                Phone = request.PatientPhone ?? "",
+                Phone = normalizedPhone,
                 Email = $"pendiente_{Guid.NewGuid():N}@clinicflow.temp", // Email temporal único
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow

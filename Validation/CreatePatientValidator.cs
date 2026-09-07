@@ -19,8 +19,7 @@ public class CreatePatientValidator : AbstractValidator<PatientWriteDTO>
             .MaximumLength(100).WithMessage("Name cannot exceed 100 characters");
 
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("Email is required")
-            .EmailAddress().WithMessage("Invalid email format")
+            .EmailAddress().When(x => !string.IsNullOrEmpty(x.Email)).WithMessage("Invalid email format")
             .MustAsync(BeUniqueEmail).When(x => !string.IsNullOrEmpty(x.Email)).WithMessage("Email already exists");
 
         RuleFor(x => x.Dob)

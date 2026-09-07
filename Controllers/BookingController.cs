@@ -25,15 +25,18 @@ namespace MedPal.API.Controllers
     {
         private readonly IBookingService _bookingService;
         private readonly IPatientRegistrationService _registrationService;
+        private readonly IAppointmentReminderService _reminderService;
         private readonly ILogger<BookingController> _logger;
 
         public BookingController(
             IBookingService bookingService,
             IPatientRegistrationService registrationService,
+            IAppointmentReminderService reminderService,
             ILogger<BookingController> logger)
         {
             _bookingService = bookingService;
             _registrationService = registrationService;
+            _reminderService = reminderService;
             _logger = logger;
         }
 
@@ -44,6 +47,18 @@ namespace MedPal.API.Controllers
             try
             {
                 var result = await _bookingService.CompleteBookingAsync(GetAuthPatientId(), dto.Sr, dto);
+                
+                if(result == null)
+                    return NotFound(new { message = "No se encontró la reserva." });
+
+                if(result.AppointmentId > 0)
+                {
+                    // Send whatsapp notification if the appointment was successfully created
+                    await SendCreatedMessageAsync(result.AppointmentId, _reminderService);
+                }
+                    
+
+
                 return Ok(result);
             }
             catch (UnauthorizedAccessException)
@@ -153,6 +168,18 @@ namespace MedPal.API.Controllers
         {
             _logger.LogError(ex, "Error no esperado en booking flow");
             return StatusCode((int)HttpStatusCode.InternalServerError, new { message = "Error interno del servidor." });
+        }
+
+        private async Task SendCreatedMessageAsync(int appointmentId, IAppointmentReminderService reminderService)
+        {
+            try
+            {
+                await reminderService.SendCreatedMessageForAppointmentAsync(appointmentId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send created message for Appointment {Id}", appointmentId);
+            }
         }
     }
 }

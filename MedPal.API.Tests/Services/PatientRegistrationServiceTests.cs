@@ -32,7 +32,6 @@ namespace MedPal.API.Tests.Services
     {
         private readonly SqliteConnection _connection;
         private readonly AppDbContext _context;
-        private readonly IMapper _mapper;
         private readonly Moq.Mock<IPatientTokenService> _tokenServiceMock;
         private readonly Moq.Mock<IRegistrationNotificationService> _notificationMock;
         private readonly PatientRegistrationService _service;
@@ -49,8 +48,6 @@ namespace MedPal.API.Tests.Services
             _context = new AppDbContext(options, new EncryptionProvider(new ConfigurationBuilder().Build()));
             _context.Database.EnsureCreated();
 
-            _mapper = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>()).CreateMapper();
-
             _tokenServiceMock = new Moq.Mock<IPatientTokenService>();
             _tokenServiceMock.Setup(x => x.GeneratePatientToken(It.IsAny<Patient>(), It.IsAny<string>()))
                 .Returns("jwt-test");
@@ -59,7 +56,7 @@ namespace MedPal.API.Tests.Services
 
             _service = new PatientRegistrationService(
                 new PatientAuthRepository(_context),
-                new PatientRepository(_context, _mapper, Mock.Of<ITenantContextService>()),
+                new PatientRepository(_context, Mock.Of<ITenantContextService>()),
                 new PatientRegistrationTokenRepository(_context),
                 _tokenServiceMock.Object,
                 _notificationMock.Object,
@@ -73,7 +70,7 @@ namespace MedPal.API.Tests.Services
         /// </summary>
         private async Task<string> SeedGhostAndTokenAsync(int resendCount = 0, DateTime? expiresAt = null)
         {
-            var patientRepo = new PatientRepository(_context, _mapper, Mock.Of<ITenantContextService>());
+            var patientRepo = new PatientRepository(_context, Mock.Of<ITenantContextService>());
             var patient = await patientRepo.AddPatientAsync(NewGhost("Ana", "Rodríguez"));
 
             var rawToken = TokenGenerator.GenerateRawToken();
@@ -149,7 +146,7 @@ namespace MedPal.API.Tests.Services
 
             var service = new PatientRegistrationService(
                 authRepoMock.Object,
-                new PatientRepository(_context, _mapper, Mock.Of<ITenantContextService>()),
+                new PatientRepository(_context, Mock.Of<ITenantContextService>()),
                 new PatientRegistrationTokenRepository(_context),
                 _tokenServiceMock.Object,
                 _notificationMock.Object,

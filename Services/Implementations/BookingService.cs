@@ -22,6 +22,7 @@ namespace MedPal.API.Services.Implementations
     public class BookingService : IBookingService
     {
         private readonly IPatientRepository _patientRepository;
+        private readonly IPatientAuthRepository _patientAuthRepository;
         private readonly IPatientRegistrationTokenRepository _tokenRepository;
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IAppointmentService _appointmentService;
@@ -35,6 +36,7 @@ namespace MedPal.API.Services.Implementations
 
         public BookingService(
             IPatientRepository patientRepository,
+            IPatientAuthRepository patientAuthRepository,
             IPatientRegistrationTokenRepository tokenRepository,
             IAppointmentRepository appointmentRepository,
             IAppointmentService appointmentService,
@@ -47,6 +49,7 @@ namespace MedPal.API.Services.Implementations
             ILogger<BookingService> logger)
         {
             _patientRepository = patientRepository;
+            _patientAuthRepository = patientAuthRepository;
             _tokenRepository = tokenRepository;
             _appointmentRepository = appointmentRepository;
             _appointmentService = appointmentService;
@@ -100,27 +103,46 @@ namespace MedPal.API.Services.Implementations
 
                     var nameParts = dto.PatientName.Trim().Split(' ', 2);
                     var firstName = nameParts[0];
-                    var lastName = nameParts.Length > 1 ? nameParts[1] : "Sin apellido";
 
-                    var ghost = new Patient
+                    var normalizedPhone = PhoneNormalizer.Normalize(dto.PatientPhone) ?? dto.PatientPhone;
+
+                    // Dedupe por teléfono: si ya existe un paciente con ese número,
+                    // se reutiliza (cero ghosts duplicados). La 2ª cita solo se cierra
+                    // si el paciente completa su registro si aún no tiene acceso (PatientAuth).
+                    var existingByPhone = !string.IsNullOrWhiteSpace(normalizedPhone)
+                        ? await _patientRepository.FindPatientByPhoneAsync(normalizedPhone)
+                        : null;
+
+                    if (existingByPhone != null)
                     {
-                        Name = firstName,
-                        Middlename = "",
-                        Lastname = lastName,
-                        Dob = DateTime.UtcNow.AddYears(-30),
-                        Gender = "No especificado",
-                        Address = "Sin configurar",
-                        Phone = PhoneNormalizer.Normalize(dto.PatientPhone) ?? dto.PatientPhone,
-                        Email = $"pendiente_{Guid.NewGuid():N}@clinicflow.temp",
-                        CreatedAt = DateTime.UtcNow,
-                        UpdatedAt = DateTime.UtcNow
-                    };
+                        patientId = existingByPhone.Id;
+                        pendingRegistration = await _patientAuthRepository.GetByPatientIdAsync(existingByPhone.Id) == null;
+                    }
+                    else
+                    {
+                        var lastName = nameParts.Length > 1 ? nameParts[1] : "Sin apellido";
 
-                    var created = await _patientRepository.AddPatientAsync(ghost);
-                    await _patientRepository.AddPatientClinicsAsync(created.Id, new List<int> { clinicId });
+                        var ghost = new Patient
+                        {
+                            Name = firstName,
+                            Middlename = "",
+                            Lastname = lastName,
+                            Dob = DateTime.UtcNow.AddYears(-30),
+                            Gender = "No especificado",
+                            Address = "Sin configurar",
+                            Phone = normalizedPhone ?? "",
+                            Email = $"pendiente_{Guid.NewGuid():N}@clinicflow.temp",
+                            IsWhatsAppConsented = dto.ConsentWhatsapp,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        };
 
-                    patientId = created.Id;
-                    pendingRegistration = true;
+                        var created = await _patientRepository.AddPatientAsync(ghost);
+                        await _patientRepository.AddPatientClinicsAsync(created.Id, new List<int> { clinicId });
+
+                        patientId = created.Id;
+                        pendingRegistration = true;
+                    }
                 }
 
                 var accountId = await _patientRepository.GetClinicAccountIdAsync(clinicId);
@@ -147,20 +169,32 @@ namespace MedPal.API.Services.Implementations
 
                 if (pendingRegistration)
                 {
-                    var rawToken = TokenGenerator.GenerateRawToken();
-                    var token = new PatientRegistrationToken
+                    // No quemar ni spamear: si el paciente ya conserva un token pendiente
+                    // vigente (p. ej. de una cita anterior), se reutiliza. El reenvío
+                    // queda a cargo del endpoint dedicado (respeta el límite).
+                    var activeTokens = await _tokenRepository.GetPendingByPatientIdAsync(patientId);
+
+                    if (!activeTokens.Any())
                     {
-                        PatientId = patientId,
-                        TokenHash = TokenGenerator.Sha256Hex(rawToken),
-                        Status = "pending",
-                        CreatedAt = DateTime.UtcNow,
-                        ExpiresAt = DateTime.UtcNow.AddHours(72)
-                    };
+                        var rawToken = TokenGenerator.GenerateRawToken();
+                        var token = new PatientRegistrationToken
+                        {
+                            PatientId = patientId,
+                            TokenHash = TokenGenerator.Sha256Hex(rawToken),
+                            Status = "pending",
+                            CreatedAt = DateTime.UtcNow,
+                            ExpiresAt = DateTime.UtcNow.AddHours(72)
+                        };
 
-                    await _tokenRepository.CreateAsync(token);
-                    await _unitOfWork.CompleteAsync();
+                        await _tokenRepository.CreateAsync(token);
+                        await _unitOfWork.CompleteAsync();
 
-                    _ = _registrationNotification.SendRegistrationLinkAsync(patientId, rawToken);
+                        _ = _registrationNotification.SendRegistrationLinkAsync(patientId, rawToken);
+                    }
+                    else
+                    {
+                        await _unitOfWork.CompleteAsync();
+                    }
                 }
                 else
                 {

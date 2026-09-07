@@ -8,7 +8,7 @@ namespace MedPal.API.DTOs
         public string Middlename { get; set; }
         public string Lastname { get; set; }
         public string Phone { get; set; }
-        public string Email { get; set; }
+        public string? Email { get; set; }
         public string Address { get; set; }
         public DateTime Dob { get; set; }
         public string Gender { get; set; }

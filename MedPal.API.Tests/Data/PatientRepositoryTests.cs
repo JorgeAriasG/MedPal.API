@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using MedPal.API.Data;
+using MedPal.API.Enums;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
 using MedPal.API.Repositories.Implementations;
@@ -29,7 +30,6 @@ namespace MedPal.API.Tests.Data
         {
             return new PatientRepository(
                 context,
-                Mock.Of<IMapper>(),
                 Mock.Of<ITenantContextService>());
         }
 
@@ -172,6 +172,60 @@ namespace MedPal.API.Tests.Data
             var roster = (await repo.GetAllPatientsAsync(1, search: "zul")).ToList();
 
             Assert.Equal(new[] { 40 }, roster.Select(p => p.Id));
+        }
+
+        [Fact]
+        public async Task UpdatePatientAsync_PreservesAppointmentsMembershipsAndAuditFields()
+        {
+            using var context = CreateContext("update-preserves");
+            var seed = NewPatient(55);
+            seed.CreatedAt = new DateTime(2026, 1, 2, 3, 4, 5, DateTimeKind.Utc);
+            seed.CreatedByUserId = 9;
+            seed.Weight = 71.5m;
+            seed.Height = 1.71m;
+            seed.PatientAccounts!.Add(NewMembership(55, 100, primary: true));
+            seed.PatientClinics!.Add(NewClinicLink(55, 1));
+
+            var clinic1 = NewClinic(1, 100);
+            context.Accounts.Add(NewAccount(100));
+            context.Clinics.Add(clinic1);
+            context.Patients.Add(seed);
+            await context.SaveChangesAsync();
+
+            var appointment = new Appointment
+            {
+                PatientId = 55,
+                UserId = 9,
+                ClinicId = 1,
+                Status = AppointmentStatus.Scheduled,
+                Date = new DateOnly(2026, 9, 10),
+                Time = new TimeOnly(9, 0),
+                DurationMinutes = 30,
+                CreatedAt = new DateTime(2026, 9, 1, 0, 0, 0, DateTimeKind.Utc),
+                UpdatedAt = new DateTime(2026, 9, 1, 0, 0, 0, DateTimeKind.Utc)
+            };
+            context.Appointments.Add(appointment);
+            await context.SaveChangesAsync();
+
+            var repo = CreateRepository(context);
+
+            var updated = NewPatient(55);
+            updated.Phone = "525599990000";
+            updated.Email = seed.Email;
+            updated.IsWhatsAppConsented = true;
+            await repo.UpdatePatientAsync(55, updated);
+
+            var patient = await context.Patients.FindAsync(55);
+            Assert.Equal(new DateTime(2026, 1, 2, 3, 4, 5, DateTimeKind.Utc), patient!.CreatedAt);
+            Assert.Equal(9, patient.CreatedByUserId);
+            Assert.Equal(71.5m, patient.Weight);
+            Assert.Equal(1.71m, patient.Height);
+            Assert.Equal("525599990000", patient.Phone);
+            Assert.True(patient.IsWhatsAppConsented);
+
+            Assert.Single(await context.Appointments.Where(a => a.PatientId == 55).ToListAsync());
+            Assert.Single(await context.PatientAccounts.Where(pa => pa.PatientId == 55).ToListAsync());
+            Assert.Single(await context.PatientClinics.Where(pc => pc.PatientId == 55).ToListAsync());
         }
     }
 }

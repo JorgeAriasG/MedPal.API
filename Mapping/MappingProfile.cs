@@ -22,7 +22,36 @@ namespace MedPal.API.Mapping
             CreateMap<PatientWriteDTO, Patient>(MemberList.Source)
                 .ForSourceMember(src => src.EmergencyContact, opt => opt.DoNotValidate())
                 .ForSourceMember(src => src.ClinicIds, opt => opt.DoNotValidate());
-            CreateMap<Patient, Patient>().ReverseMap();
+            // Patient update map: copies ONLY the scalar fields carried by PatientWriteDTO.
+            // Navigations, audit fields, soft-delete flags and non-DTO business fields are
+            // ignored so editing a patient cannot orphan-delete Appointments/memberships
+            // or overwrite CreatedAt/Weight/Height/IsMarketingBlocked with defaults.
+            CreateMap<Patient, Patient>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedByUserId, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedByUserId, opt => opt.Ignore())
+                .ForMember(dest => dest.LastModifiedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.LastModifiedByUserId, opt => opt.Ignore())
+                .ForMember(dest => dest.DeletedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.DeletedByUserId, opt => opt.Ignore())
+                .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
+                .ForMember(dest => dest.IsAnonymized, opt => opt.Ignore())
+                .ForMember(dest => dest.UserId, opt => opt.Ignore())
+                .ForMember(dest => dest.Weight, opt => opt.Ignore())
+                .ForMember(dest => dest.Height, opt => opt.Ignore())
+                .ForMember(dest => dest.IsMarketingBlocked, opt => opt.Ignore())
+                .ForMember(dest => dest.User, opt => opt.Ignore())
+                .ForMember(dest => dest.PatientDetails, opt => opt.Ignore())
+                .ForMember(dest => dest.Appointments, opt => opt.Ignore())
+                .ForMember(dest => dest.Reports, opt => opt.Ignore())
+                .ForMember(dest => dest.PatientsInsurance, opt => opt.Ignore())
+                .ForMember(dest => dest.Invoices, opt => opt.Ignore())
+                .ForMember(dest => dest.EmergencyContacts, opt => opt.Ignore())
+                .ForMember(dest => dest.PatientClinics, opt => opt.Ignore())
+                .ForMember(dest => dest.PatientAccounts, opt => opt.Ignore())
+                .ReverseMap();
             
             CreateMap<User, UserReadDTO>()
                 .ForMember(dest => dest.Token, opt => opt.Ignore())

@@ -229,5 +229,61 @@ namespace MedPal.API.Tests.Services
             Assert.False(result);
             _mockAppointmentRepo.Verify(r => r.UpdateAppointment(It.IsAny<Appointment>()), Times.Never);
         }
+    [Fact]
+        public async Task CreateAppointmentAsync_GhostWithExistingPhone_ReusesPatientWithoutCreatingDuplicate()
+        {
+            var existingPatient = new Patient { Id = 7, Phone = "525522334455" };
+            _mockPatientRepo.Setup(r => r.FindPatientByPhoneAsync("525522334455")).ReturnsAsync(existingPatient);
+            _mockPatientRepo.Setup(r => r.GetClinicAccountIdAsync(1)).ReturnsAsync((int?)null);
+
+            _mockValidator.Setup(v => v.ValidateAsync(It.IsAny<AppointmentWriteDTO>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ValidationResult());
+            _mockMapper.Setup(m => m.Map<Appointment>(It.IsAny<AppointmentWriteDTO>()))
+                .Returns((AppointmentWriteDTO src) => new Appointment
+                {
+                    PatientId = src.PatientId!.Value,
+                    ClinicId = src.ClinicId!.Value
+                });
+            _mockAppointmentRepo.Setup(r => r.AddAppointmentAsync(It.IsAny<Appointment>()))
+                .ReturnsAsync((Appointment a) => a);
+            _mockMapper.Setup(m => m.Map<AppointmentReadDTO>(It.IsAny<Appointment>()))
+                .Returns((Appointment a) => new AppointmentReadDTO { Id = 1, PatientId = a.PatientId, ClinicId = a.ClinicId });
+
+            var writeDto = new AppointmentWriteDTO { PatientName = "Juan Pérez", PatientPhone = "5522334455", ClinicId = 1 };
+
+            var result = await _appointmentService.CreateAppointmentAsync(writeDto);
+
+            Assert.Equal(7, result.PatientId);
+            _mockPatientRepo.Verify(r => r.AddPatientAsync(It.IsAny<Patient>()), Times.Never);
+            _mockPatientRepo.Verify(r => r.AddPatientClinicsAsync(7, It.IsAny<List<int>>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateAppointmentAsync_GhostWithoutPhone_CreatesNewGhost()
+        {
+            _mockPatientRepo.Setup(r => r.GetClinicAccountIdAsync(1)).ReturnsAsync((int?)null);
+            _mockPatientRepo.Setup(r => r.AddPatientAsync(It.IsAny<Patient>()))
+                .ReturnsAsync((Patient p) => p);
+
+            _mockValidator.Setup(v => v.ValidateAsync(It.IsAny<AppointmentWriteDTO>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ValidationResult());
+            _mockMapper.Setup(m => m.Map<Appointment>(It.IsAny<AppointmentWriteDTO>()))
+                .Returns((AppointmentWriteDTO src) => new Appointment
+                {
+                    PatientId = src.PatientId!.Value,
+                    ClinicId = src.ClinicId!.Value
+                });
+            _mockAppointmentRepo.Setup(r => r.AddAppointmentAsync(It.IsAny<Appointment>()))
+                .ReturnsAsync((Appointment a) => a);
+            _mockMapper.Setup(m => m.Map<AppointmentReadDTO>(It.IsAny<Appointment>()))
+                .Returns((Appointment a) => new AppointmentReadDTO { Id = 1, PatientId = a.PatientId, ClinicId = a.ClinicId });
+
+            var writeDto = new AppointmentWriteDTO { PatientName = "Solo Nombre", PatientPhone = "", ClinicId = 1 };
+
+            await _appointmentService.CreateAppointmentAsync(writeDto);
+
+            _mockPatientRepo.Verify(r => r.FindPatientByPhoneAsync(It.IsAny<string>()), Times.Never);
+            _mockPatientRepo.Verify(r => r.AddPatientAsync(It.IsAny<Patient>()), Times.Once);
+        }
     }
 }

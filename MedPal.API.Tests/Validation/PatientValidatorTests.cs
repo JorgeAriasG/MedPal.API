@@ -92,6 +92,23 @@ public class PatientValidatorTests
     }
 
     [Fact]
+    public async Task CreatePatient_EmailEmpty_ShouldPass()
+    {
+        // Email es opcional: sin email se asigna placeholder al crear.
+        var request = new PatientWriteDTO
+        {
+            Name = "John Doe",
+            Email = "",
+            Dob = new DateTime(1990, 1, 1),
+            ClinicIds = new List<int> { 1 }
+        };
+
+        var result = await _createValidator.TestValidateAsync(request);
+
+        result.ShouldNotHaveAnyValidationErrors();
+    }
+
+    [Fact]
     public async Task CreatePatient_EmailInvalidFormat_ShouldFail()
     {
         // Arrange

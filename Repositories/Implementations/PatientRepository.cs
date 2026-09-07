@@ -10,12 +10,9 @@ namespace MedPal.API.Repositories.Implementations
 {
     public class PatientRepository : TenantAwareRepository<Patient>, IPatientRepository
     {
-        private readonly IMapper _mapper;
-
-        public PatientRepository(AppDbContext context, IMapper mapper, ITenantContextService tenantContext)
+        public PatientRepository(AppDbContext context, ITenantContextService tenantContext)
             : base(context, tenantContext)
         {
-            _mapper = mapper;
         }
 
         public async Task<IEnumerable<Patient>> GetAllPatientsAsync(int clinicId, int? userId = null, string? search = null, string? sortBy = "name", bool descending = false)
@@ -93,14 +90,26 @@ namespace MedPal.API.Repositories.Implementations
 
         public async Task UpdatePatientAsync(int id, Patient patient)
         {
-            patient.Id = id;
             var existingPatient = await _context.Patients.FindAsync(id);
-            if (existingPatient != null)
-            {
-                _mapper.Map(patient, existingPatient);
-                _context.Patients.Update(existingPatient);
-                await _context.SaveChangesAsync();
-            }
+            if (existingPatient == null)
+                return;
+
+            // Explicit scalar copy of ONLY the editable fields carried by PatientWriteDTO.
+            // Avoids the generic Patient->Patient AutoMapper map + DbSet.Update() traversal,
+            // which severed required relationships and orphan-deleted Appointments/memberships
+            // (and overwrote audit fields) on every patient edit.
+            existingPatient.Name = patient.Name;
+            existingPatient.Middlename = patient.Middlename;
+            existingPatient.Lastname = patient.Lastname;
+            existingPatient.Phone = patient.Phone;
+            existingPatient.Email = patient.Email;
+            existingPatient.Address = patient.Address;
+            existingPatient.Dob = patient.Dob;
+            existingPatient.Gender = patient.Gender;
+            existingPatient.Curp = patient.Curp;
+            existingPatient.IsWhatsAppConsented = patient.IsWhatsAppConsented;
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeletePatientAsync(int id)

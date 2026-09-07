@@ -32,9 +32,8 @@ namespace MedPal.API.Tests.Services
     {
         private const string JwtKey = "test-secret-key-0123456789abcdef";
 
-        private readonly SqliteConnection _connection;
+private readonly SqliteConnection _connection;
         private readonly AppDbContext _context;
-        private readonly IMapper _mapper;
         private readonly IConfiguration _config;
         private readonly IBookingLinkService _bookingLink;
         private readonly BookingService _serviceWithRealPatientRepo;
@@ -53,10 +52,8 @@ namespace MedPal.API.Tests.Services
                 .UseSqlite(_connection)
                 .Options;
 
-            _context = new AppDbContext(options, new EncryptionProvider(new ConfigurationBuilder().Build()));
+_context = new AppDbContext(options, new EncryptionProvider(new ConfigurationBuilder().Build()));
             _context.Database.EnsureCreated();
-
-            _mapper = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>()).CreateMapper();
 
             _config = new ConfigurationBuilder()
                 .AddInMemoryCollection(new Dictionary<string, string>
@@ -114,7 +111,7 @@ namespace MedPal.API.Tests.Services
 
             _notificationMock = new Mock<IRegistrationNotificationService>();
 
-            _serviceWithRealPatientRepo = CreateService(ctx => new PatientRepository(ctx, _mapper, Mock.Of<ITenantContextService>()));
+            _serviceWithRealPatientRepo = CreateService(ctx => new PatientRepository(ctx, Mock.Of<ITenantContextService>()));
             _serviceWithMockedPatientRepo = CreateService(_ => Mock.Of<IPatientRepository>());
         }
 
@@ -132,6 +129,7 @@ namespace MedPal.API.Tests.Services
 
             return new BookingService(
                 patientRepoFactory(_context),
+                new PatientAuthRepository(_context),
                 new PatientRegistrationTokenRepository(_context),
                 appointmentRepoMock.Object,
                 _appointmentServiceMock.Object,
@@ -192,6 +190,57 @@ namespace MedPal.API.Tests.Services
 
             Mock.Get(_notificationMock.Object)
                 .Verify(x => x.SendRegistrationLinkAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task CompleteBooking_GhostFlow_WhenWhatsAppConsented_PersistsFlag()
+        {
+            var sr = CreateShareToken();
+            _context.Clinics.Add(new Clinic
+            {
+                Id = 1,
+                Name = "Clinic 1",
+                Location = "Test",
+                ContactInfo = "contact",
+                Open = new TimeOnly(8, 0),
+                Close = new TimeOnly(10, 0),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                AccountId = null
+            });
+            await _context.SaveChangesAsync();
+
+            await _serviceWithRealPatientRepo.CompleteBookingAsync(null, sr, NewGhostDto(sr));
+
+            var patient = await _context.Patients.SingleAsync();
+            Assert.True(patient.IsWhatsAppConsented);
+        }
+
+        [Fact]
+        public async Task CompleteBooking_GhostFlow_WhenWhatsAppNotConsented_LeavesFlagFalse()
+        {
+            var sr = CreateShareToken();
+            _context.Clinics.Add(new Clinic
+            {
+                Id = 1,
+                Name = "Clinic 1",
+                Location = "Test",
+                ContactInfo = "contact",
+                Open = new TimeOnly(8, 0),
+                Close = new TimeOnly(10, 0),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                AccountId = null
+            });
+            await _context.SaveChangesAsync();
+
+            var dto = NewGhostDto(sr);
+            dto.ConsentWhatsapp = false;
+
+            await _serviceWithRealPatientRepo.CompleteBookingAsync(null, sr, dto);
+
+            var patient = await _context.Patients.SingleAsync();
+            Assert.False(patient.IsWhatsAppConsented);
         }
 
         [Fact]
@@ -318,6 +367,152 @@ namespace MedPal.API.Tests.Services
                     ClinicId = 1,
                     DoctorId = 2
                 }));
+        }
+
+        [Fact]
+        public async Task CompleteBooking_SamePhone_ExistingPatientWithAuth_NoGhostNorToken()
+        {
+            var sr = CreateShareToken();
+            _context.Clinics.Add(new Clinic
+            {
+                Id = 1,
+                Name = "Clinic 1",
+                Location = "Test",
+                ContactInfo = "contact",
+                Open = new TimeOnly(8, 0),
+                Close = new TimeOnly(10, 0),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                AccountId = null
+            });
+            var existingPatient = new Patient
+            {
+Id = 42,
+                Name = "Ana",
+                Middlename = "",
+                Lastname = "Rodríguez",
+                Dob = DateTime.UtcNow.AddYears(-35),
+                Gender = "No especificado",
+                Address = "Sin configurar",
+                Phone = "525522334455",
+                Email = "ana@clinicflow.test",
+                IsWhatsAppConsented = true,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+            _context.Patients.Add(existingPatient);
+            _context.Set<PatientAuth>().Add(new PatientAuth
+            {
+                PatientId = 42,
+                Email = "ana@clinicflow.test",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("password123"),
+                CreatedAt = DateTime.UtcNow
+            });
+            await _context.SaveChangesAsync();
+
+            var result = await _serviceWithRealPatientRepo.CompleteBookingAsync(null, sr, NewGhostDto(sr));
+
+            Assert.Equal(100, result.AppointmentId);
+            Assert.False(result.PendingRegistration);
+            Assert.Equal(1, await _context.Patients.CountAsync());
+            Assert.Equal(0, await _context.PatientRegistrationTokens.CountAsync());
+
+            Mock.Get(_notificationMock.Object)
+                .Verify(x => x.SendRegistrationLinkAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task CompleteBooking_SamePhone_ExistingPatientWithoutAuth_ReusesPendingToken()
+        {
+            var sr = CreateShareToken();
+            _context.Clinics.Add(new Clinic
+            {
+                Id = 1,
+                Name = "Clinic 1",
+                Location = "Test",
+                ContactInfo = "contact",
+                Open = new TimeOnly(8, 0),
+                Close = new TimeOnly(10, 0),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                AccountId = null
+            });
+            var existingPatient = new Patient
+            {
+Id = 42,
+                Name = "Ana",
+                Middlename = "",
+                Lastname = "Rodríguez",
+                Dob = DateTime.UtcNow.AddYears(-35),
+                Gender = "No especificado",
+                Address = "Sin configurar",
+                Phone = "525522334455",
+                Email = "pendiente_abc123@clinicflow.temp",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+            _context.Patients.Add(existingPatient);
+            _context.PatientRegistrationTokens.Add(new PatientRegistrationToken
+            {
+                PatientId = 42,
+                TokenHash = "hash-pendiente-vigente",
+                Status = "pending",
+                CreatedAt = DateTime.UtcNow,
+                ExpiresAt = DateTime.UtcNow.AddHours(48)
+            });
+            await _context.SaveChangesAsync();
+
+            var result = await _serviceWithRealPatientRepo.CompleteBookingAsync(null, sr, NewGhostDto(sr));
+
+            Assert.True(result.PendingRegistration);
+            Assert.Equal(1, await _context.Patients.CountAsync());
+            Assert.Equal(1, await _context.PatientRegistrationTokens.CountAsync());
+
+            Mock.Get(_notificationMock.Object)
+                .Verify(x => x.SendRegistrationLinkAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task CompleteBooking_SamePhone_ExistingPatientWithoutAuth_NoPendingToken_CreatesToken()
+        {
+            var sr = CreateShareToken();
+            _context.Clinics.Add(new Clinic
+            {
+                Id = 1,
+                Name = "Clinic 1",
+                Location = "Test",
+                ContactInfo = "contact",
+                Open = new TimeOnly(8, 0),
+                Close = new TimeOnly(10, 0),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                AccountId = null
+            });
+            var existingPatient = new Patient
+            {
+Id = 42,
+                Name = "Ana",
+                Middlename = "",
+                Lastname = "Rodríguez",
+                Dob = DateTime.UtcNow.AddYears(-35),
+                Gender = "No especificado",
+                Address = "Sin configurar",
+                Phone = "525522334455",
+                Email = "pendiente_abc123@clinicflow.temp",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+            _context.Patients.Add(existingPatient);
+            await _context.SaveChangesAsync();
+
+            var result = await _serviceWithRealPatientRepo.CompleteBookingAsync(null, sr, NewGhostDto(sr));
+
+            Assert.True(result.PendingRegistration);
+            Assert.Equal(1, await _context.Patients.CountAsync());
+            Assert.Equal(1, await _context.PatientRegistrationTokens.CountAsync());
+
+            Mock.Get(_notificationMock.Object)
+                .Verify(x => x.SendRegistrationLinkAsync(42, It.IsAny<string>()), Times.Once);
         }
 
         public void Dispose()

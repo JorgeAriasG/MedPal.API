@@ -79,6 +79,7 @@ namespace MedPal.API.Controllers
 
             var patient = _mapper.Map<Patient>(patientWriteDto);
             patient.Phone = PhoneNormalizer.Normalize(patientWriteDto.Phone) ?? patientWriteDto.Phone ?? "";
+            patient.Email = PatientEmailResolver.Resolve(patientWriteDto.Email);
             patient.Dob.ToLocalTime();
             patient.CreatedByUserId = userId;
             patient.CreatedAt = DateTime.UtcNow;
@@ -102,6 +103,13 @@ namespace MedPal.API.Controllers
 
             var patient = _mapper.Map<Patient>(patientWriteDto);
             patient.Phone = PhoneNormalizer.Normalize(patientWriteDto.Phone) ?? patientWriteDto.Phone ?? "";
+            if (string.IsNullOrWhiteSpace(patientWriteDto.Email))
+            {
+                var existingPatient = await _patientRepository.GetPatientByIdAsync(id);
+                if (existingPatient == null)
+                    return NotFound();
+                patient.Email = existingPatient.Email;
+            }
             await _patientRepository.UpdatePatientAsync(id, patient);
             if (patientWriteDto.ClinicIds != null && patientWriteDto.ClinicIds.Count > 0)
             {

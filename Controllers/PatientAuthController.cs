@@ -35,7 +35,7 @@ namespace MedPal.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var email = ResolvePatientEmail(dto.Email);
+            var email = PatientEmailResolver.Resolve(dto.Email);
             if (await _patientAuthRepository.EmailExistsAsync(email))
                 return BadRequest(new { message = "El email ya está registrado" });
 
@@ -108,7 +108,7 @@ namespace MedPal.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var email = ResolvePatientEmail(dto.Email);
+            var email = PatientEmailResolver.Resolve(dto.Email);
             if (await _patientAuthRepository.EmailExistsAsync(email))
                 return BadRequest(new { message = "El email ya está registrado" });
 
@@ -159,29 +159,21 @@ namespace MedPal.API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<PatientLoginResponseDTO>> Login([FromBody] PatientLoginDTO dto)
         {
-            if (!ModelState.IsValid)
+if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var email = dto.Email?.Trim().ToLower() ?? "";
             var phone = PhoneNormalizer.Normalize(dto.Phone ?? "") ?? dto.Phone?.Trim() ?? "";
 
-            if (string.IsNullOrWhiteSpace(email) && string.IsNullOrWhiteSpace(phone))
-                return BadRequest(new { message = "Ingresa tu email o número de teléfono." });
+            if (string.IsNullOrWhiteSpace(phone))
+                return BadRequest(new { message = "Ingresa tu número de teléfono." });
 
-            PatientAuth auth = null;
-            if (!string.IsNullOrWhiteSpace(email))
-            {
-                auth = await _patientAuthRepository.GetByEmailAsync(email);
-            }
-            else
-            {
-                var phonePatient = await _patientRepository.FindPatientByPhoneAsync(phone);
-                if (phonePatient != null)
-                    auth = await _patientAuthRepository.GetByPatientIdAsync(phonePatient.Id);
-            }
+            var phonePatient = await _patientRepository.FindPatientByPhoneAsync(phone);
+            var auth = phonePatient != null
+                ? await _patientAuthRepository.GetByPatientIdAsync(phonePatient.Id)
+                : null;
 
             if (auth == null || !BCrypt.Net.BCrypt.Verify(dto.Password, auth.PasswordHash))
-                return Unauthorized(new { message = "Email o contraseña incorrectos" });
+                return Unauthorized(new { message = "Teléfono o contraseña incorrectos" });
 
             await _patientAuthRepository.UpdateLastLoginAsync(auth.Id);
 
@@ -197,15 +189,7 @@ namespace MedPal.API.Controllers
                 Token = token,
                 Phone = patient.Phone
             });
-        }
-
-        private static string ResolvePatientEmail(string? email)
-        {
-            if (!string.IsNullOrWhiteSpace(email))
-                return email.Trim().ToLower();
-
-            return $"pendiente_{Guid.NewGuid():N}@clinicflow.temp";
-        }
+}
 
         private string GeneratePatientToken(Patient patient, string email)
         {
@@ -240,3 +224,4 @@ namespace MedPal.API.Controllers
         }
     }
 }
+

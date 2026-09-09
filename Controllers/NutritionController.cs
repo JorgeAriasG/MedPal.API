@@ -3,6 +3,7 @@ using MedPal.API.DTOs;
 using MedPal.API.Models;
 using MedPal.API.Repositories;
 using MedPal.API.Services;
+using MedPal.API.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -168,8 +169,7 @@ namespace MedPal.API.Controllers
 
             if (entity.Weight.HasValue && entity.Height.HasValue && entity.Height.Value > 0)
             {
-                var heightM = entity.Height.Value / 100m;
-                entity.Bmi = Math.Round(entity.Weight.Value / (heightM * heightM), 1);
+                entity.Bmi = NutritionMetrics.CalculateBmi(entity.Weight, entity.Height);
             }
 
             var created = await _bodyCompositionRepository.AddAsync(entity);
@@ -194,8 +194,7 @@ namespace MedPal.API.Controllers
 
             if (entity.Weight.HasValue && entity.Height.HasValue && entity.Height.Value > 0)
             {
-                var heightM = entity.Height.Value / 100m;
-                entity.Bmi = Math.Round(entity.Weight.Value / (heightM * heightM), 1);
+                entity.Bmi = NutritionMetrics.CalculateBmi(entity.Weight, entity.Height);
             }
 
             _bodyCompositionRepository.Update(entity);
@@ -241,13 +240,12 @@ namespace MedPal.API.Controllers
 
             if (entity.Weight.HasValue && entity.Height.HasValue && entity.Height.Value > 0)
             {
-                var heightM = entity.Height.Value / 100m;
-                entity.Bmi = Math.Round(entity.Weight.Value / (heightM * heightM), 1);
-                entity.WaistHeightRatio = Math.Round(entity.Waist.GetValueOrDefault() / entity.Height.Value, 2);
+                entity.Bmi = NutritionMetrics.CalculateBmi(entity.Weight, entity.Height);
+                entity.WaistHeightRatio = NutritionMetrics.CalculateWaistHeightRatio(entity.Waist, entity.Height);
             }
 
             if (entity.Waist.HasValue && entity.Hip.HasValue && entity.Hip.Value > 0)
-                entity.WaistHipRatio = Math.Round(entity.Waist.Value / entity.Hip.Value, 3);
+                entity.WaistHipRatio = NutritionMetrics.CalculateWaistHipRatio(entity.Waist, entity.Hip);
 
             var created = await _anthropometryRepository.AddAsync(entity);
             await _anthropometryRepository.CompleteAsync();
@@ -271,13 +269,12 @@ namespace MedPal.API.Controllers
 
             if (entity.Weight.HasValue && entity.Height.HasValue && entity.Height.Value > 0)
             {
-                var heightM = entity.Height.Value / 100m;
-                entity.Bmi = Math.Round(entity.Weight.Value / (heightM * heightM), 1);
-                entity.WaistHeightRatio = Math.Round(entity.Waist.GetValueOrDefault() / entity.Height.Value, 2);
+                entity.Bmi = NutritionMetrics.CalculateBmi(entity.Weight, entity.Height);
+                entity.WaistHeightRatio = NutritionMetrics.CalculateWaistHeightRatio(entity.Waist, entity.Height);
             }
 
             if (entity.Waist.HasValue && entity.Hip.HasValue && entity.Hip.Value > 0)
-                entity.WaistHipRatio = Math.Round(entity.Waist.Value / entity.Hip.Value, 3);
+                entity.WaistHipRatio = NutritionMetrics.CalculateWaistHipRatio(entity.Waist, entity.Hip);
 
             _anthropometryRepository.Update(entity);
             await _anthropometryRepository.CompleteAsync();

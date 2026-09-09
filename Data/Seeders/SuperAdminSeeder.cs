@@ -37,30 +37,6 @@ namespace MedPal.API.Data.Seeders
                 return;
             }
 
-            // Crear Account para SuperAdmin (opcional, puede ser null)
-            Account superAdminAccount = null;
-            var existingAccount = await context.Accounts
-                .FirstOrDefaultAsync(a => a.Name == "MedPal System");
-
-            if (existingAccount == null)
-            {
-                superAdminAccount = new Account
-                {
-                    Name = "MedPal System",
-                    Description = "Cuenta del sistema para SuperAdmin",
-                    IsActive = true,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
-
-                await context.Accounts.AddAsync(superAdminAccount);
-                await context.SaveChangesAsync();
-            }
-            else
-            {
-                superAdminAccount = existingAccount;
-            }
-
             // Crear SuperAdmin User
             var superAdminUser = new User
             {
@@ -72,7 +48,7 @@ namespace MedPal.API.Data.Seeders
                 IsActive = true,
                 IsDeleted = false,
                 HasAcceptedPrivacyTerms = true,
-                AccountId = superAdminAccount.Id,  // SuperAdmin pertenece a la Account del sistema
+                AccountId = 0,  // SuperAdmin pertenece a la Account del sistema
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };

@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using MedPal.API.Models;
+using MedPal.API.Models.Authorization;
 using MedPal.API.Repositories;
 using Microsoft.IdentityModel.Tokens;
 
@@ -16,88 +17,59 @@ namespace MedPal.API.Services
             _configuration = configuration;
         }
 
-        // public string GenerateToken(User user)
-        // {
-        //     var jwtKey = _configuration["Jwt:Key"];
-        //     if (string.IsNullOrEmpty(jwtKey))
-        //     {
-        //         throw new InvalidOperationException("JWT key is not configured. Please set 'Jwt:Key' in configuration.");
-        //     }
-
-        //     var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
-        //     var key = System.Text.Encoding.UTF8.GetBytes(jwtKey);
-        //     var tokenDescriptor = new Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor
-        //     {
-        //         Subject = new System.Security.Claims.ClaimsIdentity(new[]
-        //         {
-        //             new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, user.Id.ToString()),
-        //             new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Email, user.Email)
-        //         }),
-        //         Expires = DateTime.UtcNow.AddHours(1),
-        //         SigningCredentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(
-        //             new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(key),
-        //             Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256Signature)
-        //     };
-
-        //     var token = tokenHandler.CreateToken(tokenDescriptor);
-        //     return tokenHandler.WriteToken(token);
-        // }
-
+        /// <summary>
+        /// Genera un token JWT para un usuario staff, emitiendo el contrato completo de claims.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        /// Si el usuario no tiene roles asignados, lanza excepción para que el login
+        /// retorne 403 sin emitir token.
+        /// </exception>
         public string GenerateToken(User user)
         {
             var jwtKey = _configuration["Jwt:Key"];
             if (string.IsNullOrEmpty(jwtKey))
                 throw new InvalidOperationException("JWT key is not configured.");
 
+            // F3: Sin roles → no se emite JWT; el login debe retornar 403 "no roles assigned"
+            if (user.UserRoles == null || user.UserRoles.Count == 0)
+            {
+                throw new InvalidOperationException("User has no roles assigned; cannot generate staff token. Login will return 403.");
+            }
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            // Claim "role" (primer rol, solo legacy UI). Se toma el primer rol de la lista.
+            var firstRole = user.UserRoles.First().Role.Name;
 
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim("user_id", user.Id.ToString()),
+                new Claim("email", user.Email),
+                new Claim("user_type", "staff"),
+                // account_id solo si tiene valor (SuperAdmin puede omitirlo)
+                user.AccountId.HasValue
+                    ? new Claim("account_id", user.AccountId.Value.ToString())
+                    : null,
+                // clinic_id solo si > 0
+                user.ClinicId > 0
+                    ? new Claim("clinic_id", user.ClinicId.ToString())
+                    : null,
+                // claim "roles" string[] canónico (se serializa como cadena separada por comas)
+                new Claim("roles", string.Join(",", user.UserRoles.Select(u => u.Role.Name))),
+                new Claim("role", firstRole), // legacy UI; NO usado para decisiones de autorización
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            // Fase 2: Agregar claims para multi-tenancy
-            if (user.AccountId.HasValue)
-            {
-                claims.Add(new Claim("account_id", user.AccountId.Value.ToString()));
-            }
-
-            if (user.ClinicId > 0)
-            {
-                claims.Add(new Claim("clinic_id", user.ClinicId.ToString()));
-            }
-
-            // Añadir roles del usuario (desde la relación UserRoles)
-            // Fase 1: si el usuario NO tiene roles, NO se emiten claims de rol ni ClaimTypes.Role.
-            // El JWT se emite igual (el login ya es el gate), pero sin roles el usuario tiene 0
-            // permisos y la FallbackPolicy le barrará casi todo.
-            if (user.UserRoles != null && user.UserRoles.Count > 0)
-            {
-                foreach (var userRole in user.UserRoles)
-                {
-                    if (userRole.Role != null)
-                    {
-                        claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
-                        // Fase 2: Agregar el primer rol como "role" para multi-tenancy
-                        // (Si un usuario tiene múltiples roles, se usa el primero)
-                        if (!claims.Any(c => c.Type == "role"))
-                        {
-                            claims.Add(new Claim("role", userRole.Role.Name));
-                        }
-                    }
-                }
-            }
+            // Filtrar nulos antes de crear el token
+            claims = claims.Where(c => c != null).ToList();
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],  // ← Asegúrate de que esto está aquí
+                audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(double.Parse(_configuration["Jwt:ExpireMinutes"] ?? "60")),
+                expires: DateTime.UtcNow.AddMinutes(double.Parse(_configuration["Jwt:ExpiryInMinutes"] ?? "60")),
                 signingCredentials: creds
             );
 

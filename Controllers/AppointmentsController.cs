@@ -87,7 +87,6 @@ namespace MedPal.API.Controllers
         // POST: api/appointments
         [HttpPost]
         [Authorize(Policy = "Appointments.Create")]
-        [Authorize(Policy = "ManagePatientsPolicy")]
         public async Task<ActionResult<AppointmentReadDTO>> CreateAppointment(
             AppointmentWriteDTO appointmentWriteDto,
             [FromServices] IAppointmentReminderService reminderService)

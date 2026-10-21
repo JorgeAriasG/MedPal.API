@@ -2,6 +2,7 @@ using AutoMapper;
 using MedPal.API.Data;
 using MedPal.API.DTOs;
 using MedPal.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,7 @@ namespace MedPal.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class WaitlistController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -21,6 +23,7 @@ namespace MedPal.API.Controllers
         }
 
         [HttpPost("register")]
+        [AllowAnonymous] // Registro público en lista de espera desde la página pública de la clínica
         public async Task<ActionResult> Register([FromBody] WaitlistRegisterDTO dto)
         {
             if (!ModelState.IsValid)

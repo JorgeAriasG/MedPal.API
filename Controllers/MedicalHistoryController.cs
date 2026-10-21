@@ -13,6 +13,7 @@ namespace MedPal.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class MedicalHistoryController : ControllerBase
     {
         private readonly IMedicalHistoryRepository _medicalHistoryRepository;
@@ -143,13 +144,23 @@ namespace MedPal.API.Controllers
 
         // DELETE: api/medicalhistory/{id}
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")] // Strict deletion policy
+        [Authorize(Policy = "MedicalRecords.Update")] // Borrado estricto (Fase 1): política existente, no rol inexistente "Admin"
         public async Task<IActionResult> DeleteMedicalHistory(int id)
         {
             var medicalHistory = await _medicalHistoryRepository.GetMedicalHistoryByIdAsync(id);
             if (medicalHistory == null)
             {
                 return NotFound();
+            }
+
+            // Solo el propietario del expediente (HealthcareProfessionalId asignado) o un rol
+            // con permiso explícito (MedicalRecords.Update) puede borrarlo.
+            var isOwner = int.TryParse(_userService.UserId, out int currentUserId) &&
+                          medicalHistory.HealthcareProfessionalId == currentUserId;
+            var hasUpdatePermission = await _authorizationService.AuthorizeAsync(User, "MedicalRecords.Update");
+            if (!isOwner && !hasUpdatePermission.Succeeded)
+            {
+                return Forbid();
             }
 
             _medicalHistoryRepository.RemoveMedicalHistory(medicalHistory);

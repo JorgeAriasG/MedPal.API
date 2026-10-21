@@ -123,15 +123,21 @@ _context = new AppDbContext(options, new EncryptionProvider(new ConfigurationBui
             appointmentRepoMock
                 .Setup(x => x.GetAllAppointmentsByIdAsync(It.IsAny<int>(), It.IsAny<int?>(), It.IsAny<DateOnly?>()))
                 .ReturnsAsync(new List<Appointment>());
-            appointmentRepoMock
+appointmentRepoMock
                 .Setup(x => x.GetPublicOverlapAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateOnly>()))
                 .ReturnsAsync(new List<Appointment>());
+
+            var availabilityBlockRepoMock = new Mock<IAvailabilityBlockRepository>();
+            availabilityBlockRepoMock
+                .Setup(x => x.GetBlocksForAvailabilityAsync(It.IsAny<int>(), It.IsAny<int?>(), It.IsAny<DateOnly>()))
+                .ReturnsAsync(new List<AvailabilityBlock>());
 
             return new BookingService(
                 patientRepoFactory(_context),
                 new PatientAuthRepository(_context),
                 new PatientRegistrationTokenRepository(_context),
                 appointmentRepoMock.Object,
+                availabilityBlockRepoMock.Object,
                 _appointmentServiceMock.Object,
                 _bookingLink,
                 _clinicRepoMock.Object,

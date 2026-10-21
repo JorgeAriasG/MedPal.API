@@ -17,12 +17,14 @@ namespace MedPal.API.Controllers
     public class PatientController : BaseController
     {
         private readonly IPatientRepository _patientRepository;
+        private readonly IClinicRepository _clinicRepository;
         private readonly IMapper _mapper;
         private readonly IAuthorizationService _authorizationService;
 
-        public PatientController(IPatientRepository patientRepository, IMapper mapper, IAuthorizationService authorizationService)
+        public PatientController(IPatientRepository patientRepository, IClinicRepository clinicRepository, IMapper mapper, IAuthorizationService authorizationService)
         {
             _patientRepository = patientRepository;
+            _clinicRepository = clinicRepository;
             _mapper = mapper;
             _authorizationService = authorizationService;
         }
@@ -42,7 +44,27 @@ namespace MedPal.API.Controllers
 
             // Staff of the account can see every patient that belongs to their clinics/account.
             var patients = await _patientRepository.GetAllPatientsAsync(clinicId, null, search, sortBy, descending);
-            var patientReadDTOs = _mapper.Map<IEnumerable<PatientReadDTO>>(patients);
+            var patientReadDTOs = _mapper.Map<IEnumerable<PatientReadDTO>>(patients).ToList();
+
+            // Context clinic: each row shows the clinic the roster is being browsed for.
+            // A missing/inaccessible clinic leaves Clinic null (same as before this fix).
+            ClinicReadDTO contextClinic = null;
+            try
+            {
+                contextClinic = _mapper.Map<ClinicReadDTO>(await _clinicRepository.GetClinicByIdAsync(clinicId));
+            }
+            catch (KeyNotFoundException)
+            {
+                // Clinic does not exist or is filtered out; keep Clinic null.
+            }
+            if (contextClinic != null)
+            {
+                foreach (var dto in patientReadDTOs)
+                {
+                    dto.Clinic = contextClinic;
+                }
+            }
+
             return Ok(patientReadDTOs);
         }
 

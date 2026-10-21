@@ -32,6 +32,11 @@ namespace MedPal.API.Enums
         HealthProfessional = 4,
 
         /// <summary>
+        /// Enfermería. Acceso a datos de pacientes y gestión de citas; sin acceso completo a Medical Records.
+        /// </summary>
+        Nurse = 5,
+
+        /// <summary>
         /// Recepcionista o personal administrativo.
         /// Acceso a datos de contacto y citas, NO a Medical Records.
         /// </summary>

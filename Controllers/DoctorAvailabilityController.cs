@@ -1,6 +1,7 @@
 using AutoMapper;
 using MedPal.API.DTOs;
 using MedPal.API.Repositories;
+using MedPal.API.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,17 +15,20 @@ namespace MedPal.API.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IClinicRepository _clinicRepository;
         private readonly IAppointmentRepository _appointmentRepository;
+        private readonly IAvailabilityBlockRepository _availabilityBlockRepository;
         private readonly IMapper _mapper;
 
         public DoctorAvailabilityController(
             IUserRepository userRepository,
             IClinicRepository clinicRepository,
             IAppointmentRepository appointmentRepository,
+            IAvailabilityBlockRepository availabilityBlockRepository,
             IMapper mapper)
         {
             _userRepository = userRepository;
             _clinicRepository = clinicRepository;
             _appointmentRepository = appointmentRepository;
+            _availabilityBlockRepository = availabilityBlockRepository;
             _mapper = mapper;
         }
 
@@ -62,6 +66,9 @@ namespace MedPal.API.Controllers
                 .Where(a => a.UserId == doctorId && a.Date == date && !a.IsDeleted)
                 .ToList();
 
+            var blocks = await _availabilityBlockRepository
+                .GetBlocksForAvailabilityAsync(clinicId.Value, doctorId, date);
+
             var openTime = clinic.Open;
             var closeTime = clinic.Close;
 
@@ -71,13 +78,9 @@ namespace MedPal.API.Controllers
 
             while (currentTime.AddMinutes(slotDuration) <= closeTime)
             {
-                var hasOverlap = doctorAppointments.Any(a =>
-                {
-                    var existingStart = a.Time;
-                    var existingEnd = a.Time.AddMinutes(a.DurationMinutes);
-                    var newEnd = currentTime.AddMinutes(slotDuration);
-                    return currentTime < existingEnd && existingStart < newEnd;
-                });
+                var slotEnd = currentTime.AddMinutes(slotDuration);
+                var hasOverlap = SlotAvailability.IsSlotBlockedByAppointment(currentTime, slotEnd, doctorAppointments)
+                    || SlotAvailability.IsSlotBlocked(currentTime, slotEnd, blocks);
 
                 slots.Add(new TimeSlotDTO
                 {
@@ -86,7 +89,7 @@ namespace MedPal.API.Controllers
                     IsAvailable = !hasOverlap
                 });
 
-                currentTime = currentTime.AddMinutes(slotDuration);
+                currentTime = slotEnd;
             }
 
             return Ok(slots);

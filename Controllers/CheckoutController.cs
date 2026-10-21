@@ -8,6 +8,7 @@ namespace MedPal.API.Controllers
 {
     [ApiController]
     [Route("api/checkout")]
+    [Authorize] // La única acción es pública vía [AllowAnonymous] explícito en el método
     public class CheckoutController : ControllerBase
     {
         private readonly IStripeService _stripeService;

@@ -30,6 +30,7 @@ namespace MedPal.API.Data
         public DbSet<EmergencyContact> EmergencyContacts { get; set; }
         public DbSet<Clinic> Clinics { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<AvailabilityBlock> AvailabilityBlocks { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Settings> Settings { get; set; }
@@ -240,6 +241,42 @@ namespace MedPal.API.Data
             modelBuilder.Entity<Appointment>()
                 .Property(a => a.Notes)
                 .HasDefaultValue("");
+
+            // AvailabilityBlock Configuration (ADR-006)
+            modelBuilder.Entity<AvailabilityBlock>()
+                .Property(b => b.Date)
+                .HasConversion(dateOnlyConverter);
+
+            modelBuilder.Entity<AvailabilityBlock>()
+                .Property(b => b.StartTime)
+                .HasConversion(timeOnlyConverter);
+
+            modelBuilder.Entity<AvailabilityBlock>()
+                .Property(b => b.EndTime)
+                .HasConversion(timeOnlyConverter);
+
+            modelBuilder.Entity<AvailabilityBlock>()
+                .Property(b => b.Reason)
+                .HasMaxLength(500);
+
+            modelBuilder.Entity<AvailabilityBlock>()
+                .HasOne(b => b.Clinic)
+                .WithMany()
+                .HasForeignKey(b => b.ClinicId)
+                .OnDelete(DeleteBehavior.Restrict); // No cascada: no se borran bloqueos al borrar clínica
+
+            modelBuilder.Entity<AvailabilityBlock>()
+                .HasOne(b => b.Doctor)
+                .WithMany()
+                .HasForeignKey(b => b.DoctorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Índices para consultas frecuentes de disponibilidad y rangos por fecha
+            modelBuilder.Entity<AvailabilityBlock>()
+                .HasIndex(b => new { b.ClinicId, b.Date, b.IsDeleted });
+
+            modelBuilder.Entity<AvailabilityBlock>()
+                .HasIndex(b => new { b.DoctorId, b.Date, b.IsDeleted });
 
             modelBuilder.Entity<Invoice>()
                 .Property(i => i.TotalAmount)
@@ -883,6 +920,16 @@ namespace MedPal.API.Data
                         _tenant.IsSuperAdmin ||
                         (_tenant.AccountId != null && a.Patient.PatientAccounts.Any(pa => pa.AccountId == _tenant.AccountId && !pa.IsDeleted && (pa.IsPrimaryAccount || (pa.IsVerifiedByPatient && (pa.ConsentToShareProfile ?? false))))) ||
                         (_tenant.ClinicId != null && a.ClinicId == _tenant.ClinicId)
+                    ));
+
+            // AvailabilityBlock: SuperAdmin sees all, AccountAdmin by Clinic.AccountId, ClinicAdmin/staff by direct ClinicId
+            modelBuilder.Entity<AvailabilityBlock>()
+                .HasQueryFilter(b =>
+                    !b.IsDeleted && (
+                        !_tenant.HasContext ||
+                        _tenant.IsSuperAdmin ||
+                        (_tenant.AccountId != null && b.Clinic.AccountId == _tenant.AccountId) ||
+                        (_tenant.ClinicId != null && b.ClinicId == _tenant.ClinicId)
                     ));
 
             // Phase 2: Patient-Direct entities

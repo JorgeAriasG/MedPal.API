@@ -12,7 +12,7 @@ namespace MedPal.API.Data.Seeders
     {
         public static async Task SeedDummyDataAsync(AppDbContext context)
         {
-            if (await context.Users.AnyAsync(u => u.Email == "doctor1@medpal.com"))
+            if (await context.Users.AnyAsync(u => u.Email == "doctor.general@medpal.com"))
                 return;
 
             var account = await context.Accounts.FirstOrDefaultAsync(a => a.Name == "MedPal System");
@@ -36,12 +36,14 @@ namespace MedPal.API.Data.Seeders
 
             var specialtyDoctors = new[]
             {
-                new { Email = "doctor1@medpal.com",         Name = "Dr. John Smith",      Specialty = "Cardiolog\u00eda",   License = "MED-88990" },
-                new { Email = "doctor.general@medpal.com",  Name = "Dra. Mar\u00eda Garc\u00eda", Specialty = "General",       License = "MED-88991" },
-                new { Email = "doctor.pediatria@medpal.com",Name = "Dra. Ana L\u00f3pez",  Specialty = "Pediatr\u00eda",     License = "MED-88992" },
-                new { Email = "doctor.dermatologia@medpal.com", Name = "Dr. Carlos Ruiz", Specialty = "Dermatolog\u00eda",  License = "MED-88993" },
-                new { Email = "doctor.dental@medpal.com",   Name = "Dra. Laura Mart\u00ednez", Specialty = "Dental",        License = "MED-88994" },
-                new { Email = "doctor.nutricion@medpal.com",Name = "Dr. Pedro S\u00e1nchez", Specialty = "Nutrici\u00f3n",     License = "MED-88995" },
+                new { Email = "doctor.cardiologia@medpal.com",     Name = "Dr. John Smith",      Specialty = "Cardiolog\u00eda",   License = "MED-88990" },
+                new { Email = "doctor.general@medpal.com",         Name = "Dra. Mar\u00eda Garc\u00eda", Specialty = "General",       License = "MED-88991" },
+                new { Email = "doctor.pediatria@medpal.com",       Name = "Dra. Ana L\u00f3pez",  Specialty = "Pediatr\u00eda",     License = "MED-88992" },
+                new { Email = "doctor.dermatologia@medpal.com",    Name = "Dr. Carlos Ruiz", Specialty = "Dermatolog\u00eda",  License = "MED-88993" },
+                new { Email = "doctor.dental@medpal.com",          Name = "Dra. Laura Mart\u00ednez", Specialty = "Dental",        License = "MED-88994" },
+                new { Email = "doctor.nutricion@medpal.com",       Name = "Dr. Pedro S\u00e1nchez", Specialty = "Nutrici\u00f3n",     License = "MED-88995" },
+                new { Email = "doctor.psicologia@medpal.com",      Name = "Dra. Fernanda R\u00eds", Specialty = "Psicolog\u00eda",     License = "MED-88996" },
+                new { Email = "doctor.fisioterapia@medpal.com",    Name = "Dr. Andres M\u00f3n", Specialty = "Fisioterapia",      License = "MED-88997" },
             };
 
             var doctorUsers = new List<User>();
@@ -313,7 +315,7 @@ namespace MedPal.API.Data.Seeders
             }
 
             await context.SaveChangesAsync();
-            Console.WriteLine($"\u2705 Seeder: 6 doctores, 4 ops, 50 pacientes, {apptCounter} citas, {rxCounter} recetas, {doctor2Patients.Count} cross-doctor consents");
+            Console.WriteLine($"\u2705 Seeder: {specialtyDoctors.Length} doctores, 4 ops, 50 pacientes, {apptCounter} citas, {rxCounter} recetas, {doctor2Patients.Count} cross-doctor consents");
         }
     }
 }

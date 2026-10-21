@@ -14,8 +14,8 @@ namespace MedPal.API.Mapping
             CreateMap<Patient, PatientReadDTO>()
                 .ForMember(dest => dest.EmergencyContact, opt => opt.Ignore())
                 .ForMember(dest => dest.PatientDetailsId, opt => opt.MapFrom(src => src.PatientDetails != null ? src.PatientDetails.Id : (int?)null))
-                .ForMember(dest => dest.Clinic, opt => opt.Ignore())
-                .ForMember(dest => dest.Clinics, opt => opt.Ignore());
+                .ForMember(dest => dest.Clinic, opt => opt.Ignore()) // context clinic, set by the controller
+                .ForMember(dest => dest.Clinics, opt => opt.MapFrom(src => src.PatientClinics.Select(pc => pc.Clinic)));
             CreateMap<Patient, PatientWriteDTO>()
                 .ForMember(dest => dest.EmergencyContact, opt => opt.Ignore())
                 .ForMember(dest => dest.ClinicIds, opt => opt.Ignore());
@@ -93,6 +93,11 @@ namespace MedPal.API.Mapping
                 .ForSourceMember(src => src.PatientPhone, opt => opt.DoNotValidate())
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Status) ? AppointmentStatus.Scheduled : Enum.Parse<AppointmentStatus>(src.Status, true)));
             CreateMap<Clinic, ClinicBasicDTO>().ReverseMap();
+
+            // AvailabilityBlock mappings (ADR-006)
+            CreateMap<AvailabilityBlock, AvailabilityBlockReadDTO>()
+                .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.Doctor != null ? src.Doctor.Name : null));
+            CreateMap<AvailabilityBlockWriteDTO, AvailabilityBlock>(MemberList.Source);
             CreateMap<UserUpdateDTO, User>(MemberList.Source);
             
             // Prescription mappings (Phase 4)

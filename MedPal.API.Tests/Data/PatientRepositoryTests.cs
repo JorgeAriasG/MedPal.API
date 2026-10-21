@@ -97,6 +97,7 @@ namespace MedPal.API.Tests.Data
             var p10 = NewPatient(10); var p11 = NewPatient(11); var p12 = NewPatient(12);
             var clinic1 = NewClinic(1, 100);
             p10.PatientAccounts!.Add(NewMembership(10, 100, primary: true));
+            p10.PatientClinics!.Add(NewClinicLink(10, 1));
             p11.PatientAccounts!.Add(NewMembership(11, 100, verified: false, consent: false));
             p12.PatientClinics!.Add(NewClinicLink(12, 1));
 
@@ -110,6 +111,8 @@ namespace MedPal.API.Tests.Data
             var roster = (await repo.GetAllPatientsAsync(1)).ToList();
 
             Assert.Equal(new[] { 10 }, roster.Select(p => p.Id));
+            var linked = Assert.Single(roster.Single().PatientClinics);
+            Assert.Equal("Clinic 1", linked.Clinic!.Name);
         }
 
         [Fact]
@@ -150,6 +153,8 @@ namespace MedPal.API.Tests.Data
             var roster = (await repo.GetAllPatientsAsync(1)).ToList();
 
             Assert.Equal(new[] { 30 }, roster.Select(p => p.Id));
+            var linked = Assert.Single(roster.Single().PatientClinics);
+            Assert.Equal("Clinic 1", linked.Clinic!.Name);
         }
 
         [Fact]

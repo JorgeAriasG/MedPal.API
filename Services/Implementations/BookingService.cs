@@ -25,6 +25,7 @@ namespace MedPal.API.Services.Implementations
         private readonly IPatientAuthRepository _patientAuthRepository;
         private readonly IPatientRegistrationTokenRepository _tokenRepository;
         private readonly IAppointmentRepository _appointmentRepository;
+        private readonly IAvailabilityBlockRepository _availabilityBlockRepository;
         private readonly IAppointmentService _appointmentService;
         private readonly IBookingLinkService _bookingLinkService;
         private readonly IClinicRepository _clinicRepository;
@@ -39,6 +40,7 @@ namespace MedPal.API.Services.Implementations
             IPatientAuthRepository patientAuthRepository,
             IPatientRegistrationTokenRepository tokenRepository,
             IAppointmentRepository appointmentRepository,
+            IAvailabilityBlockRepository availabilityBlockRepository,
             IAppointmentService appointmentService,
             IBookingLinkService bookingLinkService,
             IClinicRepository clinicRepository,
@@ -52,6 +54,7 @@ namespace MedPal.API.Services.Implementations
             _patientAuthRepository = patientAuthRepository;
             _tokenRepository = tokenRepository;
             _appointmentRepository = appointmentRepository;
+            _availabilityBlockRepository = availabilityBlockRepository;
             _appointmentService = appointmentService;
             _bookingLinkService = bookingLinkService;
             _clinicRepository = clinicRepository;
@@ -245,19 +248,18 @@ namespace MedPal.API.Services.Implementations
                 .Where(a => !a.IsDeleted)
                 .ToList();
 
+            // Bloques de disponibilidad: clínica completa (DoctorId null) o del doctor
+            var blocks = await _availabilityBlockRepository.GetBlocksForAvailabilityAsync(c, d, date);
+
             var slots = new List<TimeSlotDTO>();
             const int slotDuration = 30;
             var currentTime = clinic.Open;
 
             while (currentTime.AddMinutes(slotDuration) <= clinic.Close)
             {
-                var hasOverlap = doctorAppointments.Any(a =>
-                {
-                    var existingStart = a.Time;
-                    var existingEnd = a.Time.AddMinutes(a.DurationMinutes);
-                    var newEnd = currentTime.AddMinutes(slotDuration);
-                    return currentTime < existingEnd && existingStart < newEnd;
-                });
+                var slotEnd = currentTime.AddMinutes(slotDuration);
+                var hasOverlap = SlotAvailability.IsSlotBlockedByAppointment(currentTime, slotEnd, doctorAppointments)
+                    || SlotAvailability.IsSlotBlocked(currentTime, slotEnd, blocks);
 
                 slots.Add(new TimeSlotDTO
                 {
@@ -266,7 +268,7 @@ namespace MedPal.API.Services.Implementations
                     IsAvailable = !hasOverlap
                 });
 
-                currentTime = currentTime.AddMinutes(slotDuration);
+                currentTime = slotEnd;
             }
 
             return slots;

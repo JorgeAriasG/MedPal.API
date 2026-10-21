@@ -129,9 +129,12 @@ builder.Services.AddScoped<IMedicalHistoryRepository, MedicalHistoryRepository>(
 builder.Services.AddScoped<IClinicalAttachmentRepository, ClinicalAttachmentRepository>();
 builder.Services.AddScoped<IAttachmentStorageService, AttachmentStorageService>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<IAvailabilityBlockRepository, AvailabilityBlockRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IAvailabilityBlockService, AvailabilityBlockService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 // Authorization repositories
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();

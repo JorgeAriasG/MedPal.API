@@ -48,7 +48,7 @@ namespace MedPal.API.Data.Seeders
                 IsActive = true,
                 IsDeleted = false,
                 HasAcceptedPrivacyTerms = true,
-                AccountId = 0,  // SuperAdmin pertenece a la Account del sistema
+                AccountId = null,  // SuperAdmin global, no pertenece a ninguna Account (FK nullable)
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };

@@ -62,7 +62,10 @@ namespace MedPal.API.Repositories.Implementations
                     break;
             }
 
-            return await query.ToListAsync();
+            return await query
+                .Include(p => p.PatientClinics)
+                .ThenInclude(pc => pc.Clinic)
+                .ToListAsync();
         }
 
         public async Task<Patient?> GetPatientByIdAsync(int id)
@@ -71,6 +74,7 @@ namespace MedPal.API.Repositories.Implementations
             return await _context.Patients
                 .AsNoTracking()
                 .Include(p => p.PatientClinics)
+                .ThenInclude(pc => pc.Clinic)
                 .Include(p => p.PatientAccounts)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }

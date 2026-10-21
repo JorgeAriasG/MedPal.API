@@ -19,8 +19,7 @@ namespace MedPal.API.Data.Seeders
 
         private static async Task SeedPlansAsync(AppDbContext context)
         {
-            if (await context.Set<SubscriptionPlan>().AnyAsync())
-                return;
+            var existing = await context.Set<SubscriptionPlan>().ToListAsync();
 
             var plans = new[]
             {
@@ -65,10 +64,46 @@ namespace MedPal.API.Data.Seeders
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
+                },
+                new SubscriptionPlan
+                {
+                    Name = "DUO",
+                    Description = "Para parejas de profesionales",
+                    Price = 679m,
+                    MaxTeamMembers = 2,
+                    MaxClinics = 1,
+                    MaxActiveCalendars = 2,
+                    TrialDays = 7,
+                    StripePriceId = null,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 }
             };
 
-            await context.Set<SubscriptionPlan>().AddRangeAsync(plans);
+            foreach (var plan in plans)
+            {
+                var existingPlan = existing.FirstOrDefault(p => p.Name == plan.Name);
+
+                if (existingPlan == null)
+                {
+                    context.Set<SubscriptionPlan>().Add(plan);
+                    continue;
+                }
+
+                existingPlan.Description = plan.Description;
+                existingPlan.Price = plan.Price;
+                existingPlan.MaxTeamMembers = plan.MaxTeamMembers;
+                existingPlan.MaxClinics = plan.MaxClinics;
+                existingPlan.MaxActiveCalendars = plan.MaxActiveCalendars;
+                existingPlan.TrialDays = plan.TrialDays;
+                existingPlan.IsActive = plan.IsActive;
+                if (!string.IsNullOrEmpty(plan.StripePriceId))
+                {
+                    existingPlan.StripePriceId = plan.StripePriceId;
+                }
+                existingPlan.UpdatedAt = DateTime.UtcNow;
+            }
         }
 
         private static async Task SeedAccountSubscriptionsAsync(AppDbContext context)
